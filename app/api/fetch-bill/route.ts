@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { parseBill } from "@/lib/iesco/parse-bill";
 import { fetchIescoBillHtml } from "@/lib/iesco/fetch-bill";
+import { generateBillImage } from "@/lib/iesco/generate-image";
+import { storeBillImage } from "@/lib/iesco/save-bill-image";
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("Fetching IESCO bill:", referenceNumber);
+    console.log("Fetching IESCO bill & image for:", referenceNumber);
 
     // 1. Fetch raw HTML using shared utility
     const html = await fetchIescoBillHtml(referenceNumber);
@@ -80,7 +82,7 @@ export async function POST(request: Request) {
       console.log("Connection found:", connection.id);
     }
 
-    // 5. Prepare bill for database
+    // 5. Prepare billing month date
     function parseBillingMonth(value: string | null) {
       if (!value) return null;
 
@@ -92,18 +94,8 @@ export async function POST(request: Request) {
       if (!match) return null;
 
       const monthMap: Record<string, number> = {
-        JAN: 0,
-        FEB: 1,
-        MAR: 2,
-        APR: 3,
-        MAY: 4,
-        JUN: 5,
-        JUL: 6,
-        AUG: 7,
-        SEP: 8,
-        OCT: 9,
-        NOV: 10,
-        DEC: 11,
+        JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
+        JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
       };
 
       const month = monthMap[match[1]];
@@ -119,10 +111,24 @@ export async function POST(request: Request) {
       throw new Error(`Invalid billing month returned by IESCO: ${bill.bill_month}`);
     }
 
-    // 6. Save bill in Supabase
+    const billingMonthStr = billingMonth.toISOString().split("T")[0];
+
+    // 6. Generate Playwright PNG Screenshot of the original bill
+    let billImageUrl: string | null = null;
+    try {
+      console.log("Generating bill PNG image via Playwright...");
+      const pngBuffer = await generateBillImage(html);
+      billImageUrl = await storeBillImage(pngBuffer, connection.id, billingMonthStr);
+      console.log("Bill image generated and stored successfully.");
+    } catch (imgError) {
+      console.error("WARNING: Could not generate/store bill image:", imgError);
+      // Fallback: Proceed so bill data record saving is not blocked
+    }
+
+    // 7. Save bill record including image URL in Supabase
     const billRecord = {
       connection_id: connection.id,
-      billing_month: billingMonth.toISOString().split("T")[0],
+      billing_month: billingMonthStr,
       issue_date: bill.issue_date || null,
       due_date: bill.due_date || null,
       meter_number: bill.meter_number || null,
@@ -132,6 +138,7 @@ export async function POST(request: Request) {
       bill_amount: bill.grand_total ?? null,
       arrears: bill.arrears ?? null,
       late_payment_amount: bill.lp_surcharge ?? null,
+      bill_image_url: billImageUrl,
       status: "unpaid",
     };
 
@@ -148,11 +155,12 @@ export async function POST(request: Request) {
       throw new Error("Bill was fetched but could not be saved to the database.");
     }
 
-    console.log("Bill saved successfully:", savedBill.id);
+    console.log("Bill and image saved successfully:", savedBill.id);
 
     return NextResponse.json({
       success: true,
       bill: savedBill,
+      imageUrl: billImageUrl,
     });
   } catch (error) {
     console.error("IESCO FETCH ERROR:", error);

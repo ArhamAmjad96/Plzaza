@@ -16,7 +16,7 @@ export default function FetchBillForm() {
   const [activeReference, setActiveReference] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
 
-  // Standard fetch & save to Supabase
+  // Standard fetch & save data + automatically capture & store bill image
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -37,7 +37,8 @@ export default function FetchBillForm() {
 
     try {
       setLoading(true);
-      setMessage("");
+      setMessage("Fetching, parsing & capturing bill image...");
+      setBillImageUrl(null);
 
       const response = await fetch("/api/fetch-bill", {
         method: "POST",
@@ -57,13 +58,16 @@ export default function FetchBillForm() {
       }
 
       setMessageType("success");
-      setMessage("Bill fetched and saved successfully. Reloading page...");
+      setMessage("Bill data and original bill image saved successfully!");
+      setActiveReference(trimmedReferenceNumber);
+
+      const savedUrl = data.imageUrl || data.bill?.bill_image_url;
+      if (savedUrl) {
+        setBillImageUrl(savedUrl);
+      }
+
       setTenant("");
       setReferenceNumber("");
-
-      window.setTimeout(() => {
-        window.location.reload();
-      }, 800);
     } catch (error) {
       setMessageType("error");
       setMessage(
@@ -74,7 +78,7 @@ export default function FetchBillForm() {
     }
   }
 
-  // Fetch original PITC bill image
+  // Standalone preview for bill image without saving tenant connection
   async function handleFetchImage() {
     const trimmedReferenceNumber = referenceNumber.trim();
 
@@ -86,7 +90,7 @@ export default function FetchBillForm() {
 
     try {
       setImageLoading(true);
-      setMessage("");
+      setMessage("Capturing bill image...");
       setBillImageUrl(null);
 
       const response = await fetch("/api/bill-image", {
@@ -186,14 +190,14 @@ export default function FetchBillForm() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-semibold text-slate-900">
-            Fetch Electricity Bill
+            Fetch & Save Electricity Bill
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Enter tenant details and IESCO reference number to save data or view the original bill image.
+            Enter tenant name and IESCO reference number to save metrics and store the original bill image.
           </p>
         </div>
         <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700">
-          Real-time lookup
+          Real-time lookup & storage
         </span>
       </div>
 
@@ -231,7 +235,7 @@ export default function FetchBillForm() {
           disabled={loading || imageLoading}
           className="h-12 rounded-xl bg-blue-600 px-6 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? "Saving..." : "Fetch & Save"}
+          {loading ? "Saving & Capturing..." : "Fetch & Save Data"}
         </button>
 
         <button
@@ -240,7 +244,7 @@ export default function FetchBillForm() {
           disabled={loading || imageLoading}
           className="h-12 rounded-xl border border-slate-300 bg-slate-100 px-5 font-semibold text-slate-800 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {imageLoading ? "Rendering..." : "View Bill Image"}
+          {imageLoading ? "Rendering..." : "Preview Image Only"}
         </button>
       </form>
 
@@ -263,7 +267,7 @@ export default function FetchBillForm() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4 mb-4">
             <div>
               <h3 className="text-lg font-semibold text-slate-900">
-                Original IESCO Bill
+                Original IESCO Bill Image
               </h3>
               <p className="text-xs text-slate-500">
                 Reference: <span className="font-mono font-medium text-slate-700">{activeReference}</span>
