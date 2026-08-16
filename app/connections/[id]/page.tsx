@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase/server";
 import Link from "next/link";
 import FetchBillButton from "@/components/connections/FetchBillButton";
+import ConnectionBillGallery from "@/components/connections/ConnectionBillGallery";
 
 export default async function ConnectionPage({
   params,
@@ -28,8 +29,8 @@ export default async function ConnectionPage({
 
   return (
     <main className="min-h-screen bg-slate-50 p-6">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8">
+      <div className="mx-auto max-w-6xl space-y-8">
+        <div>
           <a
             href="/connections"
             className="text-sm text-blue-600 hover:underline"
@@ -42,25 +43,24 @@ export default async function ConnectionPage({
           </h1>
 
           <p className="mt-2 text-slate-600">
-            Electricity connection details.
+            Electricity connection details and bill history.
           </p>
         </div>
 
         {/* Connection Details */}
         <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
-  <h2 className="text-xl font-semibold text-slate-900">
-    Connection Details
-  </h2>
+            <h2 className="text-xl font-semibold text-slate-900">
+              Connection Details
+            </h2>
 
-  <Link
-    href={`/connections/${connection.id}/edit`}
-    className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-  >
-    Edit Connection
-  </Link>
-</div>
-
+            <Link
+              href={`/connections/${connection.id}/edit`}
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+              Edit Connection
+            </Link>
+          </div>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
@@ -113,14 +113,14 @@ export default async function ConnectionPage({
           </div>
         </section>
 
-        {/* Bills */}
-        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        {/* Bills History Table */}
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">
-            Electricity Bills
+            Electricity Bills History
           </h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            Bill history for this connection.
+            Recorded billing metrics for this connection.
           </p>
 
           {billsError ? (
@@ -132,81 +132,88 @@ export default async function ConnectionPage({
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="px-4 py-3 font-semibold">
-                      Bill Month
-                    </th>
-
-                    <th className="px-4 py-3 font-semibold">
-                      Units
-                    </th>
-
-                    <th className="px-4 py-3 font-semibold">
-                      Amount
-                    </th>
-
-                    <th className="px-4 py-3 font-semibold">
-                      Due Date
-                    </th>
-
-                    <th className="px-4 py-3 font-semibold">
-                      Late Payment
-                    </th>
-
+                    <th className="px-4 py-3 font-semibold">Bill Month</th>
+                    <th className="px-4 py-3 font-semibold">Units</th>
+                    <th className="px-4 py-3 font-semibold">Amount</th>
+                    <th className="px-4 py-3 font-semibold">Due Date</th>
+                    <th className="px-4 py-3 font-semibold">Late Payment</th>
                     <th className="px-4 py-3 font-semibold">Status</th>
+                    <th className="px-4 py-3 font-semibold">Bill Document</th>
                     <th className="px-4 py-3 font-semibold">Action</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {bills.map((bill) => (
-                    <tr
-                      key={bill.id}
-                      className="border-b border-slate-100 last:border-0"
-                    >
-                      <td className="px-4 py-4 font-medium">
-  <Link
-    href={`/bills/${bill.id}`}
-    className="text-blue-600 hover:underline"
-  >
-    {bill.billing_month}
-  </Link>
-</td>
+                  {bills.map((bill) => {
+                    const imageUrl = bill.bill_image_url || bill.pdf_url;
+                    return (
+                      <tr
+                        key={bill.id}
+                        className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50"
+                      >
+                        <td className="px-4 py-4 font-medium">
+                          <Link
+                            href={`/bills/${bill.id}`}
+                            className="text-blue-600 hover:underline"
+                          >
+                            {bill.billing_month}
+                          </Link>
+                        </td>
 
-                      <td className="px-4 py-4">
-                        {bill.units_consumed ?? "-"}
-                      </td>
+                        <td className="px-4 py-4">
+                          {bill.units_consumed ?? "-"}
+                        </td>
 
-                      <td className="px-4 py-4">
-                        Rs. {bill.bill_amount ?? 0}
-                      </td>
+                        <td className="px-4 py-4 font-medium text-slate-900">
+                          Rs. {bill.bill_amount?.toLocaleString("en-IN") ?? 0}
+                        </td>
 
-                      <td className="px-4 py-4">
-                        {bill.due_date || "-"}
-                      </td>
+                        <td className="px-4 py-4 text-slate-600">
+                          {bill.due_date || "-"}
+                        </td>
 
-                      <td className="px-4 py-4">
-                        Rs. {bill.late_payment_amount ?? 0}
-                      </td>
+                        <td className="px-4 py-4 text-slate-600">
+                          Rs. {bill.late_payment_amount?.toLocaleString("en-IN") ?? 0}
+                        </td>
 
-                      <td className="px-4 py-4">
-                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                          bill.status === "paid"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-amber-100 text-amber-800"
-                        }`}>
-                          {bill.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <Link
-                          href={`/bills/${bill.id}`}
-                          className="text-blue-600 hover:underline"
-                        >
-                          View
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="px-4 py-4">
+                          <span
+                            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                              bill.status === "paid"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "bg-amber-100 text-amber-800"
+                            }`}
+                          >
+                            {bill.status}
+                          </span>
+                        </td>
+
+                        <td className="px-4 py-4">
+                          {imageUrl ? (
+                            <a
+                              href={imageUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
+                            >
+                              📷 Original Bill
+                            </a>
+                          ) : (
+                            <span className="text-xs text-slate-400">No Image</span>
+                          )}
+                        </td>
+
+                        <td className="px-4 py-4">
+                          <Link
+                            href={`/bills/${bill.id}`}
+                            className="text-blue-600 hover:underline"
+                          >
+                            View
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -216,6 +223,9 @@ export default async function ConnectionPage({
             </p>
           )}
         </section>
+
+        {/* Original Bill Documents Gallery */}
+        {bills && bills.length > 0 && <ConnectionBillGallery bills={bills} />}
       </div>
     </main>
   );

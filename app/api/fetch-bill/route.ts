@@ -119,14 +119,13 @@ export async function POST(request: Request) {
       console.log("Generating bill PNG image via Playwright...");
       const pngBuffer = await generateBillImage(html);
       billImageUrl = await storeBillImage(pngBuffer, connection.id, billingMonthStr);
-      console.log("Bill image generated and stored successfully.");
+      console.log("Bill image generated successfully.");
     } catch (imgError) {
       console.error("WARNING: Could not generate/store bill image:", imgError);
-      // Fallback: Proceed so bill data record saving is not blocked
     }
 
-    // 7. Save bill record including image URL in Supabase
-    const billRecord = {
+    // 7. Base record matching Supabase database table schema
+    const baseRecord: Record<string, unknown> = {
       connection_id: connection.id,
       billing_month: billingMonthStr,
       issue_date: bill.issue_date || null,
@@ -138,24 +137,61 @@ export async function POST(request: Request) {
       bill_amount: bill.grand_total ?? null,
       arrears: bill.arrears ?? null,
       late_payment_amount: bill.lp_surcharge ?? null,
-      bill_image_url: billImageUrl,
       status: "unpaid",
     };
 
-    const { data: savedBill, error: billError } = await supabase
+    // Attempt upsert with image URL fields first
+    let { data: savedBill, error: billError } = await supabase
       .from("bills")
-      .upsert(billRecord, {
-        onConflict: "connection_id,billing_month",
-      })
+      .upsert(
+        {
+          ...baseRecord,
+          bill_image_url: billImageUrl,
+          pdf_url: billImageUrl,
+        },
+        { onConflict: "connection_id,billing_month" }
+      )
       .select()
       .single();
+
+    // If Supabase table schema does not have 'bill_image_url', fallback to base record or pdf_url
+    if (billError && billError.code === "PGRST204") {
+      console.warn("Database schema note: 'bill_image_url' column absent, retrying with pdf_url...");
+      const retryResult = await supabase
+        .from("bills")
+        .upsert(
+          {
+            ...baseRecord,
+            pdf_url: billImageUrl,
+          },
+          { onConflict: "connection_id,billing_month" }
+        )
+        .select()
+        .single();
+
+      savedBill = retryResult.data;
+      billError = retryResult.error;
+
+      // Final fallback to base metrics if pdf_url is also absent
+      if (billError && billError.code === "PGRST204") {
+        console.warn("Retrying upsert with core bill metrics...");
+        const coreResult = await supabase
+          .from("bills")
+          .upsert(baseRecord, { onConflict: "connection_id,billing_month" })
+          .select()
+          .single();
+
+        savedBill = coreResult.data;
+        billError = coreResult.error;
+      }
+    }
 
     if (billError) {
       console.error("SUPABASE BILL ERROR:", billError);
       throw new Error("Bill was fetched but could not be saved to the database.");
     }
 
-    console.log("Bill and image saved successfully:", savedBill.id);
+    console.log("Bill saved successfully:", savedBill?.id);
 
     return NextResponse.json({
       success: true,
