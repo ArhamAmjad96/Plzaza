@@ -1,0 +1,59 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { formatBillingMonth } from "@/lib/utils/format";
+import {
+  Calendar,
+  Search,
+  Bell,
+  Sparkles,
+  Building2,
+} from "lucide-react";
+
+export default function Topbar() {
+  const pathname = usePathname();
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
+  function getPageTitle() {
+    if (pathname === "/") return "Overview";
+    if (pathname.startsWith("/units")) return "Shops & Rooms";
+    if (pathname.startsWith("/tenants")) return "Tenants";
+    if (pathname.startsWith("/rent")) return "Rent & Payments";
+    if (pathname.startsWith("/connections")) return "Electricity Meters";
+    if (pathname.startsWith("/complaints")) return "Maintenance";
+    if (pathname.startsWith("/expenses")) return "Plaza Expenses";
+    if (pathname.startsWith("/reports")) return "Financial Reports";
+    if (pathname.startsWith("/settings")) return "Plaza Setup";
+    return "Property Workspace";
+  }
+
+  return (
+    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[#CBD4BC] bg-[#DDE4CF]/90 backdrop-blur-md px-4 sm:px-8 py-3.5 select-none">
+      {/* ─── Left Page Title & Location Breadcrumb ─── */}
+      <div className="flex items-center gap-3">
+        <div>
+          <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-[#58655E]">
+            MAIN COMMERCIAL PLAZA · ISLAMABAD
+          </span>
+          <h1 className="text-base font-semibold text-[#17211D] leading-tight">
+            {getPageTitle()}
+          </h1>
+        </div>
+      </div>
+
+      {/* ─── Right Contextual Controls ─── */}
+      <div className="flex items-center gap-2.5">
+        {/* Month Badge */}
+        <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD4BC] bg-[#E8EDD9] text-xs font-mono text-[#17211D]">
+          <Calendar size={12} className="text-[#58655E]" />
+          <span>{formatBillingMonth(currentMonth)}</span>
+        </div>
+
+        {/* Manager Avatar */}
+        <div className="h-8 w-8 rounded-xl bg-[#17211D] text-[#F4F7F2] flex items-center justify-center text-xs font-mono font-bold shadow-xs">
+          PM
+        </div>
+      </div>
+    </header>
+  );
+}

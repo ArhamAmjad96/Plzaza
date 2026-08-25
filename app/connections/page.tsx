@@ -1,152 +1,72 @@
-import { supabase } from "@/lib/supabase/server";
-import Link from "next/link";
+import { getConnectionsWithMappings } from "@/lib/electricity/service";
+import { getAllUnits } from "@/lib/units/service";
+import ConnectionsManager from "@/components/connections/ConnectionsManager";
+import { Zap, Activity, Layers } from "lucide-react";
 
 export default async function ConnectionsPage() {
-  const { data: connections, error } = await supabase
-    .from("connections")
-    .select("*")
-    .order("id", { ascending: true });
+  const [connections, { units }] = await Promise.all([
+    getConnectionsWithMappings(),
+    getAllUnits(),
+  ]);
+
+  const totalConnections = connections.length;
+  const dedicatedCount = connections.filter((c) => !c.is_shared).length;
+  const sharedCount = connections.filter((c) => c.is_shared).length;
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6">
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">
-            Connections
-          </h1>
-
-          <p className="mt-2 text-slate-600">
-            Manage electricity connections.
-          </p>
-        </div>
-
-        {/* Connections */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">
-                Electricity Connections
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-500">
-                All registered electricity connections.
-              </p>
+    <div className="space-y-8">
+      {/* ─── Dark Forest Electricity Hero ─── */}
+      <section className="rounded-3xl border border-[#32433B] bg-[#1B2521] p-8 sm:p-12 text-[#F4F7F2] space-y-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#32433B] pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-[#8FA66B]">
+                UTILITY GRID & INFRASTRUCTURE
+              </span>
+              <Zap size={14} className="text-[#FF704D] animate-pulse" />
             </div>
-
-            <div className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700">
-              {connections?.length ?? 0} Connections
-            </div>
+            <h1 className="text-3xl sm:text-4xl font-medium tracking-tight text-[#F4F7F2] mt-1">
+              Electricity. <br />
+              <span className="text-[#85918A]">Automatically Managed.</span>
+            </h1>
           </div>
 
-          {/* Error */}
-          {error && (
-            <div className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-600">
-              Failed to load connections: {error.message}
-            </div>
-          )}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#24332D] border border-[#32433B] text-xs font-mono text-[#8FA66B]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#8FA66B] animate-pulse" />
+            <span>IESCO Sync Ready</span>
+          </div>
+        </div>
 
-          {/* Table */}
-          {!error && (
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="px-4 py-3 font-semibold text-slate-700">
-                      #
-                    </th>
+        {/* Large Metric Figures */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2 font-mono">
+          <div>
+            <span className="text-[10px] uppercase font-sans text-[#85918A] block">Total Registered Meters</span>
+            <p className="text-3xl font-bold text-[#F4F7F2] mt-1">
+              {totalConnections.toString().padStart(2, "0")}
+            </p>
+            <p className="text-[11px] text-[#85918A] font-sans mt-0.5">Active IESCO reference IDs</p>
+          </div>
 
-                    <th className="px-4 py-3 font-semibold text-slate-700">
-                      Connection
-                    </th>
+          <div>
+            <span className="text-[10px] uppercase font-sans text-[#85918A] block">Dedicated Shop Meters</span>
+            <p className="text-3xl font-bold text-[#FF704D] mt-1">
+              {dedicatedCount.toString().padStart(2, "0")}
+            </p>
+            <p className="text-[11px] text-[#85918A] font-sans mt-0.5">1-to-1 individual billing</p>
+          </div>
 
-                    <th className="px-4 py-3 font-semibold text-slate-700">
-                      Reference Number
-                    </th>
+          <div>
+            <span className="text-[10px] uppercase font-sans text-[#85918A] block">Shared Sub-Meters</span>
+            <p className="text-3xl font-bold text-[#8FA66B] mt-1">
+              {sharedCount.toString().padStart(2, "0")}
+            </p>
+            <p className="text-[11px] text-[#85918A] font-sans mt-0.5">Proportional split across rooms</p>
+          </div>
+        </div>
+      </section>
 
-                    <th className="px-4 py-3 font-semibold text-slate-700">
-                      Meter Number
-                    </th>
-
-                    <th className="px-4 py-3 font-semibold text-slate-700">
-                      Tenant
-                    </th>
-
-                    <th className="px-4 py-3 font-semibold text-slate-700">
-                      Location
-                    </th>
-
-                    <th className="px-4 py-3 font-semibold text-slate-700">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {connections && connections.length > 0 ? (
-                    connections.map((connection) => (
-                      <tr
-                        key={connection.id}
-                        className="border-b border-slate-100 last:border-0"
-                      >
-                        <td className="px-4 py-4 text-slate-500">
-                          {connection.id}
-                        </td>
-
-                        <td className="px-4 py-4 font-medium text-slate-900">
-                          <Link
-                            href={`/connections/${connection.id}`}
-                            className="text-blue-600 hover:underline"
-                          >
-                            {connection.name}
-                          </Link>
-                        </td>
-
-                        <td className="px-4 py-4 font-mono text-slate-700">
-                          {connection.reference_number}
-                        </td>
-
-                        <td className="px-4 py-4 text-slate-600">
-                          {connection.meter_number || "-"}
-                        </td>
-
-                        <td className="px-4 py-4 text-slate-600">
-                          {connection.tenant || "-"}
-                        </td>
-
-                        <td className="px-4 py-4 text-slate-600">
-                          {connection.location || "-"}
-                        </td>
-
-                        <td className="px-4 py-4">
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                              connection.active
-                                ? "bg-green-100 text-green-700"
-                                : "bg-slate-100 text-slate-500"
-                            }`}
-                          >
-                            {connection.active ? "Active" : "Inactive"}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={7}
-                        className="px-4 py-10 text-center text-slate-500"
-                      >
-                        No connections found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      </div>
-    </main>
+      {/* ─── Connections Manager ─── */}
+      <ConnectionsManager connections={connections} allUnits={units} />
+    </div>
   );
 }

@@ -1,229 +1,221 @@
-# Plaza Electricity Manager — Comprehensive Project Documentation
+# 🏢 Plaza Management System — Complete Project Documentation
 
-A modern web application built with **Next.js 16 (App Router)**, **TypeScript**, **Supabase**, and **Playwright** for automated IESCO (Islamabad Electric Supply Company) electricity bill fetching, data parsing, tenant management, and high-resolution bill image rendering.
-
----
-
-## 📐 Table of Contents
-
-1. [Project Overview](#-project-overview)
-2. [Tech Stack & Dependencies](#-tech-stack--dependencies)
-3. [Directory Architecture](#-directory-architecture)
-4. [Core Features & How They Work](#-core-features--how-they-work)
-   - [1. Real-time IESCO Bill Scraping & Parsing](#1-real-time-iesco-bill-scraping--parsing)
-   - [2. On-Demand Original Bill PNG Image Generator](#2-on-demand-original-bill-png-image-generator)
-   - [3. Supabase Database Synchronization](#3-supabase-database-synchronization)
-   - [4. Dashboard & Analytics](#4-dashboard--analytics)
-   - [5. Connection & Tenant Management](#5-connection--tenant-management)
-5. [API Reference](#-api-reference)
-6. [Database Schema](#-database-schema)
-7. [Getting Started & Running Locally](#-getting-started--running-locally)
+A modern, scalable property management platform built for commercial plazas, retail markets, office complexes, and residential flat buildings.
 
 ---
 
-## 🚀 Project Overview
-
-The **Plaza Electricity Manager** allows plaza managers and landlords to effortlessly manage electricity meters across multiple shops/tenants.
-
-Instead of manually checking paper bills or visiting the PITC portal for each reference number, this application:
-- **Fetches live bills** directly from PITC (`bill.pitc.com.pk`).
-- **Parses bill metrics** (meter readings, units consumed, due dates, total bill amount, late fees) into structured database records.
-- **Renders exact original bill images** as crisp PNGs using server-side Playwright Chromium rendering.
-- **Tracks payment statuses** (paid vs unpaid) and financial summaries.
+## 📑 Table of Contents
+1. [Project Vision & Core Philosophy](#1-project-vision--core-philosophy)
+2. [Technology Stack & Architecture](#2-technology-stack--architecture)
+3. [Two Distinct Experiences](#3-two-distinct-experiences)
+4. [Core Modules Breakdown](#4-core-modules-breakdown)
+5. [Database Architecture & Entity Relationships](#5-database-architecture--entity-relationships)
+6. [IESCO / PITC Electricity Billing & Playwright Engine](#6-iesco--pitc-electricity-billing--playwright-engine)
+7. [Step-by-Step Owner Operation Guide](#7-step-by-step-owner-operation-guide)
+8. [Multi-Plaza Scalability](#8-multi-plaza-scalability)
 
 ---
 
-## 🛠 Tech Stack & Dependencies
+## 1. Project Vision & Core Philosophy
 
-| Category | Technology | Description |
+### The Problem
+Traditional property and accounting software is built for accountants and software developers, filled with overwhelming terminology like *Ledger Adjustments*, *Sub-ledger Allocations*, *Multi-tier Tax Schedules*, and *Cron Job Monitors*. The actual plaza owner wants simple, practical answers to basic questions:
+- *Who owes me money this month?*
+- *What repairs need my attention?*
+- *How much profit did I make after paying staff salaries and electricity?*
+
+### The Solution Principle
+> **"Setup can be flexible for ANY plaza. Daily use must be radically simple for the owner."**
+
+The internal backend is decoupled and powerful (handling multi-unit electricity splits, Playwright browser scraping, and double-entry ledger calculations), while the user experience is intuitive (**Shop → Person → Paisa → Masla → Kharcha**).
+
+---
+
+## 2. Technology Stack & Architecture
+
+| Layer | Technology | Key Capabilities |
 | :--- | :--- | :--- |
-| **Framework** | Next.js 16 (App Router) | React Server Components & Turbopack |
-| **Language** | TypeScript & JavaScript (ESNext) | Strict type safety and ES module support |
-| **Styling** | Tailwind CSS v4 | Clean UI with Slate & Blue design system |
-| **Database** | Supabase (PostgreSQL) | Cloud database storing connections and bills |
-| **Scraping** | Axios, Tough-Cookie, Cheerio | Session cookie handling & HTML DOM parsing |
-| **Rendering** | Playwright (Chromium) | Server-side HTML rendering to high-DPI PNG |
+| **Frontend & UI** | **Next.js 16** (Turbopack, App Router, React 19) | Server Components, Server Actions, Responsive Desktop & Mobile layout |
+| **Styling** | **Tailwind CSS** | Clean cards, status badges, typography, printable letterheads |
+| **Database** | **Supabase PostgreSQL** | Scoped `plaza_id` architecture, relational integrity, row-level security |
+| **Resilience Layer** | **In-Memory Fallback Stores** | Zero-crash guarantee during remote schema updates or initial deployment |
+| **Automation Engine** | **Playwright + Node.js** | Headless automated browser capturing high-resolution original IESCO bill images |
+| **Utility Sync** | **IESCO / PITC Scraping API** | Automated 14-digit reference scraping, HTML bill parsing, sub-unit cost allocation |
 
 ---
 
-## 📁 Directory Architecture
+## 3. Two Distinct Experiences
 
-```text
-plaza-electricity-manager/
-├── app/                        # Next.js App Router (Pages & Server Actions)
-│   ├── api/                    # Serverless API Endpoints
-│   │   ├── bill-image/         # POST /api/bill-image (PNG Image Stream)
-│   │   └── fetch-bill/         # POST /api/fetch-bill (Data Save to Supabase)
-│   ├── bills/[id]/             # Single Bill Detail Page & Actions
-│   ├── connections/            # Plaza Meter Connections Management Pages
-│   │   └── [id]/edit/          # Edit Connection & Tenant Details
-│   ├── tenants/                # Tenant Directory & Management Page
-│   ├── globals.css             # Tailwind CSS Configuration
-│   ├── layout.tsx              # Root HTML Layout & Font Providers
-│   └── page.tsx                # Main Dashboard with Analytics & Recent Bills
-│
-├── components/                 # Reusable React UI Components
-│   ├── bills/
-│   │   ├── FetchBillForm.tsx   # Search form, real-time fetching, modal lightbox
-│   │   └── DeleteBillButton.tsx# Client component for bill deletion prompts
-│   └── connections/
-│       └── FetchBillButton.tsx # Quick-refetch button on connection pages
-│
-├── lib/                        # Backend Services & Third-Party Integrations
-│   ├── iesco/                  # IESCO/PITC Integration Package
-│   │   ├── fetch-bill.ts       # Session cookie client & PITC POST request
-│   │   ├── generate-image.ts   # Playwright Chromium HTML-to-PNG renderer
-│   │   └── parse-bill.js       # Cheerio HTML parser extracting 15+ bill fields
-│   └── supabase/
-│       └── server.ts           # Supabase Database Client Initialization
-│
-├── .env.local                  # Environment Variables (Supabase Keys)
-├── next.config.ts              # Next.js Configuration
-└── tsconfig.json               # TypeScript Compiler Settings & Path Aliases (@/*)
+### 1. Plaza Setup & Configuration (Settings)
+Used when a new plaza is configured or structural renovations take place:
+- Building Name & Location setup
+- Custom Floors hierarchy (*Basement, Lower Ground, Ground Floor, 1st Floor, 2nd Floor, Rooftop*)
+- Bulk Shop / Room Generator with automatic numbering (`B-01` to `B-05`, `G-01` to `G-12`)
+- Default Monthly Rent & Security Deposit rules per floor
+- Residential Flats and rentable rooms setup
+- Dedicated or Shared Electricity meter configuration
+
+### 2. Daily Use (5 Simple Touchpoints)
+1. 🏠 **Home** — Answers: *Who owes money?*, *What needs attention?*, *What happened this month?*
+2. 🏢 **Shops / Rooms** — Floor-by-floor interactive building layout with 360° shop profile.
+3. 💰 **Money** — Simple Expected vs. Received vs. Due tracker with 1-click payment recording.
+4. 🔧 **Maintenance** — Visual maintenance logging with 1-click repair cost recording.
+5. 📊 **Monthly Hisab** — Clear Net Cash Flow statement ($\text{Income} - \text{Expenses}$) with printable PDF export.
+
+---
+
+## 4. Core Modules Breakdown
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                   PLAZA MANAGEMENT SYSTEM                │
+├─────────────┬─────────────┬─────────────┬────────────────┤
+│ 🏠 Home     │ 🏢 Units    │ 💰 Money    │ 🔧 Maintenance │
+│ Dashboard   │ & Tenants   │ & Payments  │ & Complaints   │
+├─────────────┼─────────────┼─────────────┼────────────────┤
+│ 📊 Monthly  │ ⚙️ Setup    │ 🔌 Meters   │ 🤖 Automation  │
+│ Hisab (P&L) │ & Settings  │ & Scraping  │ & Cron Jobs    │
+└─────────────┴─────────────┴─────────────┴────────────────┘
 ```
 
----
+### Module 1: Home Dashboard (`/`)
+- **This Month Summary**: Big numbers showing **Rent Received**, **Money Still Due**, and **Plaza Running Expenses**.
+- **Needs Attention Panel**: Interactive cards highlighting overdue rents, unpaid electricity bills, open maintenance issues, and incomplete security deposits.
+- **5 Quick Actions**: `➕ Add Unit`, `👤 Add Tenant`, `💰 Record Payment`, `🔧 Add Complaint`, `💸 Add Expense`.
 
-## ⚙ Core Features & How They Work
+### Module 2: Shops & Rooms (`/units`)
+- Visual floor plan grouping shops and flat rooms under their respective floor headings.
+- Occupancy badges: 🟢 **OCCUPIED** (displays tenant name and rent status) vs. ⚪ **VACANT** (1-click `+ Assign Tenant`).
+- **360° Single Unit Profile (`/units/[id]`)**:
+  - Tenant contacts & phone number
+  - Monthly rent amount, due date, and payment status (`✅ PAID` / `🔴 UNPAID`)
+  - Electricity meter reference, current bill amount, and original bill picture link
+  - Security deposit required vs. received vs. remaining
+  - Open maintenance issues for this unit
+  - Complete history tabs: Payments, Monthly Ledgers, Maintenance
 
-### 1. Real-time IESCO Bill Scraping & Parsing
-- **Location**: `lib/iesco/fetch-bill.ts` & `lib/iesco/parse-bill.js`
-- **Flow**:
-  1. The server opens `https://bill.pitc.com.pk/iescobill` using an `axios` instance wrapped with `tough-cookie`.
-  2. It reads hidden CSRF/session form tokens from the search page HTML using `cheerio`.
-  3. It submits a POST request containing `searchTextBox: referenceNumber` and `rbSearchByList: refno`.
-  4. `parse-bill.js` extracts bill details such as reference number, tenant name/address, meter number, billing month, issue date, due date, previous/present readings, units consumed, total bill amount, arrears, and late surcharge.
+### Module 3: Money & Payments (`/rent`)
+- Tracks monthly collections for the current or past billing months.
+- Replaces complex accounting terms with plain language: **Expected Rent**, **Received**, **Remaining Due**.
+- **`+ Record Payment` Modal**:
+  - Who paid?
+  - What for? (*Rent*, *Electricity*, *Security*, *Other*)
+  - Amount in PKR
+  - Payment method (*Cash*, *Bank Transfer*, *Online*, *Cheque*)
+- **Digital Printable Receipts**: Generates branded payment receipts with receipt number, breakdown, and signature block.
 
-### 2. On-Demand Original Bill PNG Image Generator
-- **Location**: `lib/iesco/generate-image.ts` & `app/api/bill-image/route.ts`
-- **Flow**:
-  1. Receives reference number and fetches raw HTML from PITC.
-  2. Launches headless **Chromium** via Playwright at retina resolution (`deviceScaleFactor: 2`, viewport `1200x1600`).
-  3. Injects `<base href="https://bill.pitc.com.pk/">` so external CSS styles, fonts, and images resolve correctly.
-  4. Automatically injects CSS overrides to hide PITC's animated *"Loading your bill"* modal (`#loader-container`) and unblur bill text.
-  5. Captures a crisp PNG screenshot of the `#maincontent-1` bill container.
-  6. Streams the binary PNG image directly to the client with `Content-Type: image/png`.
-  7. Frontend displays the image with **View Fullscreen Lightbox**, **Print Bill**, and **Download PNG** options.
+### Module 4: Maintenance & Complaints (`/complaints`)
+- Minimal issue reporting with visual category cards:
+  - ⚡ *Electricity* • 💧 *Water / Plumbing* • 🧱 *Wall / Paint* • 🚪 *Door / Lock* • 🚽 *Washroom* • 🏗 *Other*
+- Urgency toggles: **Normal** vs. **🔴 Urgent**.
+- **1-Click Repair Cost Recording**: When marking a complaint as resolved, prompts for Material + Labour cost and **automatically includes it in plaza expenses** without requiring duplicate entry.
 
-### 3. Supabase Database Synchronization
-- **Location**: `app/api/fetch-bill/route.ts`
-- **Flow**:
-  1. When a bill is fetched, the server checks if the connection exists in the `connections` table.
-  2. If missing, it automatically creates a new connection record linked to the tenant.
-  3. It upserts (inserts or updates on conflict of `connection_id, billing_month`) the bill metrics in the `bills` table.
+### Module 5: General Plaza Expenses (`/expenses`)
+- Records recurring operational running costs:
+  - 👮 *Security Guard Salary*
+  - 🧹 *Janitorial & Sweeper Wages*
+  - ⛽ *Generator Diesel Fuel*
+  - 💡 *Common Area Electricity & Water*
+  - 🗑️ *Waste Disposal Fee*
+  - 🏛️ *Taxes & Legal Costs*
 
-### 4. Dashboard & Analytics
-- **Location**: `app/page.tsx`
-- Displays key statistics:
-  - **Active Connections**: Total active meters monitored.
-  - **Bills This Month**: Number of records fetched for the current billing cycle.
-  - **Total Electricity Expense**: Aggregated sum of bill amounts across all shops.
-  - **Pending Payments**: Count and monetary sum of unpaid bills.
-  - **Recent Bills Table**: Quick list of recent bills with status badges and navigation links.
-
-### 5. Connection & Tenant Management
-- **Location**: `app/connections/` & `app/tenants/`
-- Allows plaza managers to view meter details by connection, edit shop/tenant names, toggle active status, and view historical bill trends per connection.
-
----
-
-## 📡 API Reference
-
-### `POST /api/fetch-bill`
-Fetches bill from PITC, parses data, and saves to Supabase database.
-
-- **Request Body**:
-  ```json
-  {
-    "tenant": "Shop 12 - Mobile Hub",
-    "referenceNumber": "15142165161900"
-  }
-  ```
-- **Response** (200 OK):
-  ```json
-  {
-    "success": true,
-    "bill": {
-      "id": "102",
-      "connection_id": "5",
-      "billing_month": "2026-08-01",
-      "units_consumed": 450,
-      "bill_amount": 18500,
-      "status": "unpaid"
-    }
-  }
-  ```
+### Module 6: Monthly Hisab & Reports (`/reports`)
+- Executive Financial Statement:
+  $$\text{Net Cash Flow} = \text{Total Collections} - (\text{Operating Expenses} + \text{Maintenance Repairs})$$
+- 5 Specialized Statements:
+  1. Net Cash Flow Statement (P&L)
+  2. Rent Collection & Outstanding Balance Sheet
+  3. Electricity Consumption & Billing Report
+  4. Security Deposits Held Registry
+  5. Plaza Running Expense Breakdown
+- **Print / PDF Export**: Formatted with executive letterheads and management signature lines.
 
 ---
 
-### `POST /api/bill-image`
-Fetches original PITC bill HTML and returns an on-demand PNG screenshot stream.
+## 5. Database Architecture & Entity Relationships
 
-- **Request Body**:
-  ```json
-  {
-    "referenceNumber": "15142165161900"
-  }
-  ```
-- **Response**: Binary stream with headers:
-  - `Content-Type: image/png`
-  - `Cache-Control: no-store, max-age=0`
-
----
-
-## 🗄 Database Schema
+The PostgreSQL database is organized with clean separation between physical spaces, tenant occupancies, utility meters, and financial ledgers:
 
 ```mermaid
 erDiagram
-    CONNECTIONS ||--o{ BILLS : "has many"
-    CONNECTIONS {
-        bigint id PK
-        text reference_number UK
-        text name
-        text tenant
-        text meter_number
-        text location
-        text tariff
-        boolean active
-        timestamp created_at
-    }
-    BILLS {
-        bigint id PK
-        bigint connection_id FK
-        date billing_month
-        date issue_date
-        date due_date
-        text meter_number
-        numeric previous_reading
-        numeric current_reading
-        numeric units_consumed
-        numeric bill_amount
-        numeric arrears
-        numeric late_payment_amount
-        text status "paid | unpaid"
-        timestamp created_at
-    }
+    PLAZAS ||--o{ UNITS : contains
+    PLAZAS ||--o{ EXPENSES : incurs
+    UNITS ||--o{ LEASES : hosts
+    TENANTS ||--o{ LEASES : holds
+    UNITS ||--o{ CONNECTION_UNIT_MAPPINGS : maps
+    CONNECTIONS ||--o{ CONNECTION_UNIT_MAPPINGS : links
+    CONNECTIONS ||--o{ BILLS : receives
+    LEASES ||--o{ TENANT_ACCOUNTS : generates
+    TENANT_ACCOUNTS ||--o{ PAYMENTS : receives
+    UNITS ||--o{ COMPLAINTS : logs
+    COMPLAINTS ||--o{ COMPLAINT_EXPENSES : incurs
 ```
+
+### Table Definitions:
+1. **`plazas`**: Plaza name, location, contact, and JSONB `floors` hierarchy.
+2. **`units`**: Physical shops and rooms (`unit_number`, `unit_name`, `unit_type`, `floor`, `default_monthly_rent`, `default_security_amount`, `status`).
+3. **`tenants`**: Personal identity (`full_name`, `phone`, `cnic`, `emergency_contact`, `status`).
+4. **`leases`**: Legal occupancy agreements (`monthly_rent`, `security_amount`, `security_paid`, `rent_due_day`, `move_in_date`, `annual_increase_pct`).
+5. **`connections`**: Raw utility meters (`name`, `reference_number`, `meter_number`, `active`).
+6. **`connection_unit_mappings`**: Rules linking meters to units (`split_type`: EQUAL / PERCENTAGE, `split_value`: 100% or 50%).
+7. **`bills`**: Fetched IESCO bills (`billing_month`, `bill_amount`, `units_consumed`, `due_date`, `status`, `bill_image_url`).
+8. **`tenant_accounts`**: Monthly billing ledger (`rent_amount`, `rent_status`, `electricity_amount`, `electricity_status`, `total_payable`, `paid_amount`, `remaining_balance`).
+9. **`payments`**: Transaction records (`receipt_number`, `payment_type`, `amount`, `payment_method`, `payment_date`).
+10. **`complaints`**: Maintenance issues (`category`, `title`, `priority`, `status`, `assigned_to`).
+11. **`complaint_expenses`**: Repair costs linked to specific complaints.
+12. **`expenses`**: General plaza operational expenses (`category`, `amount`, `expense_date`, `paid_to`, `receipt_voucher_no`).
 
 ---
 
-## 🚦 Getting Started & Running Locally
+## 6. IESCO / PITC Electricity Billing & Playwright Engine
 
-### Environment Setup
-Ensure `.env.local` contains valid Supabase credentials:
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_<your-key>
-```
+### Live Utility Automation
+1. **Reference Number Architecture**:
+   - Each connection stores a 14-digit IESCO reference number (e.g. `04141234567890`).
+2. **Automated Scraping**:
+   - Queries the official PITC billing server (`http://bill.pitc.com.pk/iescobill/general?refno=...`).
+   - Parses electricity cost, taxes, units consumed, issue date, and due date.
+3. **Original Bill Image Capture**:
+   - Uses a background **Playwright** headless browser to render the official paper bill HTML and capture a crystal-clear PNG screenshot.
+   - Saves the screenshot and makes it viewable via `/bills/[id]`.
+4. **Sub-Unit Split Calculation**:
+   - **Dedicated Meter**: 100% of the bill is applied to that specific shop.
+   - **Shared Meter (Flats)**: Automatically divides the bill across linked flat rooms (e.g. 50% for Room 1, 50% for Room 2) without fetching duplicate bills or creating duplicate connections.
 
-### Install Dependencies & Browsers
-```bash
-npm install
-npx playwright install chromium
-```
+---
 
-### Run Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+## 7. Step-by-Step Owner Operation Guide
+
+### A. Initial Plaza Setup (One-time)
+1. Open **[http://localhost:3000/settings](http://localhost:3000/settings)** $\rightarrow$ click **`🏢 Setup / Reconfigure Plaza`**.
+2. Enter building name and customize floor names.
+3. Type shop counts per floor $\rightarrow$ the system auto-generates unit numbers.
+4. Set default monthly rent and security deposit per floor.
+5. Click **`✓ Save & Build Plaza Structure`**.
+
+### B. Adding a Unit with Electricity (Anytime)
+1. Click **`➕ Add Unit`** on **[http://localhost:3000/units](http://localhost:3000/units)**.
+2. Step 1: Choose `🏪 Commercial Shop` or `🚪 Rentable Room`.
+3. Step 2: Choose floor and unit name.
+4. Step 3: Confirm suggested rent and security.
+5. Step 4: Choose Electricity option:
+   - `✅ Own Meter`: Type 14-digit IESCO reference number $\rightarrow$ *backend automatically links the meter!*
+   - `🔗 Shares Meter`: Pick existing meter and 50/50 split.
+   - `⚡ Add Later`: Save unit without meter.
+6. Confirmation screen offers **`👤 Add Tenant Now`**.
+
+### C. Daily Operations
+- **Morning Check**: Open **[http://localhost:3000/](http://localhost:3000/)** to view overdue rents and urgent complaints.
+- **Receive Rent / Bill**: Open **[http://localhost:3000/rent](http://localhost:3000/rent)** $\rightarrow$ click **`+ Record Payment`** $\rightarrow$ print official receipt.
+- **Report Maintenance**: Open **[http://localhost:3000/complaints](http://localhost:3000/complaints)** $\rightarrow$ click **`+ Add Complaint`** $\rightarrow$ tap problem icon.
+- **End of Month Review**: Open **[http://localhost:3000/reports](http://localhost:3000/reports)** $\rightarrow$ click **`🖨️ Print Statement`**.
+
+---
+
+## 8. Multi-Plaza Scalability
+
+The application is structured to support pitching and managing **any commercial plaza**:
+- ✅ **No hardcoded units or floor limits**: Can manage a 6-shop mini-market or a 150-unit commercial center.
+- ✅ **Custom Floor Terminology**: Supports *Basement*, *Lower Ground*, *Mezzanine*, *Ground Floor*, *1st to 10th Floors*, *Offices*, and *Residential Flats*.
+- ✅ **Dynamic Pricing**: Every unit inherits floor defaults but remains 100% individually editable.
+- ✅ **Decoupled Tenants & Units**: When a tenant vacates, historical payments, ledgers, and complaints are preserved forever while the unit becomes vacant for a new lease.

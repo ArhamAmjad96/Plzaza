@@ -1,28 +1,113 @@
 @import "tailwindcss";
 
+@theme {
+  /* ─── Sunlit Architecture Color Palette ─── */
+  --color-sage-bg: #DDE4CF;
+  --color-sand-bg: #E7D4BE;
+  --color-forest-dark: #1B2521;
+  --color-forest-surface: #24332D;
+  --color-forest-border: #32433B;
+  
+  /* Tinted Surfaces */
+  --color-surface-sage: #E8EDD9;
+  --color-surface-sand: #EFE3D3;
+  --color-surface-stone: #D4DDC5;
+  --color-surface-cream: #F5EFE6;
+  --color-surface-card: #FAF6F0;
+  --color-surface-pure: #FFFFFF;
+
+  /* Text Colors */
+  --color-text-primary: #17211D;
+  --color-text-secondary: #58655E;
+  --color-text-muted: #85918A;
+  --color-text-light: #F4F7F2;
+  --color-text-sand: #7D6F5D;
+
+  /* Architectural Borders */
+  --color-border-sage: #CBD4BC;
+  --color-border-sand: #D9C4AC;
+  --color-border-subtle: #E2DFD8;
+  --color-border-dark: #2F3E37;
+
+  /* Accents */
+  --color-coral-accent: #FF704D;
+  --color-coral-light: #FFEAE4;
+  --color-coral-dark: #E05432;
+  --color-olive-support: #8FA66B;
+  --color-olive-light: #EEF4E3;
+  --color-olive-dark: #6D824E;
+
+  /* Semantic Status Indicators */
+  --color-status-paid: #2D5A43;
+  --color-status-paid-bg: #E3EFE8;
+  --color-status-paid-border: #BCD8C7;
+
+  --color-status-pending: #8C6B32;
+  --color-status-pending-bg: #F9F1E2;
+  --color-status-pending-border: #E8D3B0;
+
+  --color-status-overdue: #8E3E33;
+  --color-status-overdue-bg: #FAECE9;
+  --color-status-overdue-border: #EBC1BA;
+
+  --color-status-vacant: #FF704D;
+  --color-status-vacant-bg: #FFF0EB;
+  --color-status-vacant-border: #FFD4C7;
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", Menlo, Consolas, monospace;
+}
+
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --border: #e2e8f0;
+  --background: #DDE4CF;
+  --foreground: #17211D;
+  --sand: #E7D4BE;
+  --forest: #1B2521;
+  --coral: #FF704D;
+  --olive: #8FA66B;
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background-color: #DDE4CF;
+  color: #17211D;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* Minimal Architectural Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD4BC;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8FA66B;
+}
+
+/* Form Inputs & Interactive Targets */
 button,
 input,
 textarea,
@@ -34,20 +119,155 @@ button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid rgb(37 99 235);
-  outline-offset: 2px;
+  outline: 1.5px solid #FF704D;
+  outline-offset: 1px;
 }
 
 ::selection {
-  background: rgba(59, 130, 246, 0.2);
-  color: #0f172a;
+  background: rgba(255, 112, 77, 0.25);
+  color: #17211D;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b1120;
-    --foreground: #e2e8f0;
-    --card: #111827;
-    --border: #334155;
+/* Dynamic Section Color Transition */
+.section-transition-sand {
+  background-color: #E7D4BE;
+  color: #17211D;
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section-transition-forest {
+  background-color: #1B2521;
+  color: #F4F7F2;
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section-transition-sage {
+  background-color: #DDE4CF;
+  color: #17211D;
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Utility Animations */
+.fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle Hero Background Drift & Float Keyframes */
+@keyframes heroBuildingDrift {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(-8px, -6px) scale(1.015);
+  }
+  100% {
+    transform: translate(6px, 4px) scale(0.99);
+  }
+}
+
+@keyframes heroChipFloat1 {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes heroChipFloat2 {
+  0% {
+    transform: translateY(0px) translateX(0px);
+  }
+  100% {
+    transform: translateY(6px) translateX(-4px);
+  }
+}
+
+@keyframes heroChipFloat3 {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Small Colorful Floating Buildings Animations */
+@keyframes floatBuilding1 {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.5deg);
+  }
+  100% {
+    transform: translateY(4px) rotate(-1deg);
+  }
+}
+
+@keyframes floatBuilding2 {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-2deg);
+  }
+  100% {
+    transform: translateY(6px) rotate(1deg);
+  }
+}
+
+@keyframes floatBuilding3 {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.03);
+  }
+  100% {
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes floatBuilding4 {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(5px) rotate(-1.5deg);
+  }
+}
+
+@keyframes floatBuilding5 {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-11px) rotate(-1.5deg);
+  }
+  100% {
+    transform: translateY(7px) rotate(1.5deg);
+  }
+}
+
+/* Print specific optimizations */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
   }
 }

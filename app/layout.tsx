@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Sidebar from "@/components/navigation/Sidebar";
+import Topbar from "@/components/navigation/Topbar";
+import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,54 +16,35 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Plaza Electricity Manager",
-  description:
-    "Manage electricity bills, connections, and tenants with a clean dashboard.",
+  title: "Plaza Manager — Commercial Property Management",
+  description: "Architectural property and electricity management for commercial plazas.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-slate-50 text-slate-900 font-sans">
-        <div className="flex min-h-full flex-col">
-          <header className="border-b border-slate-200 bg-white/90 backdrop-blur-sm">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-blue-600">
-                  Plaza
-                </p>
-                <h1 className="text-xl font-semibold text-slate-900">
-                  Electricity Manager
-                </h1>
-              </div>
-              <nav className="flex flex-wrap gap-3 text-sm text-slate-700">
-                <a
-                  href="/"
-                  className="rounded-full px-4 py-2 transition hover:bg-slate-100"
-                >
-                  Dashboard
-                </a>
-                <a
-                  href="/connections"
-                  className="rounded-full px-4 py-2 transition hover:bg-slate-100"
-                >
-                  Connections
-                </a>
-                <a
-                  href="/tenants"
-                  className="rounded-full px-4 py-2 transition hover:bg-slate-100"
-                >
-                  Tenants
-                </a>
-              </nav>
-            </div>
-          </header>
+      <body className="min-h-full bg-[#DDE4CF] text-[#17211D] font-sans selection:bg-[#FF704D]/25 selection:text-[#17211D]">
+        <div className="flex min-h-screen">
+          {/* Desktop Left Deep Forest Architectural Sidebar */}
+          <Sidebar />
 
-          <main className="flex-1">{children}</main>
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-0">
+            {/* Topbar */}
+            <Topbar />
+
+            {/* Page Content Viewport */}
+            <main className="flex-1 px-4 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10 max-w-7xl w-full mx-auto">
+              {children}
+            </main>
+          </div>
         </div>
+
+        {/* Mobile Bottom Bar Navigation */}
+        <MobileBottomNav />
       </body>
     </html>
   );

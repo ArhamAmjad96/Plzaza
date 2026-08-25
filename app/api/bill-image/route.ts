@@ -2,6 +2,17 @@ import { NextResponse } from "next/server";
 import { fetchIescoBillHtml } from "@/lib/iesco/fetch-bill";
 import { generateBillImage } from "@/lib/iesco/generate-image";
 
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const referenceNumber = searchParams.get("ref")?.trim();
+
+  if (!referenceNumber) {
+    return NextResponse.json({ error: "Reference number is required." }, { status: 400 });
+  }
+
+  return generateAndReturnImage(referenceNumber);
+}
+
 export async function POST(request: Request) {
   try {
     let body: { referenceNumber?: string } = {};
@@ -24,7 +35,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate reference number format
+    return generateAndReturnImage(referenceNumber);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to generate bill image.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+async function generateAndReturnImage(referenceNumber: string) {
+  try {
     const sanitizedRef = referenceNumber.replace(/[\s-]/g, "");
     if (sanitizedRef.length < 10) {
       return NextResponse.json(
@@ -33,10 +52,10 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("Generating bill image for reference number:", referenceNumber);
+    console.log("Generating bill image for reference number:", sanitizedRef);
 
     // 1. Fetch original PITC bill HTML
-    const html = await fetchIescoBillHtml(referenceNumber);
+    const html = await fetchIescoBillHtml(sanitizedRef);
 
     // 2. Render HTML to high-quality PNG
     const pngBuffer = await generateBillImage(html);
@@ -51,15 +70,8 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("BILL IMAGE GENERATION ERROR:", error);
-
-    const message =
-      error instanceof Error ? error.message : "Failed to generate bill image.";
-
+    const message = error instanceof Error ? error.message : "Failed to generate bill image.";
     const status = message.includes("not found") ? 404 : 500;
-
-    return NextResponse.json(
-      { error: message },
-      { status }
-    );
+    return NextResponse.json({ error: message }, { status });
   }
 }
