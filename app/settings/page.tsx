@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase/server";
 import { getPrimaryPlaza } from "@/lib/units/service";
 import SettingsManager from "@/components/settings/SettingsManager";
 
+export const dynamic = "force-dynamic";
+
 export default async function SettingsPage() {
   const [plaza, connsRes, billsRes] = await Promise.all([
     getPrimaryPlaza(),

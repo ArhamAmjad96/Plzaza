@@ -1,6 +1,8 @@
 import { getPlazaExpenses } from "@/lib/expenses/service";
 import ExpensesManager from "@/components/expenses/ExpensesManager";
 
+export const dynamic = "force-dynamic";
+
 export default async function ExpensesPage({
   searchParams,
 }: {

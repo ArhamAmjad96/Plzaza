@@ -8,6 +8,8 @@ import { getAllComplaints } from "@/lib/complaints/service";
 import { getUnitAllocatedElectricityBill } from "@/lib/electricity/service";
 import UnitDetailView from "@/components/units/UnitDetailView";
 
+export const dynamic = "force-dynamic";
+
 export default async function UnitDetailPage({
   params,
   searchParams,

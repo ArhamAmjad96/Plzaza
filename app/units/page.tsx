@@ -1,6 +1,8 @@
 import { getAllUnits } from "@/lib/units/service";
 import UnitsManager from "@/components/units/UnitsManager";
 
+export const dynamic = "force-dynamic";
+
 export default async function UnitsPage() {
   const { units, stats, plaza } = await getAllUnits();
 

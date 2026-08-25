@@ -9,6 +9,8 @@ import { getAllComplaintExpensesMap } from "@/lib/complaints/expenses-service";
 import { getUnitAllocatedElectricityBill } from "@/lib/electricity/service";
 import TenantProfileView from "@/components/tenants/TenantProfileView";
 
+export const dynamic = "force-dynamic";
+
 export default async function TenantDetailPage({
   params,
   searchParams,

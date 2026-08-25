@@ -3,6 +3,8 @@ import { getTenantsWithLeases } from "@/lib/tenants/service";
 import { supabase } from "@/lib/supabase/server";
 import AutomationManager from "@/components/automation/AutomationManager";
 
+export const dynamic = "force-dynamic";
+
 export default async function AutomationPage() {
   const [escalations, { tenants }, connsRes] = await Promise.all([
     getEligibleRentEscalations(),

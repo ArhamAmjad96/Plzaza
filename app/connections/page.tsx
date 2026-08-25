@@ -3,6 +3,8 @@ import { getAllUnits } from "@/lib/units/service";
 import ConnectionsManager from "@/components/connections/ConnectionsManager";
 import { Zap, Activity, Layers } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function ConnectionsPage() {
   const [connections, { units }] = await Promise.all([
     getConnectionsWithMappings(),

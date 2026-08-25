@@ -4,6 +4,8 @@ import Link from "next/link";
 import FetchBillButton from "@/components/connections/FetchBillButton";
 import ConnectionBillGallery from "@/components/connections/ConnectionBillGallery";
 
+export const dynamic = "force-dynamic";
+
 export default async function ConnectionPage({
   params,
 }: {

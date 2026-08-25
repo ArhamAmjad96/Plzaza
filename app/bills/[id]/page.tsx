@@ -7,6 +7,8 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { formatPKR, formatBillingMonth } from "@/lib/utils/format";
 import { ArrowLeft, CheckCircle2, ExternalLink } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function BillPage({
   params,
 }: {

@@ -4,6 +4,8 @@ import { getAllUnits } from "@/lib/units/service";
 import { getTenantsWithLeases } from "@/lib/tenants/service";
 import ComplaintsManager from "@/components/complaints/ComplaintsManager";
 
+export const dynamic = "force-dynamic";
+
 export default async function ComplaintsPage() {
   const [{ complaints, stats }, expenseMap, { units }, { tenants }] = await Promise.all([
     getAllComplaints(),

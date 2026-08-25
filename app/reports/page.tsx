@@ -1,6 +1,8 @@
 import { getFinancialOverviewReport } from "@/lib/reports/service";
 import ReportsManager from "@/components/reports/ReportsManager";
 
+export const dynamic = "force-dynamic";
+
 export default async function ReportsPage({
   searchParams,
 }: {

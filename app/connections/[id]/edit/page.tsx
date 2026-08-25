@@ -3,6 +3,8 @@ import { supabase } from "@/lib/supabase/server";
 import Link from "next/link";
 import { updateConnection, toggleConnection } from "./actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditConnectionPage({
   params,
 }: {
