@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { supabase } from "@/lib/supabase/server";
 import { getAllUnits } from "@/lib/units/service";
 import { getTenantsWithLeases } from "@/lib/tenants/service";
@@ -23,6 +23,10 @@ export default async function UnitDetailPage({
 
   // 1. Fetch all units and find target unit
   const { units } = await getAllUnits();
+  if (!units || units.length === 0) {
+    redirect("/units");
+  }
+
   const decodedId = decodeURIComponent(id).trim().toLowerCase();
   const unit = units.find(
     (u) =>
@@ -33,7 +37,7 @@ export default async function UnitDetailPage({
   ) || units[0];
 
   if (!unit) {
-    notFound();
+    redirect("/units");
   }
 
   // 2. Fetch Tenant Lease View for this unit

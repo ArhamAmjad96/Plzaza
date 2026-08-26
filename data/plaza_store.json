@@ -1,0 +1,132 @@
+﻿{
+  plaza: {
+    id: 1,
+    name: Al-Rehman Commercial Center,
+    address: Blue Area, Sector F-6, Islamabad,
+    description: Prime Commercial Plaza,
+    floors: [Basement, Ground Floor, 1st Floor, 2nd Floor],
+    active: true
+  },
+  units: [
+    {
+      id: 101,
+      plaza_id: 1,
+      unit_number: G-01,
+      unit_name: Ground Shop G-01,
+      unit_type: SHOP,
+      floor: Ground Floor,
+      default_monthly_rent: 25000,
+      default_security_amount: 50000,
+      default_rent_due_day: 5,
+      status: OCCUPIED,
+      notes: Main Corner Retail,
+      created_at: 2026-08-26T21:00:00.000Z
+    },
+    {
+      id: 102,
+      plaza_id: 1,
+      unit_number: G-02,
+      unit_name: Ground Shop G-02,
+      unit_type: SHOP,
+      floor: Ground Floor,
+      default_monthly_rent: 25000,
+      default_security_amount: 50000,
+      default_rent_due_day: 5,
+      status: VACANT,
+      notes: null,
+      created_at: 2026-08-26T21:00:00.000Z
+    },
+    {
+      id: 103,
+      plaza_id: 1,
+      unit_number: G-03,
+      unit_name: Ground Shop G-03,
+      unit_type: SHOP,
+      floor: Ground Floor,
+      default_monthly_rent: 25000,
+      default_security_amount: 50000,
+      default_rent_due_day: 5,
+      status: VACANT,
+      notes: null,
+      created_at: 2026-08-26T21:00:00.000Z
+    },
+    {
+      id: 201,
+      plaza_id: 1,
+      unit_number: B-01,
+      unit_name: Basement Space B-01,
+      unit_type: SHOP,
+      floor: Basement,
+      default_monthly_rent: 20000,
+      default_security_amount: 40000,
+      default_rent_due_day: 5,
+      status: VACANT,
+      notes: null,
+      created_at: 2026-08-26T21:00:00.000Z
+    },
+    {
+      id: 202,
+      plaza_id: 1,
+      unit_number: B-02,
+      unit_name: Basement Space B-02,
+      unit_type: SHOP,
+      floor: Basement,
+      default_monthly_rent: 20000,
+      default_security_amount: 40000,
+      default_rent_due_day: 5,
+      status: VACANT,
+      notes: null,
+      created_at: 2026-08-26T21:00:00.000Z
+    },
+    {
+      id: 301,
+      plaza_id: 1,
+      unit_number: F1-01,
+      unit_name: First Floor Office 101,
+      unit_type: SHOP,
+      floor: 1st Floor,
+      default_monthly_rent: 30000,
+      default_security_amount: 60000,
+      default_rent_due_day: 5,
+      status: VACANT,
+      notes: null,
+      created_at: 2026-08-26T21:00:00.000Z
+    }
+  ],
+  tenants: [
+    {
+      id: 501,
+      plaza_id: 1,
+      full_name: Arham,
+      phone: 0300-6262626,
+      cnic: 26262-6262626-1,
+      emergency_contact: 0321-5551234,
+      status: ACTIVE,
+      created_at: 2026-08-26T21:00:00.000Z
+    }
+  ],
+  leases: [
+    {
+      id: 601,
+      plaza_id: 1,
+      tenant_id: 501,
+      unit_id: 101,
+      monthly_rent: 25000,
+      rent_due_day: 5,
+      security_amount: 50000,
+      security_paid: 50000,
+      security_status: PAID,
+      move_in_date: 2026-08-26,
+      lease_start_date: 2026-08-26,
+      status: ACTIVE,
+      created_at: 2026-08-26T21:00:00.000Z
+    }
+  ],
+  connections: [],
+  connection_unit_mappings: [],
+  bills: [],
+  payments: [],
+  expenses: [],
+  complaints: [],
+  complaint_expenses: []
+}

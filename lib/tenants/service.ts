@@ -55,22 +55,23 @@ export interface TenantStats {
   totalSecurityHeld: number;
 }
 
-// In-Memory Fallback State (Initialized empty to ensure 100% fresh starts)
-let fallbackTenants: TenantItem[] = [];
-let fallbackLeases: LeaseItem[] = [];
+import { getStore, updateStore } from "@/lib/storage/fileStore";
 
 export function resetTenantsMemory(): void {
-  fallbackTenants = [];
-  fallbackLeases = [];
+  updateStore((s) => {
+    s.tenants = [];
+    s.leases = [];
+  });
 }
 
 export function getFallbackTenantsAndLeases(): {
   tenants: TenantItem[];
   leases: LeaseItem[];
 } {
+  const store = getStore();
   return {
-    tenants: fallbackTenants,
-    leases: fallbackLeases,
+    tenants: store.tenants || [],
+    leases: store.leases || [],
   };
 }
 
@@ -94,9 +95,10 @@ export async function getTenantsWithLeases(): Promise<{
   const unitsMap = new Map<string, UnitItem>();
   units.forEach((u) => unitsMap.set(u.id.toString(), u));
 
-  let rawTenants: TenantItem[] = [];
-  let rawLeases: LeaseItem[] = [];
-  let rawConnections: any[] = [];
+  const store = getStore();
+  let rawTenants: TenantItem[] = store.tenants || [];
+  let rawLeases: LeaseItem[] = store.leases || [];
+  let rawConnections: any[] = store.connections || [];
 
   try {
     const [tenantsRes, leasesRes, connsRes] = await Promise.all([
@@ -105,23 +107,16 @@ export async function getTenantsWithLeases(): Promise<{
       supabase.from("connections").select("*"),
     ]);
 
-    if (!tenantsRes.error && tenantsRes.data) {
+    if (!tenantsRes.error && tenantsRes.data && tenantsRes.data.length > 0) {
       rawTenants = tenantsRes.data as TenantItem[];
-    } else {
-      rawTenants = [...fallbackTenants];
     }
-
-    if (!leasesRes.error && leasesRes.data) {
+    if (!leasesRes.error && leasesRes.data && leasesRes.data.length > 0) {
       rawLeases = leasesRes.data as LeaseItem[];
-    } else {
-      rawLeases = [...fallbackLeases];
     }
-
-    rawConnections = connsRes.data || [];
-  } catch {
-    rawTenants = [...fallbackTenants];
-    rawLeases = [...fallbackLeases];
-  }
+    if (!connsRes.error && connsRes.data && connsRes.data.length > 0) {
+      rawConnections = connsRes.data || [];
+    }
+  } catch {}
 
   // Group leases by tenant_id
   const leasesByTenant = new Map<string, LeaseItem[]>();
@@ -318,9 +313,11 @@ export async function createTenantWithLease(data: {
     // Non-blocking
   }
 
-  // Update in-memory fallback state
-  fallbackTenants = [tenantItem, ...fallbackTenants];
-  fallbackLeases = [leaseItem, ...fallbackLeases];
+  // Update persistent fileStore
+  updateStore((s) => {
+    s.tenants = [tenantItem, ...s.tenants.filter((t) => t.id.toString() !== tenantItem.id.toString())];
+    s.leases = [leaseItem, ...s.leases.filter((l) => l.id.toString() !== leaseItem.id.toString())];
+  });
 
   return { tenant: tenantItem, lease: leaseItem };
 }

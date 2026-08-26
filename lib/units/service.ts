@@ -4,6 +4,7 @@ import { resetGeneralExpensesMemory } from "@/lib/expenses/service";
 import { resetComplaintsMemory } from "@/lib/complaints/service";
 import { resetComplaintExpensesMemory } from "@/lib/complaints/expenses-service";
 import { resetElectricityMemory } from "@/lib/electricity/service";
+import { getStore, updateStore } from "@/lib/storage/fileStore";
 
 export interface UnitItem {
   id: number | string;
@@ -19,6 +20,11 @@ export interface UnitItem {
   notes?: string | null;
   created_at?: string;
   updated_at?: string;
+  tenant_name?: string;
+  tenant_id?: number | string;
+  lease_id?: number | string;
+  reference_number?: string;
+  meter_number?: string;
 }
 
 export interface PlazaItem {
@@ -49,20 +55,10 @@ export interface UnitElectricitySetup {
   splitValue?: number;
 }
 
-let dynamicPlazaMemory: PlazaItem = {
-  id: 1,
-  name: "",
-  address: "",
-  description: "",
-  floors: [],
-  active: false,
-};
-
-// Flexible in-memory units array
-let fallbackUnitsMemory: UnitItem[] = [];
-
 export function resetUnitsMemory(): void {
-  fallbackUnitsMemory = [];
+  updateStore((s) => {
+    s.units = [];
+  });
 }
 
 /**
@@ -113,32 +109,43 @@ export async function resetAllPlazaData(options?: {
     await supabase.from("units").delete().neq("id", 0);
   } catch {}
 
-  // 2. Wipe in-memory fallback state in all modules
-  fallbackUnitsMemory = [];
+  // 2. Wipe store and reset in all modules
+  updateStore((s) => {
+    s.units = [];
+    s.tenants = [];
+    s.leases = [];
+    s.connections = [];
+    s.connection_unit_mappings = [];
+    s.bills = [];
+    s.payments = [];
+    s.expenses = [];
+    s.complaints = [];
+    s.complaint_expenses = [];
+    s.plaza = {
+      id: plaza.id,
+      name: options?.name?.trim() || "",
+      address: options?.address?.trim() || "",
+      description: "",
+      floors: options?.floors || [],
+      active: Boolean(options?.name && options?.floors && options.floors.length > 0),
+    };
+  });
+
   resetTenantsMemory();
   resetGeneralExpensesMemory();
   resetComplaintsMemory();
   resetComplaintExpensesMemory();
   resetElectricityMemory();
 
-  // 3. Update plaza profile if options provided
-  dynamicPlazaMemory = {
-    id: plaza.id,
-    name: options?.name?.trim() || "",
-    address: options?.address?.trim() || "",
-    description: "",
-    floors: options?.floors || [],
-    active: Boolean(options?.name && options?.floors && options.floors.length > 0),
-  };
-
   try {
+    const store = getStore();
     await supabase.from("plazas").upsert({
       id: plaza.id,
-      name: dynamicPlazaMemory.name,
-      location: dynamicPlazaMemory.address,
-      description: dynamicPlazaMemory.description,
-      floors: dynamicPlazaMemory.floors,
-      active: dynamicPlazaMemory.active,
+      name: store.plaza.name,
+      location: store.plaza.address,
+      description: store.plaza.description,
+      floors: store.plaza.floors,
+      active: store.plaza.active,
     });
   } catch {}
 }
@@ -185,31 +192,45 @@ export function getUnitPricingDefaults(unitType: string, floor: string = "Ground
  * Gets or initializes the primary plaza record
  */
 export async function getPrimaryPlaza(): Promise<PlazaItem> {
+  const store = getStore();
+  if (store.plaza && store.plaza.name) {
+    return store.plaza;
+  }
+
   try {
     const { data: plaza, error } = await supabase
       .from("plazas")
       .select("*")
+      .order("id", { ascending: true })
       .limit(1)
       .maybeSingle();
 
-    if (!error && plaza) {
-      const hasFloors = Array.isArray(plaza.floors) && plaza.floors.length > 0;
-      const isConfigured = Boolean(plaza.name && plaza.name.trim().length > 0 && hasFloors && plaza.active !== false);
-
-      return {
+    if (!error && plaza && plaza.name) {
+      const pItem: PlazaItem = {
         id: plaza.id,
-        name: isConfigured ? plaza.name : "",
-        address: isConfigured ? (plaza.location || plaza.address || "") : "",
-        description: isConfigured ? plaza.description : "",
-        floors: isConfigured ? plaza.floors : [],
-        active: isConfigured,
+        name: plaza.name,
+        address: plaza.location || plaza.address || "",
+        description: plaza.description || "",
+        floors: Array.isArray(plaza.floors) ? plaza.floors : [],
+        active: Boolean(plaza.name),
       };
+      updateStore((s) => {
+        s.plaza = pItem;
+      });
+      return pItem;
     }
   } catch {
     // Non-blocking
   }
 
-  return dynamicPlazaMemory;
+  return store.plaza || {
+    id: 1,
+    name: "",
+    address: "",
+    description: "",
+    floors: [],
+    active: false,
+  };
 }
 
 /**
@@ -235,7 +256,9 @@ export async function savePlazaDetails(data: {
     active: isNowActive,
   };
 
-  dynamicPlazaMemory = updated;
+  updateStore((s) => {
+    s.plaza = updated;
+  });
 
   try {
     await supabase.from("plazas").upsert({
@@ -254,7 +277,7 @@ export async function savePlazaDetails(data: {
 }
 
 /**
- * Bulk creates or reconfigures units for a plaza (clearing all previous plaza data if replaceExisting is true)
+ * Bulk creates or reconfigures units for a plaza
  */
 export async function bulkConfigurePlazaUnits(
   unitsData: Array<{
@@ -280,6 +303,12 @@ export async function bulkConfigurePlazaUnits(
 
   if (replaceExisting) {
     await resetAllPlazaData({
+      name: activeName,
+      address: activeAddress,
+      floors: activeFloors,
+    });
+  } else if (plazaMetadata && plazaMetadata.name) {
+    await savePlazaDetails({
       name: activeName,
       address: activeAddress,
       floors: activeFloors,
@@ -329,7 +358,10 @@ export async function bulkConfigurePlazaUnits(
     created.push(item);
   }
 
-  fallbackUnitsMemory = [...fallbackUnitsMemory, ...created];
+  updateStore((s) => {
+    s.units = [...s.units, ...created];
+  });
+
   return { count: created.length };
 }
 
@@ -342,10 +374,11 @@ export async function getAllUnits(): Promise<{
   stats: UnitStats;
 }> {
   const plaza = await getPrimaryPlaza();
+  const store = getStore();
 
-  let unitsList: UnitItem[] = [];
-  let rawLeases: any[] = [];
-  let rawTenants: any[] = [];
+  let unitsList: UnitItem[] = store.units || [];
+  let rawLeases: any[] = store.leases || [];
+  let rawTenants: any[] = store.tenants || [];
 
   try {
     const [unitsRes, leasesRes, tenantsRes] = await Promise.all([
@@ -363,31 +396,14 @@ export async function getAllUnits(): Promise<{
         .select("*"),
     ]);
 
-    if (!unitsRes.error && unitsRes.data) {
+    if (!unitsRes.error && unitsRes.data && unitsRes.data.length > 0) {
       unitsList = unitsRes.data as UnitItem[];
-    } else {
-      unitsList = [...fallbackUnitsMemory];
     }
-
-    if (!leasesRes.error && leasesRes.data) {
+    if (!leasesRes.error && leasesRes.data && leasesRes.data.length > 0) {
       rawLeases = leasesRes.data;
     }
-    if (!tenantsRes.error && tenantsRes.data) {
+    if (!tenantsRes.error && tenantsRes.data && tenantsRes.data.length > 0) {
       rawTenants = tenantsRes.data;
-    }
-  } catch {
-    unitsList = [...fallbackUnitsMemory];
-  }
-
-  // Check in-memory fallbacks if needed
-  try {
-    const { getFallbackTenantsAndLeases } = await import("@/lib/tenants/service");
-    const mem = getFallbackTenantsAndLeases();
-    if (rawLeases.length === 0 && mem.leases.length > 0) {
-      rawLeases = mem.leases.filter((l) => l.status === "ACTIVE");
-    }
-    if (rawTenants.length === 0 && mem.tenants.length > 0) {
-      rawTenants = mem.tenants;
     }
   } catch {}
 
@@ -501,8 +517,11 @@ export async function createUnit(data: {
       notes: data.notes?.trim() || null,
       created_at: new Date().toISOString(),
     };
-    fallbackUnitsMemory = [createdUnit, ...fallbackUnitsMemory];
   }
+
+  updateStore((s) => {
+    s.units = [createdUnit!, ...s.units.filter((u) => u.id.toString() !== createdUnit!.id.toString())];
+  });
 
   // Handle electricity linking
   if (data.electricity && data.electricity.option !== "NO_METER") {
@@ -531,19 +550,26 @@ export async function updateUnit(
       .maybeSingle();
 
     if (!error && updated) {
+      updateStore((s) => {
+        const idx = s.units.findIndex((u) => u.id.toString() === id.toString());
+        if (idx !== -1) s.units[idx] = { ...s.units[idx], ...updated };
+      });
       return updated as UnitItem;
     }
   } catch {
     // Non-blocking
   }
 
-  const idx = fallbackUnitsMemory.findIndex((u) => u.id.toString() === id.toString());
-  if (idx !== -1) {
-    fallbackUnitsMemory[idx] = { ...fallbackUnitsMemory[idx], ...data };
-    return fallbackUnitsMemory[idx];
-  }
+  let result: UnitItem | null = null;
+  updateStore((s) => {
+    const idx = s.units.findIndex((u) => u.id.toString() === id.toString());
+    if (idx !== -1) {
+      s.units[idx] = { ...s.units[idx], ...data };
+      result = s.units[idx];
+    }
+  });
 
-  return null;
+  return result;
 }
 
 /**
@@ -556,7 +582,9 @@ export async function deleteUnit(id: number | string): Promise<boolean> {
     // Non-blocking
   }
 
-  fallbackUnitsMemory = fallbackUnitsMemory.filter((u) => u.id.toString() !== id.toString());
+  updateStore((s) => {
+    s.units = s.units.filter((u) => u.id.toString() !== id.toString());
+  });
   return true;
 }
 

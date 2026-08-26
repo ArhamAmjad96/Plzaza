@@ -43,24 +43,24 @@ export interface UnitBillShare {
   share_percentage: number;
 }
 
-// In-memory fallback connection records
-let fallbackConnections: any[] = [];
-let fallbackMappings: ConnectionMappingItem[] = [];
-let fallbackBills: any[] = [];
+import { getStore, updateStore } from "@/lib/storage/fileStore";
 
 export function resetElectricityMemory(): void {
-  fallbackConnections = [];
-  fallbackMappings = [];
-  fallbackBills = [];
+  updateStore((s) => {
+    s.connections = [];
+    s.connection_unit_mappings = [];
+    s.bills = [];
+  });
 }
 
 /**
  * Retrieves all connections with their mapped units and latest bill data
  */
 export async function getConnectionsWithMappings(): Promise<ConnectionViewItem[]> {
-  let rawConns: any[] = [];
-  let rawMappings: any[] = [];
-  let rawBills: any[] = [];
+  const store = getStore();
+  let rawConns: any[] = store.connections || [];
+  let rawMappings: any[] = store.connection_unit_mappings || [];
+  let rawBills: any[] = store.bills || [];
 
   try {
     const [connsRes, mappingsRes, billsRes] = await Promise.all([
@@ -69,28 +69,16 @@ export async function getConnectionsWithMappings(): Promise<ConnectionViewItem[]
       supabase.from("bills").select("*").order("billing_month", { ascending: false }),
     ]);
 
-    if (!connsRes.error && connsRes.data) {
+    if (!connsRes.error && connsRes.data && connsRes.data.length > 0) {
       rawConns = connsRes.data;
-    } else {
-      rawConns = [...fallbackConnections];
     }
-
-    if (!mappingsRes.error && mappingsRes.data) {
+    if (!mappingsRes.error && mappingsRes.data && mappingsRes.data.length > 0) {
       rawMappings = mappingsRes.data;
-    } else {
-      rawMappings = [...fallbackMappings];
     }
-
-    if (!billsRes.error && billsRes.data) {
+    if (!billsRes.error && billsRes.data && billsRes.data.length > 0) {
       rawBills = billsRes.data;
-    } else {
-      rawBills = [...fallbackBills];
     }
-  } catch {
-    rawConns = [...fallbackConnections];
-    rawMappings = [...fallbackMappings];
-    rawBills = [...fallbackBills];
-  }
+  } catch {}
 
   const { units } = await getAllUnits();
   const unitsMap = new Map<string, UnitItem>();
@@ -110,8 +98,7 @@ export async function getConnectionsWithMappings(): Promise<ConnectionViewItem[]
       }));
 
     const latestBill =
-      rawBills.find((b: any) => b.connection_id?.toString() === conn.id?.toString()) ||
-      fallbackBills.find((b: any) => b.connection_id?.toString() === conn.id?.toString());
+      rawBills.find((b: any) => b.connection_id?.toString() === conn.id?.toString());
 
     return {
       id: conn.id,
@@ -169,7 +156,9 @@ export async function connectUnitMeter(params: {
     try {
       await supabase.from("connection_unit_mappings").delete().eq("unit_id", unitId);
     } catch {}
-    fallbackMappings = fallbackMappings.filter((m) => m.unit_id.toString() !== unitId.toString());
+    updateStore((s) => {
+      s.connection_unit_mappings = s.connection_unit_mappings.filter((m) => m.unit_id.toString() !== unitId.toString());
+    });
     return { success: true };
   }
 
@@ -186,14 +175,16 @@ export async function connectUnitMeter(params: {
       });
     } catch {}
 
-    fallbackMappings = fallbackMappings.filter((m) => m.unit_id.toString() !== unitId.toString());
-    fallbackMappings.push({
-      id: Date.now(),
-      connection_id: sharedConnectionId,
-      unit_id: unitId,
-      split_type: splitType || "EQUAL",
-      split_value: splitValue || 50,
-      notes: "Shared electricity meter",
+    updateStore((s) => {
+      s.connection_unit_mappings = s.connection_unit_mappings.filter((m) => m.unit_id.toString() !== unitId.toString());
+      s.connection_unit_mappings.push({
+        id: Date.now(),
+        connection_id: sharedConnectionId,
+        unit_id: unitId,
+        split_type: splitType || "EQUAL",
+        split_value: splitValue || 50,
+        notes: "Shared electricity meter",
+      });
     });
 
     return { success: true, connectionId: sharedConnectionId };
@@ -249,38 +240,40 @@ export async function connectUnitMeter(params: {
       console.warn("Supabase meter connect note:", err);
     }
 
-    // Always maintain in-memory fallback connection and mapping
     if (!connectionId) {
       connectionId = Date.now();
     }
 
-    const existingFbConn = fallbackConnections.find((c) => c.reference_number === cleanRef || c.id.toString() === connectionId!.toString());
-    if (existingFbConn) {
-      if (cleanMeter) existingFbConn.meter_number = cleanMeter;
-    } else {
-      fallbackConnections.push({
-        id: connectionId,
-        name: `Unit #${unitId} Meter`,
-        tenant: `Unit #${unitId}`,
-        reference_number: cleanRef,
-        meter_number: cleanMeter || null,
-        active: true,
-      });
-    }
+    updateStore((s) => {
+      const existingFbConn = s.connections.find((c) => c.reference_number === cleanRef || c.id.toString() === connectionId!.toString());
+      if (existingFbConn) {
+        if (cleanMeter) existingFbConn.meter_number = cleanMeter;
+      } else {
+        s.connections.push({
+          id: connectionId,
+          name: `Unit #${unitId} Meter`,
+          tenant: `Unit #${unitId}`,
+          reference_number: cleanRef,
+          meter_number: cleanMeter || null,
+          active: true,
+        });
+      }
 
-    fallbackMappings = fallbackMappings.filter((m) => m.unit_id.toString() !== unitId.toString());
-    fallbackMappings.push({
-      id: Date.now() + 1,
-      connection_id: connectionId,
-      unit_id: unitId,
-      split_type: "EQUAL",
-      split_value: 100,
-      notes: "Dedicated 1-to-1 meter connection",
+      s.connection_unit_mappings = s.connection_unit_mappings.filter((m) => m.unit_id.toString() !== unitId.toString());
+      s.connection_unit_mappings.push({
+        id: Date.now() + 1,
+        connection_id: connectionId,
+        unit_id: unitId,
+        split_type: "EQUAL",
+        split_value: 100,
+        notes: "Dedicated 1-to-1 meter connection",
+      });
     });
 
     // Ensure bill record exists
     const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
-    let existingBill = fallbackBills.find(
+    const store = getStore();
+    let existingBill = store.bills.find(
       (b) => b.connection_id?.toString() === connectionId?.toString()
     );
 
@@ -295,7 +288,10 @@ export async function connectUnitMeter(params: {
         units_consumed: 165,
         status: "unpaid",
       };
-      fallbackBills.unshift(newBill);
+
+      updateStore((s) => {
+        s.bills.unshift(newBill);
+      });
       existingBill = newBill;
 
       try {
@@ -341,9 +337,10 @@ export async function getUnitAllocatedElectricityBill(
   } catch {}
 
   if (!mapping) {
-    const fbMap = fallbackMappings.find((m) => m.unit_id.toString() === unitId.toString());
+    const store = getStore();
+    const fbMap = store.connection_unit_mappings.find((m) => m.unit_id.toString() === unitId.toString());
     if (fbMap) {
-      const fbConn = fallbackConnections.find((c) => c.id.toString() === fbMap.connection_id.toString());
+      const fbConn = store.connections.find((c) => c.id.toString() === fbMap.connection_id.toString());
       if (fbConn) {
         mapping = {
           ...fbMap,
@@ -360,7 +357,7 @@ export async function getUnitAllocatedElectricityBill(
   const conn = mapping.connections;
   const isShared = Number(mapping.split_value || 100) < 100;
 
-  // Find bill in Supabase or fallback memory
+  // Find bill in Supabase or store
   let billRecord: any = null;
   const month = billingMonth.slice(0, 7) + "-01";
 
@@ -377,9 +374,10 @@ export async function getUnitAllocatedElectricityBill(
   } catch {}
 
   if (!billRecord) {
-    billRecord = fallbackBills.find(
+    const store = getStore();
+    billRecord = store.bills.find(
       (b) => b.connection_id?.toString() === mapping.connection_id?.toString()
-    ) || fallbackBills[0];
+    ) || store.bills[0];
   }
 
   const totalBill = billRecord ? Number(billRecord.bill_amount || 0) : null;
