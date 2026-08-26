@@ -8,8 +8,36 @@ import { createGeneralExpense, getPlazaExpenses } from "../lib/expenses/service"
 import { createComplaint, getAllComplaints } from "../lib/complaints/service";
 import { addComplaintExpense } from "../lib/complaints/expenses-service";
 import { getMonthlyLedgers } from "../lib/ledgers/service";
+import { connectUnitMeter, getConnectionsWithMappings, getUnitAllocatedElectricityBill } from "../lib/electricity/service";
 import { supabase } from "../lib/supabase/server";
-import { chromium } from "playwright";
+
+async function testMeter() {
+  console.log("=== TESTING METER ATTACHMENT ===");
+  const { units } = await getAllUnits();
+  const u = units.find(x => x.unit_number === "G-01") || units[0];
+  console.log("Found unit G-01:", { id: u.id, unit_number: u.unit_number });
+
+  const res = await connectUnitMeter({
+    unitId: u.id,
+    referenceNumber: "04141234567890",
+    meterNumber: "MTR-G01",
+    electricityOption: "OWN_METER",
+  });
+  console.log("connectUnitMeter result:", res);
+
+  const conns = await getConnectionsWithMappings();
+  console.log("getConnectionsWithMappings returned:", conns.length, "connections");
+  for (const c of conns) {
+    console.log("Connection:", { id: c.id, ref: c.reference_number, name: c.name, mappings: c.mappings.map(m => m.unit_id) });
+  }
+
+  const matchingConn = conns.find((c) =>
+    c.mappings.some((m) => m.unit_id.toString() === u.id.toString())
+  );
+  console.log("Matching connection for G-01:", matchingConn ? matchingConn.reference_number : "NOT FOUND!");
+}
+
+testMeter().catch(console.error);
 
 async function runCompleteLiveExperience() {
   console.log("=================================================================");

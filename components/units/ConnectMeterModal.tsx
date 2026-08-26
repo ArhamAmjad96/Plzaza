@@ -16,8 +16,8 @@ type ElectricityOption = "OWN_METER" | "SHARED_METER" | "NONE";
 export default function ConnectMeterModal({ unit, onClose }: ConnectMeterModalProps) {
   const router = useRouter();
   const [electricityOption, setElectricityOption] = useState<ElectricityOption>("OWN_METER");
-  const [referenceNumber, setReferenceNumber] = useState("");
-  const [meterNumber, setMeterNumber] = useState("");
+  const [referenceNumber, setReferenceNumber] = useState((unit as any).reference_number || "");
+  const [meterNumber, setMeterNumber] = useState((unit as any).meter_number || "");
   const [sharedConnectionId, setSharedConnectionId] = useState<string>("");
   const [splitType, setSplitType] = useState<"EQUAL" | "PERCENTAGE">("EQUAL");
   const [splitValue, setSplitValue] = useState("50");
@@ -35,7 +35,9 @@ export default function ConnectMeterModal({ unit, onClose }: ConnectMeterModalPr
 
   async function handleSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (electricityOption === "OWN_METER" && !referenceNumber.trim()) {
+    const cleanRef = referenceNumber.replace(/[^0-9]/g, "").trim();
+
+    if (electricityOption === "OWN_METER" && !cleanRef) {
       alert("Please enter the 14-digit IESCO reference number.");
       return;
     }
@@ -47,7 +49,7 @@ export default function ConnectMeterModal({ unit, onClose }: ConnectMeterModalPr
       formData.append("electricity_option", electricityOption);
 
       if (electricityOption === "OWN_METER") {
-        formData.append("reference_number", referenceNumber.replace(/\s+/g, "").trim());
+        formData.append("reference_number", cleanRef);
         formData.append("meter_number", meterNumber.trim());
       } else if (electricityOption === "SHARED_METER") {
         formData.append("shared_connection_id", sharedConnectionId);

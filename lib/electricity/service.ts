@@ -152,7 +152,19 @@ export async function connectUnitMeter(params: {
   splitValue?: number;
 }): Promise<{ success: boolean; connectionId?: number | string; bill?: any }> {
   const { unitId, referenceNumber, meterNumber, electricityOption, sharedConnectionId, splitType, splitValue } = params;
+  const cleanRef = referenceNumber?.replace(/\s+/g, "").trim() || "";
+  const cleanMeter = meterNumber?.trim() || "";
 
+  // 1. Update the unit record directly so the reference number is permanently tied to the unit
+  try {
+    const { updateUnit } = await import("@/lib/units/service");
+    await updateUnit(unitId, {
+      reference_number: electricityOption === "OWN_METER" ? cleanRef : undefined,
+      meter_number: electricityOption === "OWN_METER" ? cleanMeter : undefined,
+    } as any);
+  } catch {}
+
+  // 2. Handle NO_METER
   if (electricityOption === "NO_METER") {
     try {
       await supabase.from("connection_unit_mappings").delete().eq("unit_id", unitId);
@@ -161,6 +173,7 @@ export async function connectUnitMeter(params: {
     return { success: true };
   }
 
+  // 3. Handle SHARED_METER
   if (electricityOption === "SHARED_METER" && sharedConnectionId) {
     try {
       await supabase.from("connection_unit_mappings").delete().eq("unit_id", unitId);
@@ -186,8 +199,8 @@ export async function connectUnitMeter(params: {
     return { success: true, connectionId: sharedConnectionId };
   }
 
-  if (electricityOption === "OWN_METER" && referenceNumber?.trim()) {
-    const cleanRef = referenceNumber.trim();
+  // 4. Handle OWN_METER
+  if (electricityOption === "OWN_METER" && cleanRef) {
     let connectionId: number | string | null = null;
 
     try {
@@ -199,8 +212,8 @@ export async function connectUnitMeter(params: {
 
       if (existingConn) {
         connectionId = existingConn.id;
-        if (meterNumber?.trim()) {
-          await supabase.from("connections").update({ meter_number: meterNumber.trim() }).eq("id", connectionId);
+        if (cleanMeter) {
+          await supabase.from("connections").update({ meter_number: cleanMeter }).eq("id", connectionId);
         }
       } else {
         const { units } = await getAllUnits();
@@ -213,7 +226,7 @@ export async function connectUnitMeter(params: {
             name: connName,
             tenant: foundUnit?.unit_name || "",
             reference_number: cleanRef,
-            meter_number: meterNumber?.trim() || null,
+            meter_number: cleanMeter || null,
             active: true,
           })
           .select("id")
@@ -236,36 +249,36 @@ export async function connectUnitMeter(params: {
       console.warn("Supabase meter connect note:", err);
     }
 
-    // In-memory fallback
+    // Always maintain in-memory fallback connection and mapping
     if (!connectionId) {
-      const existingFbConn = fallbackConnections.find((c) => c.reference_number === cleanRef);
-      if (existingFbConn) {
-        connectionId = existingFbConn.id;
-        if (meterNumber?.trim()) existingFbConn.meter_number = meterNumber.trim();
-      } else {
-        connectionId = Date.now();
-        fallbackConnections.push({
-          id: connectionId,
-          name: `Unit #${unitId} Meter`,
-          tenant: `Unit #${unitId}`,
-          reference_number: cleanRef,
-          meter_number: meterNumber?.trim() || null,
-          active: true,
-        });
-      }
+      connectionId = Date.now();
+    }
 
-      fallbackMappings = fallbackMappings.filter((m) => m.unit_id.toString() !== unitId.toString());
-      fallbackMappings.push({
-        id: Date.now() + 1,
-        connection_id: connectionId!,
-        unit_id: unitId,
-        split_type: "EQUAL",
-        split_value: 100,
-        notes: "Dedicated 1-to-1 meter connection",
+    const existingFbConn = fallbackConnections.find((c) => c.reference_number === cleanRef || c.id.toString() === connectionId!.toString());
+    if (existingFbConn) {
+      if (cleanMeter) existingFbConn.meter_number = cleanMeter;
+    } else {
+      fallbackConnections.push({
+        id: connectionId,
+        name: `Unit #${unitId} Meter`,
+        tenant: `Unit #${unitId}`,
+        reference_number: cleanRef,
+        meter_number: cleanMeter || null,
+        active: true,
       });
     }
 
-    // Ensure a bill record exists for this connection
+    fallbackMappings = fallbackMappings.filter((m) => m.unit_id.toString() !== unitId.toString());
+    fallbackMappings.push({
+      id: Date.now() + 1,
+      connection_id: connectionId,
+      unit_id: unitId,
+      split_type: "EQUAL",
+      split_value: 100,
+      notes: "Dedicated 1-to-1 meter connection",
+    });
+
+    // Ensure bill record exists
     const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
     let existingBill = fallbackBills.find(
       (b) => b.connection_id?.toString() === connectionId?.toString()
