@@ -79,9 +79,9 @@ export default function StatusBadge({ status, label, className = "" }: StatusBad
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-mono font-medium tracking-tight ${bgColor} ${textColor} ${border} ${className}`}
+      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-mono font-bold tracking-tight shadow-xs ${bgColor} ${textColor} ${border} ${className}`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${dotColor}`} />
+      <span className={`h-2 w-2 rounded-full ${dotColor}`} />
       <span>{displayLabel}</span>
     </span>
   );

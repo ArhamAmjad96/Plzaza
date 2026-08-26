@@ -28,29 +28,29 @@ export default function Topbar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[#CBD4BC] bg-[#DDE4CF]/90 backdrop-blur-md px-4 sm:px-8 py-3.5 select-none">
+    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[#CBD4BC] bg-[#DDE4CF]/95 backdrop-blur-md px-6 sm:px-10 py-4 select-none">
       {/* ─── Left Page Title & Location Breadcrumb ─── */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3.5">
         <div>
-          <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-[#58655E]">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#58655E]">
             PLAZA MANAGER · COMMERCIAL PROPERTY SYSTEM
           </span>
-          <h1 className="text-base font-semibold text-[#17211D] leading-tight">
+          <h1 className="text-lg sm:text-xl font-bold text-[#17211D] leading-tight mt-0.5">
             {getPageTitle()}
           </h1>
         </div>
       </div>
 
       {/* ─── Right Contextual Controls ─── */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
         {/* Month Badge */}
-        <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD4BC] bg-[#E8EDD9] text-xs font-mono text-[#17211D]">
-          <Calendar size={12} className="text-[#58655E]" />
+        <div className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-2xl border border-[#CBD4BC] bg-[#E8EDD9] text-sm font-mono font-semibold text-[#17211D] shadow-xs">
+          <Calendar size={15} className="text-[#58655E]" />
           <span>{formatBillingMonth(currentMonth)}</span>
         </div>
 
         {/* Manager Avatar */}
-        <div className="h-8 w-8 rounded-xl bg-[#17211D] text-[#F4F7F2] flex items-center justify-center text-xs font-mono font-bold shadow-xs">
+        <div className="h-9 w-9 rounded-2xl bg-[#17211D] text-[#F4F7F2] flex items-center justify-center text-sm font-mono font-bold shadow-xs">
           PM
         </div>
       </div>

@@ -70,53 +70,53 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
   return (
     <div className="space-y-8">
       {/* ─── Header ─── */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-4 border-b border-[#CBD4BC]">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-5 border-b border-[#CBD4BC]">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#FF704D] font-mono">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#FF704D] font-mono">
             PROPERTY DIRECTORY
           </p>
-          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-[#17211D]">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#17211D] mt-1">
             Shops & Rooms
           </h1>
-          <p className="text-xs text-[#58655E] mt-0.5">
+          <p className="text-sm text-[#58655E] mt-1">
             {stats.totalUnits} units across {floorKeys.length || 4} floors · {stats.occupiedCount} occupied · {stats.vacantCount} vacant
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setShowAddUnitModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition shadow-xs"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm font-semibold hover:bg-[#24332D] transition shadow-xs"
           >
-            <Plus size={14} />
-            <span>Add Unit</span>
+            <Plus size={16} />
+            <span>Add Space</span>
           </button>
         </div>
       </div>
 
       {/* ─── Search & Status Filters ─── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Search Bar */}
-        <div className="relative flex-1 max-w-md">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#58655E]" />
+        <div className="relative flex-1 max-w-lg">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#58655E]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by shop number, name, floor, or tenant..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs text-[#17211D] placeholder-[#85918A] focus:border-[#FF704D] focus:ring-0 transition"
+            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm sm:text-base text-[#17211D] placeholder-[#85918A] focus:border-[#FF704D] focus:ring-0 transition shadow-xs"
           />
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center p-1 rounded-xl border border-[#CBD4BC] bg-[#E8EDD9] text-xs font-medium text-[#58655E]">
+        <div className="flex items-center p-1.5 rounded-2xl border border-[#CBD4BC] bg-[#E8EDD9] text-xs sm:text-sm font-semibold text-[#58655E] shadow-xs">
           <button
             type="button"
             onClick={() => setFilterStatus("ALL")}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-4 py-2 rounded-xl transition ${
               filterStatus === "ALL"
-                ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-semibold"
+                ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-bold"
                 : "hover:text-[#17211D]"
             }`}
           >
@@ -125,9 +125,9 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
           <button
             type="button"
             onClick={() => setFilterStatus("OCCUPIED")}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-4 py-2 rounded-xl transition ${
               filterStatus === "OCCUPIED"
-                ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-semibold"
+                ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-bold"
                 : "hover:text-[#17211D]"
             }`}
           >
@@ -136,9 +136,9 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
           <button
             type="button"
             onClick={() => setFilterStatus("VACANT")}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-4 py-2 rounded-xl transition ${
               filterStatus === "VACANT"
-                ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-semibold"
+                ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-bold"
                 : "hover:text-[#17211D]"
             }`}
           >
@@ -150,7 +150,7 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
       {/* ─── Grid with Vertical Floor Navigator & Floor Cards ─── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Side: Vertical Floor Navigator & Digital Plaza */}
-        <div className="lg:col-span-3 space-y-4 sticky top-20">
+        <div className="lg:col-span-3 space-y-5 sticky top-20">
           <FloorNavigator
             floors={floorKeys}
             activeFloor={selectedFloor}
@@ -158,8 +158,8 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
             unitCountsByFloor={unitCountsByFloor}
           />
 
-          <div className="hidden lg:block p-4 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-3">
-            <span className="text-[9px] font-mono font-semibold uppercase tracking-widest text-[#58655E]">
+          <div className="hidden lg:block p-5 rounded-3xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-3.5 shadow-xs">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#58655E]">
               BUILDING ELEVATION
             </span>
             <DigitalPlaza
@@ -173,11 +173,11 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
         </div>
 
         {/* Right Side: Floor-Grouped Units List */}
-        <div className="lg:col-span-9 space-y-8">
+        <div className="lg:col-span-9 space-y-9">
           {filteredUnits.length === 0 ? (
             <EmptyState
               icon={Building2}
-              title="No shops match your search"
+              title="No spaces match your search"
               description="Try clearing your search query or selecting a different floor level."
               actionText="Add New Unit"
               onAction={() => setShowAddUnitModal(true)}
@@ -194,19 +194,19 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
               return (
                 <div key={floor} className="space-y-4">
                   {/* Floor Header Bar */}
-                  <div className="flex items-center justify-between border-b border-[#CBD4BC] pb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#17211D]">
+                  <div className="flex items-center justify-between border-b border-[#CBD4BC] pb-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-mono text-sm sm:text-base font-bold uppercase tracking-wider text-[#17211D]">
                         {floor}
                       </span>
-                      <span className="text-xs text-[#58655E]">
+                      <span className="text-xs sm:text-sm text-[#58655E] font-medium">
                         ({floorOccupied} of {floorUnits.length} Occupied)
                       </span>
                     </div>
                   </div>
 
                   {/* Units Tiles Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
                     {floorUnits.map((unit) => {
                       const isVacant = unit.status === "VACANT";
                       const tenant = (unit as any).tenant_name;
@@ -215,20 +215,20 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
                       return (
                         <div
                           key={unit.id}
-                          className={`rounded-2xl border p-5 flex flex-col justify-between space-y-4 transition-all duration-300 ${
+                          className={`rounded-3xl border p-6 flex flex-col justify-between space-y-5 transition-all duration-300 shadow-xs hover:shadow-md ${
                             isVacant
-                              ? "bg-[#FAF6F0] border-[#FF704D]/60 hover:border-[#FF704D] shadow-xs"
-                              : "bg-[#FAF6F0] border-[#CBD4BC] hover:border-[#8FA66B] shadow-xs"
+                              ? "bg-[#FAF6F0] border-[#FF704D]/60 hover:border-[#FF704D]"
+                              : "bg-[#FAF6F0] border-[#CBD4BC] hover:border-[#8FA66B]"
                           }`}
                         >
                           <div>
                             {/* Card Top: Code & Status */}
                             <div className="flex items-start justify-between gap-2">
                               <div>
-                                <span className="font-mono text-sm font-bold text-[#17211D]">
+                                <span className="font-mono text-lg sm:text-xl font-bold text-[#17211D] block">
                                   {unit.unit_number || unit.unit_name}
                                 </span>
-                                <p className="text-[11px] text-[#58655E]">
+                                <p className="text-xs text-[#58655E] mt-0.5 font-medium">
                                   {unit.unit_type === "ROOM" ? "Residential Room" : "Commercial Shop"}
                                 </p>
                               </div>
@@ -237,22 +237,22 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
                             </div>
 
                             {/* Tenant / Asking Rent */}
-                            <div className="mt-4 pt-3 border-t border-[#CBD4BC]/60 space-y-1">
+                            <div className="mt-4 pt-3.5 border-t border-[#CBD4BC]/60 space-y-1">
                               {tenant ? (
                                 <div>
-                                  <p className="text-xs font-semibold text-[#17211D]">
+                                  <p className="text-sm sm:text-base font-bold text-[#17211D] truncate">
                                     {tenant}
                                   </p>
-                                  <p className="text-[11px] font-mono text-[#58655E]">
+                                  <p className="text-xs sm:text-sm font-mono font-semibold text-[#58655E] mt-0.5">
                                     {formatPKR(unit.default_monthly_rent)}/mo
                                   </p>
                                 </div>
                               ) : (
                                 <div>
-                                  <p className="text-xs font-semibold text-[#FF704D]">
+                                  <p className="text-sm sm:text-base font-bold text-[#FF704D]">
                                     Vacant Space
                                   </p>
-                                  <p className="text-[11px] font-mono text-[#58655E]">
+                                  <p className="text-xs sm:text-sm font-mono font-semibold text-[#58655E] mt-0.5">
                                     Asking: {formatPKR(unit.default_monthly_rent)}/mo
                                   </p>
                                 </div>
@@ -261,43 +261,43 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
                           </div>
 
                           {/* Card Actions */}
-                          <div className="pt-3 border-t border-[#CBD4BC]/60 flex items-center justify-between">
+                          <div className="pt-3.5 border-t border-[#CBD4BC]/60 flex items-center justify-between gap-2">
                             {isVacant ? (
                               <button
                                 type="button"
                                 onClick={() => setOnboardingTenantUnit(unit)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FF704D] text-[#17211D] text-xs font-semibold hover:bg-[#E05432] hover:text-[#F4F7F2] transition shadow-xs"
+                                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#FF704D] text-[#17211D] text-xs sm:text-sm font-bold hover:bg-[#E05432] hover:text-[#F4F7F2] transition shadow-xs"
                               >
-                                <UserPlus size={13} />
+                                <UserPlus size={15} />
                                 <span>Assign Tenant</span>
                               </button>
                             ) : (
                               <Link
                                 href={`/units/${unit.id}`}
-                                className="inline-flex items-center gap-1 text-xs font-medium text-[#17211D] hover:text-[#FF704D] transition"
+                                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#17211D] hover:text-[#FF704D] transition px-2 py-1"
                               >
-                                <span>Open Unit</span>
-                                <ArrowUpRight size={13} />
+                                <span>Open Space</span>
+                                <ArrowUpRight size={15} />
                               </Link>
                             )}
 
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
                                 onClick={() => setConnectingMeterUnit(unit)}
-                                className="p-1.5 rounded-lg border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] hover:bg-[#E8EDD9] transition"
+                                className="p-2 rounded-xl border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] hover:bg-[#E8EDD9] transition"
                                 title="Electricity Meter"
                               >
-                                <Zap size={13} />
+                                <Zap size={16} />
                               </button>
 
                               <button
                                 type="button"
                                 onClick={() => setEditingUnit(unit)}
-                                className="p-1.5 rounded-lg border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] hover:bg-[#E8EDD9] transition"
+                                className="p-2 rounded-xl border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] hover:bg-[#E8EDD9] transition"
                                 title="Edit Unit Specs"
                               >
-                                <Sliders size={13} />
+                                <Sliders size={16} />
                               </button>
                             </div>
                           </div>

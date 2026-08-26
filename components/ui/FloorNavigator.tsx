@@ -28,17 +28,17 @@ export default function FloorNavigator({
   }
 
   return (
-    <div className="flex flex-col gap-1.5 p-1.5 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] shadow-xs select-none">
+    <div className="flex flex-col gap-2 p-2 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] shadow-xs select-none">
       <button
         type="button"
         onClick={() => onSelectFloor("ALL")}
-        className={`px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-center justify-between gap-2 ${
+        className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-between gap-2.5 ${
           activeFloor === "ALL"
             ? "bg-[#17211D] text-[#F4F7F2] shadow-xs"
             : "text-[#58655E] hover:text-[#17211D] hover:bg-[#DDE4CF]"
         }`}
       >
-        <span className="font-mono text-[10px] uppercase tracking-wider">All Floors</span>
+        <span className="font-mono text-xs uppercase tracking-wider">All Floors</span>
       </button>
 
       {floors.map((floor) => {
@@ -51,14 +51,14 @@ export default function FloorNavigator({
             key={floor}
             type="button"
             onClick={() => onSelectFloor(floor)}
-            className={`px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-center justify-between gap-3 ${
+            className={`px-3.5 py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-between gap-3 ${
               isSelected
                 ? "bg-[#17211D] text-[#F4F7F2] shadow-xs"
                 : "text-[#58655E] hover:text-[#17211D] hover:bg-[#DDE4CF]"
             }`}
           >
-            <div className="flex items-center gap-2">
-              <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md font-bold ${
+            <div className="flex items-center gap-2.5">
+              <span className={`font-mono text-xs px-2 py-0.5 rounded-lg font-bold ${
                 isSelected ? "bg-[#FF704D] text-[#17211D]" : "bg-[#DDE4CF] text-[#58655E]"
               }`}>
                 {shortCode}
@@ -67,7 +67,7 @@ export default function FloorNavigator({
             </div>
 
             {counts && (
-              <span className={`text-[10px] font-mono ${
+              <span className={`text-xs font-mono font-semibold ${
                 isSelected ? "text-[#8FA66B]" : "text-[#85918A]"
               }`}>
                 {counts.occupied}/{counts.total}
