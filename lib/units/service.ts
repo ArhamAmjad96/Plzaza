@@ -51,11 +51,11 @@ export interface UnitElectricitySetup {
 
 let dynamicPlazaMemory: PlazaItem = {
   id: 1,
-  name: "My Commercial Plaza",
+  name: "",
   address: "",
   description: "",
   floors: [],
-  active: true,
+  active: false,
 };
 
 // Flexible in-memory units array
@@ -124,11 +124,11 @@ export async function resetAllPlazaData(options?: {
   // 3. Update plaza profile if options provided
   dynamicPlazaMemory = {
     id: plaza.id,
-    name: options?.name?.trim() || "My Commercial Plaza",
+    name: options?.name?.trim() || "",
     address: options?.address?.trim() || "",
     description: "",
     floors: options?.floors || [],
-    active: true,
+    active: Boolean(options?.name && options?.floors && options.floors.length > 0),
   };
 
   try {
@@ -138,7 +138,7 @@ export async function resetAllPlazaData(options?: {
       location: dynamicPlazaMemory.address,
       description: dynamicPlazaMemory.description,
       floors: dynamicPlazaMemory.floors,
-      active: true,
+      active: dynamicPlazaMemory.active,
     });
   } catch {}
 }
@@ -193,9 +193,16 @@ export async function getPrimaryPlaza(): Promise<PlazaItem> {
       .maybeSingle();
 
     if (!error && plaza) {
+      const hasFloors = Array.isArray(plaza.floors) && plaza.floors.length > 0;
+      const isConfigured = Boolean(plaza.name && plaza.name.trim().length > 0 && hasFloors && plaza.active !== false);
+
       return {
-        ...plaza,
-        floors: plaza.floors || dynamicPlazaMemory.floors || [],
+        id: plaza.id,
+        name: isConfigured ? plaza.name : "",
+        address: isConfigured ? (plaza.location || plaza.address || "") : "",
+        description: isConfigured ? plaza.description : "",
+        floors: isConfigured ? plaza.floors : [],
+        active: isConfigured,
       };
     }
   } catch {

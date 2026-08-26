@@ -33,6 +33,14 @@ export default function SettingsManager({
   const [showSetupWizard, setShowSetupWizard] = useState(false);
   const [resetting, setResetting] = useState(false);
 
+  const isConfigured = Boolean(
+    plaza.name &&
+    plaza.name.trim().length > 0 &&
+    plaza.floors &&
+    plaza.floors.length > 0 &&
+    plaza.active !== false
+  );
+
   async function handleResetPlaza() {
     const confirmName = window.prompt(
       `Type "RESET" to confirm wiping all previous tenants, rent ledgers, electricity dues, and maintenance records:`
@@ -92,48 +100,63 @@ export default function SettingsManager({
         </div>
       </div>
 
-      {/* ─── Active Plaza Overview ─── */}
-      <section className="bg-[#FAF6F0] rounded-3xl border border-[#CBD4BC] p-6 sm:p-8 space-y-4 shadow-xs">
-        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-3">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
-            ACTIVE PROPERTY PROFILE
-          </span>
-          {plaza.floors && plaza.floors.length > 0 ? (
+      {/* ─── Active Plaza Profile OR Empty Setup Invitation ─── */}
+      {isConfigured ? (
+        <section className="bg-[#FAF6F0] rounded-3xl border border-[#CBD4BC] p-6 sm:p-8 space-y-4 shadow-xs">
+          <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-3">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
+              ACTIVE PROPERTY PROFILE
+            </span>
             <span className="text-xs font-mono text-[#8FA66B] flex items-center gap-1">
               <ShieldCheck size={12} />
-              <span>Configured ({plaza.floors.length} Level{plaza.floors.length > 1 ? "s" : ""})</span>
+              <span>Configured ({plaza.floors!.length} Level{plaza.floors!.length > 1 ? "s" : ""})</span>
             </span>
-          ) : (
-            <span className="text-xs font-mono text-[#FF704D] flex items-center gap-1">
-              <AlertTriangle size={12} />
-              <span>Not Configured Yet</span>
-            </span>
-          )}
-        </div>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
-          <div>
-            <span className="text-[10px] uppercase font-mono text-[#58655E]">Plaza Name</span>
-            <p className="text-base font-semibold text-[#17211D] mt-0.5">
-              {plaza.name || "Untitled Plaza"}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
+            <div>
+              <span className="text-[10px] uppercase font-mono text-[#58655E]">Plaza Name</span>
+              <p className="text-base font-semibold text-[#17211D] mt-0.5">
+                {plaza.name}
+              </p>
+            </div>
+            <div>
+              <span className="text-[10px] uppercase font-mono text-[#58655E]">Address / City</span>
+              <p className="text-base font-semibold text-[#17211D] mt-0.5">
+                {plaza.address || "Not Set"}
+              </p>
+            </div>
+            <div>
+              <span className="text-[10px] uppercase font-mono text-[#58655E]">Active Floors</span>
+              <p className="text-base font-mono font-semibold text-[#17211D] mt-0.5">
+                {plaza.floors!.length} Level{plaza.floors!.length > 1 ? "s" : ""} ({plaza.floors!.join(", ")})
+              </p>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="bg-[#FAF6F0] rounded-3xl border border-[#CBD4BC] p-8 sm:p-12 text-center space-y-5 shadow-xs">
+          <div className="mx-auto w-14 h-14 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] flex items-center justify-center text-[#17211D]">
+            <Building2 size={26} />
+          </div>
+          <div className="max-w-md mx-auto space-y-2">
+            <h2 className="text-xl font-medium text-[#17211D]">No Active Property Setup</h2>
+            <p className="text-xs text-[#58655E] leading-relaxed">
+              Your workspace is completely clean. Launch the setup wizard to name your commercial building, select your floors (e.g. Basement only, Ground, etc.), and generate your physical units.
             </p>
           </div>
           <div>
-            <span className="text-[10px] uppercase font-mono text-[#58655E]">Address / City</span>
-            <p className="text-base font-semibold text-[#17211D] mt-0.5">
-              {plaza.address || "Not Set"}
-            </p>
+            <button
+              type="button"
+              onClick={() => setShowSetupWizard(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-xs font-semibold hover:bg-[#24332D] transition shadow-md"
+            >
+              <Sliders size={15} />
+              <span>Launch Plaza Setup Wizard</span>
+            </button>
           </div>
-          <div>
-            <span className="text-[10px] uppercase font-mono text-[#58655E]">Active Floors</span>
-            <p className="text-base font-mono font-semibold text-[#17211D] mt-0.5">
-              {plaza.floors && plaza.floors.length > 0
-                ? `${plaza.floors.length} Level${plaza.floors.length > 1 ? "s" : ""} (${plaza.floors.join(", ")})`
-                : "0 Levels (Not Set)"}
-            </p>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ─── Quick Tools Grid ─── */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
