@@ -36,9 +36,9 @@ const AVAILABLE_FLOOR_OPTIONS = [
 ];
 
 export default function PlazaSetupWizard({
-  initialName = "Main Commercial Plaza",
-  initialAddress = "Islamabad, Pakistan",
-  initialFloors = ["Basement", "Ground Floor", "1st Floor", "Residential Flats"],
+  initialName = "",
+  initialAddress = "",
+  initialFloors = [],
   onClose,
   onSuccess,
 }: PlazaSetupWizardProps) {

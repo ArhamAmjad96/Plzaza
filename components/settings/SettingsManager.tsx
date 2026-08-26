@@ -98,25 +98,38 @@ export default function SettingsManager({
           <span className="text-[10px] font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
             ACTIVE PROPERTY PROFILE
           </span>
-          <span className="text-xs font-mono text-[#8FA66B] flex items-center gap-1">
-            <ShieldCheck size={12} />
-            <span>Configured</span>
-          </span>
+          {plaza.floors && plaza.floors.length > 0 ? (
+            <span className="text-xs font-mono text-[#8FA66B] flex items-center gap-1">
+              <ShieldCheck size={12} />
+              <span>Configured ({plaza.floors.length} Level{plaza.floors.length > 1 ? "s" : ""})</span>
+            </span>
+          ) : (
+            <span className="text-xs font-mono text-[#FF704D] flex items-center gap-1">
+              <AlertTriangle size={12} />
+              <span>Not Configured Yet</span>
+            </span>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
           <div>
             <span className="text-[10px] uppercase font-mono text-[#58655E]">Plaza Name</span>
-            <p className="text-base font-semibold text-[#17211D] mt-0.5">{plaza.name}</p>
+            <p className="text-base font-semibold text-[#17211D] mt-0.5">
+              {plaza.name || "Untitled Plaza"}
+            </p>
           </div>
           <div>
             <span className="text-[10px] uppercase font-mono text-[#58655E]">Address / City</span>
-            <p className="text-base font-semibold text-[#17211D] mt-0.5">{plaza.address || "Islamabad, Pakistan"}</p>
+            <p className="text-base font-semibold text-[#17211D] mt-0.5">
+              {plaza.address || "Not Set"}
+            </p>
           </div>
           <div>
             <span className="text-[10px] uppercase font-mono text-[#58655E]">Active Floors</span>
             <p className="text-base font-mono font-semibold text-[#17211D] mt-0.5">
-              {plaza.floors?.length || 4} Building Levels
+              {plaza.floors && plaza.floors.length > 0
+                ? `${plaza.floors.length} Level${plaza.floors.length > 1 ? "s" : ""} (${plaza.floors.join(", ")})`
+                : "0 Levels (Not Set)"}
             </p>
           </div>
         </div>
@@ -188,9 +201,9 @@ export default function SettingsManager({
       {/* Setup Wizard Modal */}
       {showSetupWizard && (
         <PlazaSetupWizard
-          initialName={plaza.name}
-          initialAddress={plaza.address || "Islamabad, Pakistan"}
-          initialFloors={plaza.floors}
+          initialName={plaza.name || ""}
+          initialAddress={plaza.address || ""}
+          initialFloors={plaza.floors || []}
           onClose={() => setShowSetupWizard(false)}
         />
       )}
