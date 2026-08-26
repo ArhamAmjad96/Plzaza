@@ -238,13 +238,13 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
 
                             {/* Tenant / Asking Rent */}
                             <div className="mt-4 pt-3.5 border-t border-[#CBD4BC]/60 space-y-1">
-                              {tenant ? (
+                              {!isVacant ? (
                                 <div>
                                   <p className="text-sm sm:text-base font-bold text-[#17211D] truncate">
-                                    {tenant}
+                                    {tenant || "Active Tenant"}
                                   </p>
                                   <p className="text-xs sm:text-sm font-mono font-semibold text-[#58655E] mt-0.5">
-                                    {formatPKR(unit.default_monthly_rent)}/mo
+                                    Rent: {formatPKR(unit.default_monthly_rent)}/mo
                                   </p>
                                 </div>
                               ) : (

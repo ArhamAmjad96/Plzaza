@@ -344,34 +344,89 @@ export async function getAllUnits(): Promise<{
   const plaza = await getPrimaryPlaza();
 
   let unitsList: UnitItem[] = [];
+  let rawLeases: any[] = [];
+  let rawTenants: any[] = [];
 
   try {
-    const { data: units, error } = await supabase
-      .from("units")
-      .select("*")
-      .order("floor", { ascending: true })
-      .order("unit_number", { ascending: true });
+    const [unitsRes, leasesRes, tenantsRes] = await Promise.all([
+      supabase
+        .from("units")
+        .select("*")
+        .order("floor", { ascending: true })
+        .order("unit_number", { ascending: true }),
+      supabase
+        .from("leases")
+        .select("*")
+        .eq("status", "ACTIVE"),
+      supabase
+        .from("tenants")
+        .select("*"),
+    ]);
 
-    if (!error && units) {
-      unitsList = units as UnitItem[];
+    if (!unitsRes.error && unitsRes.data) {
+      unitsList = unitsRes.data as UnitItem[];
     } else {
       unitsList = [...fallbackUnitsMemory];
+    }
+
+    if (!leasesRes.error && leasesRes.data) {
+      rawLeases = leasesRes.data;
+    }
+    if (!tenantsRes.error && tenantsRes.data) {
+      rawTenants = tenantsRes.data;
     }
   } catch {
     unitsList = [...fallbackUnitsMemory];
   }
 
+  // Check in-memory fallbacks if needed
+  try {
+    const { getFallbackTenantsAndLeases } = await import("@/lib/tenants/service");
+    const mem = getFallbackTenantsAndLeases();
+    if (rawLeases.length === 0 && mem.leases.length > 0) {
+      rawLeases = mem.leases.filter((l) => l.status === "ACTIVE");
+    }
+    if (rawTenants.length === 0 && mem.tenants.length > 0) {
+      rawTenants = mem.tenants;
+    }
+  } catch {}
+
+  const tenantMap = new Map<string, any>();
+  rawTenants.forEach((t) => tenantMap.set(t.id.toString(), t));
+
+  const leaseByUnit = new Map<string, any>();
+  rawLeases.forEach((l) => {
+    if (l.status === "ACTIVE") {
+      leaseByUnit.set(l.unit_id.toString(), l);
+    }
+  });
+
+  const enrichedUnits: UnitItem[] = unitsList.map((u) => {
+    const activeLease = leaseByUnit.get(u.id.toString());
+    const tenant = activeLease ? tenantMap.get(activeLease.tenant_id.toString()) : null;
+    const isOccupied = Boolean(activeLease || u.status === "OCCUPIED");
+
+    return {
+      ...u,
+      status: isOccupied ? ("OCCUPIED" as const) : u.status,
+      tenant_name: tenant ? tenant.full_name : (u as any).tenant_name || (isOccupied ? "Active Tenant" : undefined),
+      tenant_id: tenant?.id,
+      lease_id: activeLease?.id,
+      monthly_rent: activeLease?.monthly_rent || u.default_monthly_rent,
+    } as any;
+  });
+
   // Calculate stats
-  const totalUnits = unitsList.length;
-  const totalShops = unitsList.filter((u) => u.unit_type === "SHOP").length;
-  const totalRooms = unitsList.filter((u) => u.unit_type === "ROOM").length;
-  const occupiedCount = unitsList.filter((u) => u.status === "OCCUPIED").length;
-  const vacantCount = unitsList.filter((u) => u.status === "VACANT").length;
-  const inactiveCount = unitsList.filter((u) => u.status === "INACTIVE").length;
+  const totalUnits = enrichedUnits.length;
+  const totalShops = enrichedUnits.filter((u) => u.unit_type === "SHOP").length;
+  const totalRooms = enrichedUnits.filter((u) => u.unit_type === "ROOM").length;
+  const occupiedCount = enrichedUnits.filter((u) => u.status === "OCCUPIED").length;
+  const vacantCount = enrichedUnits.filter((u) => u.status === "VACANT").length;
+  const inactiveCount = enrichedUnits.filter((u) => u.status === "INACTIVE").length;
   const occupancyRate = totalUnits > 0 ? Math.round((occupiedCount / totalUnits) * 100) : 0;
 
   return {
-    units: unitsList,
+    units: enrichedUnits,
     plaza,
     stats: {
       totalUnits,

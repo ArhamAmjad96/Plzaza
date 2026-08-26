@@ -64,6 +64,16 @@ export function resetTenantsMemory(): void {
   fallbackLeases = [];
 }
 
+export function getFallbackTenantsAndLeases(): {
+  tenants: TenantItem[];
+  leases: LeaseItem[];
+} {
+  return {
+    tenants: fallbackTenants,
+    leases: fallbackLeases,
+  };
+}
+
 export function calculateSecurityStatus(
   required: number,
   paid: number
