@@ -1,4 +1,9 @@
 import { supabase } from "@/lib/supabase/server";
+import { resetTenantsMemory } from "@/lib/tenants/service";
+import { resetGeneralExpensesMemory } from "@/lib/expenses/service";
+import { resetComplaintsMemory } from "@/lib/complaints/service";
+import { resetComplaintExpensesMemory } from "@/lib/complaints/expenses-service";
+import { resetElectricityMemory } from "@/lib/electricity/service";
 
 export interface UnitItem {
   id: number | string;
@@ -47,50 +52,98 @@ export interface UnitElectricitySetup {
 let dynamicPlazaMemory: PlazaItem = {
   id: 1,
   name: "Main Commercial Plaza",
-  address: "Commercial Center",
+  address: "Islamabad, Pakistan",
   description: "Commercial building with shops and rentable rooms.",
   floors: ["Basement", "Ground Floor", "1st Floor", "Residential Flats"],
   active: true,
 };
 
 // Flexible in-memory units array
-let fallbackUnitsMemory: UnitItem[] = [
-  // Basement Shops
-  { id: 1, plaza_id: 1, unit_number: "B-01", unit_name: "Basement Shop B-01", unit_type: "SHOP", floor: "Basement", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 2, plaza_id: 1, unit_number: "B-02", unit_name: "Basement Shop B-02", unit_type: "SHOP", floor: "Basement", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 3, plaza_id: 1, unit_number: "B-03", unit_name: "Basement Shop B-03", unit_type: "SHOP", floor: "Basement", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 4, plaza_id: 1, unit_number: "B-04", unit_name: "Basement Shop B-04", unit_type: "SHOP", floor: "Basement", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "VACANT" },
+let fallbackUnitsMemory: UnitItem[] = [];
 
-  // Ground Floor Shops
-  { id: 5, plaza_id: 1, unit_number: "G-01", unit_name: "Ground Shop G-01", unit_type: "SHOP", floor: "Ground Floor", default_monthly_rent: 30000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 6, plaza_id: 1, unit_number: "G-02", unit_name: "Ground Shop G-02", unit_type: "SHOP", floor: "Ground Floor", default_monthly_rent: 30000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 7, plaza_id: 1, unit_number: "G-03", unit_name: "Ground Shop G-03", unit_type: "SHOP", floor: "Ground Floor", default_monthly_rent: 30000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 8, plaza_id: 1, unit_number: "G-04", unit_name: "Ground Shop G-04", unit_type: "SHOP", floor: "Ground Floor", default_monthly_rent: 30000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 9, plaza_id: 1, unit_number: "G-05", unit_name: "Ground Shop G-05", unit_type: "SHOP", floor: "Ground Floor", default_monthly_rent: 30000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
+export function resetUnitsMemory(): void {
+  fallbackUnitsMemory = [];
+}
 
-  // 1st Floor Shops
-  { id: 10, plaza_id: 1, unit_number: "F-01", unit_name: "1st Floor Shop F-01", unit_type: "SHOP", floor: "1st Floor", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 11, plaza_id: 1, unit_number: "F-02", unit_name: "1st Floor Shop F-02", unit_type: "SHOP", floor: "1st Floor", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 12, plaza_id: 1, unit_number: "F-03", unit_name: "1st Floor Shop F-03", unit_type: "SHOP", floor: "1st Floor", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 13, plaza_id: 1, unit_number: "F-04", unit_name: "1st Floor Shop F-04", unit_type: "SHOP", floor: "1st Floor", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 14, plaza_id: 1, unit_number: "F-05", unit_name: "1st Floor Shop F-05", unit_type: "SHOP", floor: "1st Floor", default_monthly_rent: 28000, default_security_amount: 50000, default_rent_due_day: 5, status: "VACANT" },
+/**
+ * Resets all plaza data across all modules (Units, Tenants, Leases, Ledgers, Meters, Dues, Expenses, Complaints)
+ */
+export async function resetAllPlazaData(options?: {
+  name?: string;
+  address?: string;
+  floors?: string[];
+}): Promise<void> {
+  const plaza = await getPrimaryPlaza();
 
-  // Flat 1 Rooms
-  { id: 15, plaza_id: 1, unit_number: "FL1-R1", unit_name: "Flat 1 Room 1", unit_type: "ROOM", floor: "Residential Flats", default_monthly_rent: 8500, default_security_amount: 10000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 16, plaza_id: 1, unit_number: "FL1-R2", unit_name: "Flat 1 Room 2", unit_type: "ROOM", floor: "Residential Flats", default_monthly_rent: 8500, default_security_amount: 10000, default_rent_due_day: 5, status: "OCCUPIED" },
+  // 1. Delete all records from Supabase in reverse dependency order
+  try {
+    await supabase.from("payments").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("complaint_expenses").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("complaints").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("tenant_accounts").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("tenant_monthly_ledgers").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("leases").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("tenants").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("connection_unit_mappings").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("bills").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("connections").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("expenses").delete().neq("id", 0);
+  } catch {}
+  try {
+    await supabase.from("units").delete().neq("id", 0);
+  } catch {}
 
-  // Flat 2 Rooms
-  { id: 17, plaza_id: 1, unit_number: "FL2-R1", unit_name: "Flat 2 Room 1", unit_type: "ROOM", floor: "Residential Flats", default_monthly_rent: 8500, default_security_amount: 10000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 18, plaza_id: 1, unit_number: "FL2-R2", unit_name: "Flat 2 Room 2", unit_type: "ROOM", floor: "Residential Flats", default_monthly_rent: 8500, default_security_amount: 10000, default_rent_due_day: 5, status: "OCCUPIED" },
+  // 2. Wipe in-memory fallback state in all modules
+  fallbackUnitsMemory = [];
+  resetTenantsMemory();
+  resetGeneralExpensesMemory();
+  resetComplaintsMemory();
+  resetComplaintExpensesMemory();
+  resetElectricityMemory();
 
-  // Flat 3 Rooms
-  { id: 19, plaza_id: 1, unit_number: "FL3-R1", unit_name: "Flat 3 Room 1", unit_type: "ROOM", floor: "Residential Flats", default_monthly_rent: 8500, default_security_amount: 10000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 20, plaza_id: 1, unit_number: "FL3-R2", unit_name: "Flat 3 Room 2", unit_type: "ROOM", floor: "Residential Flats", default_monthly_rent: 8500, default_security_amount: 10000, default_rent_due_day: 5, status: "VACANT" },
+  // 3. Update plaza profile if options provided
+  if (options?.name || options?.floors) {
+    dynamicPlazaMemory = {
+      id: plaza.id,
+      name: options.name?.trim() || "Main Commercial Plaza",
+      address: options.address?.trim() || "Islamabad, Pakistan",
+      description: "Commercial building with shops and rentable rooms.",
+      floors: options.floors && options.floors.length > 0 ? options.floors : ["Basement", "Ground Floor", "1st Floor", "Residential Flats"],
+      active: true,
+    };
 
-  // Flat 4 Rooms
-  { id: 21, plaza_id: 1, unit_number: "FL4-R1", unit_name: "Flat 4 Room 1", unit_type: "ROOM", floor: "Residential Flats", default_monthly_rent: 8500, default_security_amount: 10000, default_rent_due_day: 5, status: "OCCUPIED" },
-  { id: 22, plaza_id: 1, unit_number: "FL4-R2", unit_name: "Flat 4 Room 2", unit_type: "ROOM", floor: "Residential Flats", default_monthly_rent: 8500, default_security_amount: 10000, default_rent_due_day: 5, status: "OCCUPIED" },
-];
+    try {
+      await supabase.from("plazas").upsert({
+        id: plaza.id,
+        name: dynamicPlazaMemory.name,
+        location: dynamicPlazaMemory.address,
+        description: dynamicPlazaMemory.description,
+        floors: dynamicPlazaMemory.floors,
+        active: true,
+      });
+    } catch {}
+  }
+}
 
 /**
  * Returns baseline smart suggestions for unit pricing
@@ -147,7 +200,7 @@ export async function getPrimaryPlaza(): Promise<PlazaItem> {
         floors: plaza.floors || dynamicPlazaMemory.floors || ["Basement", "Ground Floor", "1st Floor", "Residential Flats"],
       };
     }
-  } catch (err) {
+  } catch {
     // Non-blocking
   }
 
@@ -181,7 +234,7 @@ export async function savePlazaDetails(data: {
       floors: updated.floors,
       active: true,
     });
-  } catch (err) {
+  } catch {
     // Fallback
   }
 
@@ -190,7 +243,7 @@ export async function savePlazaDetails(data: {
 }
 
 /**
- * Bulk creates or reconfigures units for a plaza
+ * Bulk creates or reconfigures units for a plaza (clearing all previous plaza data if replaceExisting is true)
  */
 export async function bulkConfigurePlazaUnits(
   unitsData: Array<{
@@ -204,17 +257,11 @@ export async function bulkConfigurePlazaUnits(
   }>,
   replaceExisting: boolean = false
 ): Promise<{ count: number }> {
-  const plaza = await getPrimaryPlaza();
-
   if (replaceExisting) {
-    fallbackUnitsMemory = [];
-    try {
-      await supabase.from("units").delete().eq("plaza_id", plaza.id);
-    } catch {
-      // Non-blocking
-    }
+    await resetAllPlazaData();
   }
 
+  const plaza = await getPrimaryPlaza();
   let nextId = Date.now();
   const created: UnitItem[] = [];
 
@@ -280,12 +327,12 @@ export async function getAllUnits(): Promise<{
       .order("floor", { ascending: true })
       .order("unit_number", { ascending: true });
 
-    if (!error && units && units.length > 0) {
+    if (!error && units) {
       unitsList = units as UnitItem[];
     } else {
       unitsList = [...fallbackUnitsMemory];
     }
-  } catch (err) {
+  } catch {
     unitsList = [...fallbackUnitsMemory];
   }
 
@@ -353,10 +400,10 @@ export async function createUnit(data: {
       .maybeSingle();
 
     if (!error && newUnit) {
-      createdUnit = newUnit;
+      createdUnit = newUnit as UnitItem;
     }
-  } catch (err) {
-    // Fallback
+  } catch {
+    // Non-blocking
   }
 
   if (!createdUnit) {
@@ -374,128 +421,45 @@ export async function createUnit(data: {
       notes: data.notes?.trim() || null,
       created_at: new Date().toISOString(),
     };
-    fallbackUnitsMemory.push(createdUnit);
+    fallbackUnitsMemory = [createdUnit, ...fallbackUnitsMemory];
   }
 
-  // Handle Automatic Electricity Setup behind the scenes
-  if (data.electricity && createdUnit) {
-    const { option, referenceNumber, meterNumber, sharedConnectionId, splitType, splitValue } = data.electricity;
-
-    if (option === "OWN_METER" && referenceNumber?.trim()) {
-      const cleanRef = referenceNumber.trim();
-      try {
-        const { data: existingConn } = await supabase
-          .from("connections")
-          .select("id")
-          .eq("reference_number", cleanRef)
-          .maybeSingle();
-
-        let connectionId = existingConn?.id;
-
-        if (!connectionId) {
-          const { data: newConn } = await supabase
-            .from("connections")
-            .insert({
-              name: `${createdUnit.unit_name} Meter`,
-              tenant: createdUnit.unit_name,
-              reference_number: cleanRef,
-              meter_number: meterNumber?.trim() || null,
-              active: true,
-            })
-            .select("id")
-            .maybeSingle();
-
-          connectionId = newConn?.id;
-        }
-
-        if (connectionId) {
-          await supabase.from("connection_unit_mappings").upsert({
-            connection_id: connectionId,
-            unit_id: createdUnit.id,
-            split_type: "EQUAL",
-            split_value: 100,
-          });
-        }
-      } catch (connErr) {
-        console.warn("Electricity link note:", connErr);
-      }
-    } else if (option === "SHARED_METER" && sharedConnectionId) {
-      try {
-        await supabase.from("connection_unit_mappings").upsert({
-          connection_id: sharedConnectionId,
-          unit_id: createdUnit.id,
-          split_type: splitType || "EQUAL",
-          split_value: splitValue || 50,
-        });
-      } catch (connErr) {
-        console.warn("Shared electricity link note:", connErr);
-      }
-    }
+  // Handle electricity linking
+  if (data.electricity && data.electricity.option !== "NO_METER") {
+    await configureUnitElectricity(createdUnit.id, data.electricity, createdUnit.unit_name);
   }
 
   return createdUnit;
 }
 
 /**
- * Updates an existing physical unit
+ * Updates an existing unit
  */
 export async function updateUnit(
   id: number | string,
-  data: Partial<{
-    unitNumber: string;
-    unitName: string;
-    unitType: "SHOP" | "ROOM" | "OTHER";
-    floor: string;
-    defaultMonthlyRent: number;
-    defaultSecurityAmount: number;
-    defaultRentDueDay: number;
-    status: "OCCUPIED" | "VACANT" | "INACTIVE";
-    notes: string | null;
-  }>
+  data: Partial<UnitItem>
 ): Promise<UnitItem | null> {
-  const updatePayload: Record<string, any> = {
-    updated_at: new Date().toISOString(),
-  };
-
-  if (data.unitNumber !== undefined) updatePayload.unit_number = data.unitNumber.trim();
-  if (data.unitName !== undefined) updatePayload.unit_name = data.unitName.trim();
-  if (data.unitType !== undefined) updatePayload.unit_type = data.unitType;
-  if (data.floor !== undefined) updatePayload.floor = data.floor.trim();
-  if (data.defaultMonthlyRent !== undefined) updatePayload.default_monthly_rent = data.defaultMonthlyRent;
-  if (data.defaultSecurityAmount !== undefined) updatePayload.default_security_amount = data.defaultSecurityAmount;
-  if (data.defaultRentDueDay !== undefined) updatePayload.default_rent_due_day = data.defaultRentDueDay;
-  if (data.status !== undefined) updatePayload.status = data.status;
-  if (data.notes !== undefined) updatePayload.notes = data.notes;
-
   try {
-    const { data: updatedUnit, error } = await supabase
+    const { data: updated, error } = await supabase
       .from("units")
-      .update(updatePayload)
+      .update({
+        ...data,
+        updated_at: new Date().toISOString(),
+      })
       .eq("id", id)
       .select()
       .maybeSingle();
 
-    if (!error && updatedUnit) {
-      return updatedUnit;
+    if (!error && updated) {
+      return updated as UnitItem;
     }
-  } catch (err) {
-    // Fallback to local memory
+  } catch {
+    // Non-blocking
   }
 
   const idx = fallbackUnitsMemory.findIndex((u) => u.id.toString() === id.toString());
   if (idx !== -1) {
-    fallbackUnitsMemory[idx] = {
-      ...fallbackUnitsMemory[idx],
-      ...data,
-      unit_number: data.unitNumber ?? fallbackUnitsMemory[idx].unit_number,
-      unit_name: data.unitName ?? fallbackUnitsMemory[idx].unit_name,
-      unit_type: data.unitType ?? fallbackUnitsMemory[idx].unit_type,
-      floor: data.floor ?? fallbackUnitsMemory[idx].floor,
-      default_monthly_rent: data.defaultMonthlyRent ?? fallbackUnitsMemory[idx].default_monthly_rent,
-      default_security_amount: data.defaultSecurityAmount ?? fallbackUnitsMemory[idx].default_security_amount,
-      default_rent_due_day: data.defaultRentDueDay ?? fallbackUnitsMemory[idx].default_rent_due_day,
-      status: data.status ?? fallbackUnitsMemory[idx].status,
-    };
+    fallbackUnitsMemory[idx] = { ...fallbackUnitsMemory[idx], ...data };
     return fallbackUnitsMemory[idx];
   }
 
@@ -508,10 +472,71 @@ export async function updateUnit(
 export async function deleteUnit(id: number | string): Promise<boolean> {
   try {
     await supabase.from("units").delete().eq("id", id);
-  } catch (err) {
-    // Fallback
+  } catch {
+    // Non-blocking
   }
 
   fallbackUnitsMemory = fallbackUnitsMemory.filter((u) => u.id.toString() !== id.toString());
   return true;
+}
+
+/**
+ * Configures dedicated or shared electricity linking for a unit
+ */
+export async function configureUnitElectricity(
+  unitId: number | string,
+  electricity: UnitElectricitySetup,
+  unitName?: string
+): Promise<void> {
+  if (electricity.option === "NO_METER") {
+    try {
+      await supabase.from("connection_unit_mappings").delete().eq("unit_id", unitId);
+    } catch {}
+    return;
+  }
+
+  let connectionId: number | string | null = null;
+
+  if (electricity.option === "OWN_METER" && electricity.referenceNumber) {
+    try {
+      const { data: existingConn } = await supabase
+        .from("connections")
+        .select("id")
+        .eq("reference_number", electricity.referenceNumber.trim())
+        .maybeSingle();
+
+      if (existingConn) {
+        connectionId = existingConn.id;
+      } else {
+        const { data: newConn } = await supabase
+          .from("connections")
+          .insert({
+            reference_number: electricity.referenceNumber.trim(),
+            name: `${unitName || "Unit"} Meter`,
+            meter_number: electricity.meterNumber?.trim() || null,
+            active: true,
+          })
+          .select()
+          .maybeSingle();
+
+        if (newConn) {
+          connectionId = newConn.id;
+        }
+      }
+    } catch {}
+  } else if (electricity.option === "SHARED_METER" && electricity.sharedConnectionId) {
+    connectionId = electricity.sharedConnectionId;
+  }
+
+  if (connectionId) {
+    try {
+      await supabase.from("connection_unit_mappings").upsert({
+        connection_id: connectionId,
+        unit_id: unitId,
+        split_type: electricity.splitType || "PERCENTAGE",
+        split_value: electricity.splitValue || 50,
+        notes: `Mapped for unit #${unitId}`,
+      });
+    } catch {}
+  }
 }

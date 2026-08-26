@@ -55,16 +55,14 @@ export interface TenantStats {
   totalSecurityHeld: number;
 }
 
-// In-Memory Fallback State
-let fallbackTenants: TenantItem[] = [
-  { id: 101, plaza_id: 1, full_name: "Arham Fabrics", phone: "0300-1234567", cnic: "37405-1234567-1", emergency_contact: "0321-1234567", status: "ACTIVE", notes: "Main commercial shop" },
-  { id: 102, plaza_id: 1, full_name: "Ali Raza", phone: "0333-7654321", cnic: "37405-7654321-2", emergency_contact: "0300-9876543", status: "ACTIVE", notes: "Flat 1 tenant" },
-];
+// In-Memory Fallback State (Initialized empty to ensure 100% fresh starts)
+let fallbackTenants: TenantItem[] = [];
+let fallbackLeases: LeaseItem[] = [];
 
-let fallbackLeases: LeaseItem[] = [
-  { id: 201, plaza_id: 1, tenant_id: 101, unit_id: 1, monthly_rent: 28000, rent_due_day: 5, security_amount: 50000, security_paid: 50000, security_status: "PAID", move_in_date: "2025-01-01", lease_start_date: "2025-01-01", status: "ACTIVE", annual_increase_pct: 10, next_escalation_date: "2026-09-01" },
-  { id: 202, plaza_id: 1, tenant_id: 102, unit_id: 15, monthly_rent: 8500, rent_due_day: 5, security_amount: 10000, security_paid: 10000, security_status: "PAID", move_in_date: "2025-02-01", lease_start_date: "2025-02-01", status: "ACTIVE", annual_increase_pct: 10, next_escalation_date: "2026-09-01" },
-];
+export function resetTenantsMemory(): void {
+  fallbackTenants = [];
+  fallbackLeases = [];
+}
 
 export function calculateSecurityStatus(
   required: number,
@@ -97,58 +95,22 @@ export async function getTenantsWithLeases(): Promise<{
       supabase.from("connections").select("*"),
     ]);
 
-    if (!tenantsRes.error && tenantsRes.data && tenantsRes.data.length > 0) {
+    if (!tenantsRes.error && tenantsRes.data) {
       rawTenants = tenantsRes.data as TenantItem[];
     } else {
       rawTenants = [...fallbackTenants];
     }
 
-    if (!leasesRes.error && leasesRes.data && leasesRes.data.length > 0) {
+    if (!leasesRes.error && leasesRes.data) {
       rawLeases = leasesRes.data as LeaseItem[];
     } else {
       rawLeases = [...fallbackLeases];
     }
 
     rawConnections = connsRes.data || [];
-  } catch (err) {
+  } catch {
     rawTenants = [...fallbackTenants];
     rawLeases = [...fallbackLeases];
-  }
-
-  // If DB was empty, check connections for legacy tenants
-  if (rawTenants.length === 0 && rawConnections.length > 0) {
-    rawConnections.forEach((conn, index) => {
-      if (conn.tenant || conn.name) {
-        const tenantId = `legacy-t-${conn.id}`;
-        const unitId = `legacy-u-${conn.id}`;
-        rawTenants.push({
-          id: tenantId,
-          plaza_id: conn.plaza_id || 1,
-          full_name: conn.tenant || conn.name,
-          phone: null,
-          cnic: null,
-          emergency_contact: null,
-          status: "ACTIVE",
-          notes: "Auto-migrated from connection",
-        });
-
-        rawLeases.push({
-          id: `legacy-l-${conn.id}`,
-          plaza_id: conn.plaza_id || 1,
-          tenant_id: tenantId,
-          unit_id: unitId,
-          monthly_rent: conn.monthly_rent || 28000,
-          rent_due_day: 5,
-          security_amount: 50000,
-          security_paid: 50000,
-          security_status: "PAID",
-          move_in_date: new Date().toISOString().split("T")[0],
-          lease_start_date: new Date().toISOString().split("T")[0],
-          status: "ACTIVE",
-          annual_increase_pct: 10,
-        });
-      }
-    });
   }
 
   // Group leases by tenant_id
@@ -185,21 +147,24 @@ export async function getTenantsWithLeases(): Promise<{
     };
   });
 
-  // Calculate stats
-  const totalTenants = tenantViews.length;
-  const activeTenants = tenantViews.filter((v) => v.is_active).length;
-  const vacatedTenants = totalTenants - activeTenants;
-  const shopTenants = tenantViews.filter(
-    (v) => v.is_active && v.unit?.unit_type === "SHOP"
-  ).length;
-  const roomTenants = tenantViews.filter(
-    (v) => v.is_active && v.unit?.unit_type === "ROOM"
-  ).length;
+  // Calculate high-level stats
+  const totalTenants = rawTenants.length;
+  const activeTenants = tenantViews.filter((t) => t.is_active).length;
+  const vacatedTenants = rawTenants.filter((t) => t.status === "VACATED").length;
 
-  const totalSecurityHeld = tenantViews.reduce(
-    (sum, v) => sum + (v.is_active ? Number(v.lease?.security_paid || 0) : 0),
-    0
-  );
+  let shopTenants = 0;
+  let roomTenants = 0;
+  let totalSecurityHeld = 0;
+
+  tenantViews.forEach((tv) => {
+    if (tv.is_active && tv.unit) {
+      if (tv.unit.unit_type === "SHOP") shopTenants++;
+      else if (tv.unit.unit_type === "ROOM") roomTenants++;
+    }
+    if (tv.lease) {
+      totalSecurityHeld += Number(tv.lease.security_paid || 0);
+    }
+  });
 
   return {
     tenants: tenantViews,
@@ -215,21 +180,28 @@ export async function getTenantsWithLeases(): Promise<{
 }
 
 /**
- * Retrieves only vacant units of a specific type (SHOP or ROOM) for new tenant assignment
+ * Returns a list of units that currently have NO active lease/tenant
  */
-export async function getAvailableUnits(unitType?: "SHOP" | "ROOM"): Promise<UnitItem[]> {
-  try {
-    const { units } = await getAllUnits();
-    return units.filter((u) => u.status === "VACANT" && (!unitType || u.unit_type === unitType));
-  } catch {
-    return [];
-  }
+export async function getAvailableUnits(): Promise<UnitItem[]> {
+  const { units } = await getAllUnits();
+  const { tenants } = await getTenantsWithLeases();
+
+  const occupiedUnitIds = new Set<string>();
+  tenants.forEach((t) => {
+    if (t.is_active && t.unit) {
+      occupiedUnitIds.add(t.unit.id.toString());
+    }
+  });
+
+  return units.filter(
+    (u) => u.status !== "INACTIVE" && !occupiedUnitIds.has(u.id.toString())
+  );
 }
 
 /**
- * Creates a new tenant and assigns them to a unit via a lease
+ * Assigns a new tenant to a specific unit with initial lease terms
  */
-export async function createTenantWithLease(params: {
+export async function createTenantWithLease(data: {
   fullName: string;
   phone?: string | null;
   cnic?: string | null;
@@ -242,194 +214,285 @@ export async function createTenantWithLease(params: {
   moveInDate?: string;
   leaseStartDate?: string;
   leaseEndDate?: string | null;
+  annualIncreasePct?: number;
   notes?: string | null;
 }): Promise<{ tenant: TenantItem; lease: LeaseItem }> {
   const plaza = await getPrimaryPlaza();
-  const securityStatus = calculateSecurityStatus(params.securityAmount, params.securityPaid);
+  const nextId = Date.now();
+  const today = new Date().toISOString().split("T")[0];
 
-  let newTenant: TenantItem | null = null;
-  let newLease: LeaseItem | null = null;
+  const tenantItem: TenantItem = {
+    id: nextId,
+    plaza_id: plaza.id,
+    full_name: data.fullName.trim(),
+    phone: data.phone?.trim() || null,
+    cnic: data.cnic?.trim() || null,
+    emergency_contact: data.emergencyContact?.trim() || null,
+    status: "ACTIVE",
+    notes: data.notes || null,
+    created_at: new Date().toISOString(),
+  };
+
+  const securityPaid = Number(data.securityPaid) || 0;
+  const securityReq = Number(data.securityAmount) || 0;
+
+  const leaseItem: LeaseItem = {
+    id: nextId + 1,
+    plaza_id: plaza.id,
+    tenant_id: tenantItem.id,
+    unit_id: data.unitId,
+    monthly_rent: Number(data.monthlyRent) || 0,
+    rent_due_day: data.rentDueDay || 5,
+    security_amount: securityReq,
+    security_paid: securityPaid,
+    security_status: calculateSecurityStatus(securityReq, securityPaid),
+    move_in_date: data.moveInDate || today,
+    lease_start_date: data.leaseStartDate || today,
+    lease_end_date: data.leaseEndDate || null,
+    annual_increase_pct: data.annualIncreasePct || 10,
+    status: "ACTIVE",
+    notes: data.notes || null,
+    created_at: new Date().toISOString(),
+  };
 
   try {
-    const { data: tenant, error: tenantErr } = await supabase
+    // 1. Insert Tenant in DB
+    const { data: dbTenant, error: tErr } = await supabase
       .from("tenants")
       .insert({
         plaza_id: plaza.id,
-        full_name: params.fullName.trim(),
-        phone: params.phone?.trim() || null,
-        cnic: params.cnic?.trim() || null,
-        emergency_contact: params.emergencyContact?.trim() || null,
+        full_name: tenantItem.full_name,
+        phone: tenantItem.phone,
+        cnic: tenantItem.cnic,
+        emergency_contact: tenantItem.emergency_contact,
         status: "ACTIVE",
-        notes: params.notes?.trim() || null,
+        notes: tenantItem.notes,
       })
       .select()
       .maybeSingle();
 
-    if (!tenantErr && tenant) {
-      newTenant = tenant;
-      const { data: lease } = await supabase
-        .from("leases")
-        .insert({
-          plaza_id: plaza.id,
-          tenant_id: tenant.id,
-          unit_id: params.unitId,
-          monthly_rent: params.monthlyRent,
-          rent_due_day: params.rentDueDay || 5,
-          security_amount: params.securityAmount,
-          security_paid: params.securityPaid,
-          security_status: securityStatus,
-          move_in_date: params.moveInDate || new Date().toISOString().split("T")[0],
-          lease_start_date: params.leaseStartDate || new Date().toISOString().split("T")[0],
-          lease_end_date: params.leaseEndDate || null,
-          status: "ACTIVE",
-          notes: params.notes?.trim() || null,
-        })
-        .select()
-        .maybeSingle();
-
-      newLease = lease;
+    if (dbTenant) {
+      tenantItem.id = dbTenant.id;
+      leaseItem.tenant_id = dbTenant.id;
     }
-  } catch (err) {
-    // Fallback
+
+    // 2. Insert Lease in DB
+    const { data: dbLease } = await supabase
+      .from("leases")
+      .insert({
+        plaza_id: plaza.id,
+        tenant_id: leaseItem.tenant_id,
+        unit_id: leaseItem.unit_id,
+        monthly_rent: leaseItem.monthly_rent,
+        rent_due_day: leaseItem.rent_due_day,
+        security_amount: leaseItem.security_amount,
+        security_paid: leaseItem.security_paid,
+        security_status: leaseItem.security_status,
+        move_in_date: leaseItem.move_in_date,
+        lease_start_date: leaseItem.lease_start_date,
+        lease_end_date: leaseItem.lease_end_date,
+        annual_increase_pct: leaseItem.annual_increase_pct,
+        status: "ACTIVE",
+        notes: leaseItem.notes,
+      })
+      .select()
+      .maybeSingle();
+
+    if (dbLease) {
+      leaseItem.id = dbLease.id;
+    }
+
+    // 3. Mark Unit as OCCUPIED
+    await updateUnit(data.unitId, { status: "OCCUPIED" });
+  } catch {
+    // Non-blocking
   }
 
-  if (!newTenant) {
-    newTenant = {
-      id: Date.now(),
-      plaza_id: plaza.id,
-      full_name: params.fullName.trim(),
-      phone: params.phone?.trim() || null,
-      cnic: params.cnic?.trim() || null,
-      emergency_contact: params.emergencyContact?.trim() || null,
-      status: "ACTIVE",
-      notes: params.notes?.trim() || null,
-      created_at: new Date().toISOString(),
-    };
-    fallbackTenants.push(newTenant);
-  }
+  // Update in-memory fallback state
+  fallbackTenants = [tenantItem, ...fallbackTenants];
+  fallbackLeases = [leaseItem, ...fallbackLeases];
 
-  if (!newLease) {
-    newLease = {
-      id: Date.now() + 1,
-      plaza_id: plaza.id,
-      tenant_id: newTenant.id,
-      unit_id: params.unitId,
-      monthly_rent: params.monthlyRent,
-      rent_due_day: params.rentDueDay || 5,
-      security_amount: params.securityAmount,
-      security_paid: params.securityPaid,
-      security_status: securityStatus,
-      move_in_date: params.moveInDate || new Date().toISOString().split("T")[0],
-      lease_start_date: params.leaseStartDate || new Date().toISOString().split("T")[0],
-      lease_end_date: params.leaseEndDate || null,
-      status: "ACTIVE",
-      notes: params.notes?.trim() || null,
-      created_at: new Date().toISOString(),
-    };
-    fallbackLeases.push(newLease);
-  }
-
-  // Mark Unit as OCCUPIED
-  await updateUnit(params.unitId, { status: "OCCUPIED" });
-
-  return { tenant: newTenant, lease: newLease };
+  return { tenant: tenantItem, lease: leaseItem };
 }
 
 /**
- * Vacates a tenant: ends lease, sets unit back to VACANT, preserves complete financial history
+ * Updates an existing tenant profile
  */
-export async function vacateTenantLease(params: {
-  leaseId: number | string;
-  unitId: number | string;
-  tenantId: number | string;
-  vacateReason?: string | null;
-}): Promise<boolean> {
-  const now = new Date().toISOString();
+export async function updateTenant(
+  id: number | string,
+  data: Partial<TenantItem>
+): Promise<TenantItem | null> {
+  try {
+    const { data: updated, error } = await supabase
+      .from("tenants")
+      .update({
+        full_name: data.full_name,
+        phone: data.phone,
+        cnic: data.cnic,
+        emergency_contact: data.emergency_contact,
+        status: data.status,
+        notes: data.notes,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .select()
+      .maybeSingle();
+
+    if (!error && updated) {
+      return updated as TenantItem;
+    }
+  } catch {
+    // Non-blocking
+  }
+
+  const idx = fallbackTenants.findIndex((t) => t.id.toString() === id.toString());
+  if (idx !== -1) {
+    fallbackTenants[idx] = { ...fallbackTenants[idx], ...data };
+    return fallbackTenants[idx];
+  }
+
+  return null;
+}
+
+/**
+ * Updates an active lease's terms
+ */
+export async function updateLease(
+  id: number | string,
+  data: Partial<LeaseItem>
+): Promise<LeaseItem | null> {
+  const securityPaid = data.security_paid;
+  const securityReq = data.security_amount;
+
+  const patch: any = {
+    ...data,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (securityPaid !== undefined && securityReq !== undefined) {
+    patch.security_status = calculateSecurityStatus(securityReq, securityPaid);
+  }
 
   try {
+    const { data: updated, error } = await supabase
+      .from("leases")
+      .update(patch)
+      .eq("id", id)
+      .select()
+      .maybeSingle();
+
+    if (!error && updated) {
+      return updated as LeaseItem;
+    }
+  } catch {
+    // Non-blocking
+  }
+
+  const idx = fallbackLeases.findIndex((l) => l.id.toString() === id.toString());
+  if (idx !== -1) {
+    fallbackLeases[idx] = { ...fallbackLeases[idx], ...patch };
+    return fallbackLeases[idx];
+  }
+
+  return null;
+}
+
+/**
+ * Handles the complete Tenant Move-Out workflow
+ */
+export async function vacateTenant(
+  tenantId: number | string,
+  unitId: number | string,
+  data: {
+    vacateDate?: string;
+    vacateReason?: string;
+    deductions?: number;
+    refundedAmount?: number;
+  }
+): Promise<{ success: boolean }> {
+  const today = data.vacateDate || new Date().toISOString().split("T")[0];
+
+  try {
+    // 1. Mark lease as ENDED
     await supabase
       .from("leases")
       .update({
         status: "ENDED",
-        ended_at: now,
-        vacate_reason: params.vacateReason || "Tenant moved out",
-        updated_at: now,
+        ended_at: new Date().toISOString(),
+        vacate_reason: data.vacateReason || "Tenant moved out",
+        updated_at: new Date().toISOString(),
       })
-      .eq("id", params.leaseId);
+      .eq("tenant_id", tenantId)
+      .eq("unit_id", unitId);
 
+    // 2. Mark tenant as VACATED
     await supabase
       .from("tenants")
-      .update({ status: "VACATED", updated_at: now })
-      .eq("id", params.tenantId);
-  } catch (err) {
-    // Fallback
+      .update({
+        status: "VACATED",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", tenantId);
+
+    // 3. Mark unit as VACANT
+    await updateUnit(unitId, { status: "VACANT" });
+
+    // Update in-memory fallback state
+    fallbackLeases = fallbackLeases.map((l) =>
+      l.tenant_id.toString() === tenantId.toString() && l.unit_id.toString() === unitId.toString()
+        ? { ...l, status: "ENDED", ended_at: new Date().toISOString(), vacate_reason: data.vacateReason }
+        : l
+    );
+
+    fallbackTenants = fallbackTenants.map((t) =>
+      t.id.toString() === tenantId.toString() ? { ...t, status: "VACATED" } : t
+    );
+
+    return { success: true };
+  } catch {
+    return { success: false };
   }
-
-  const lIdx = fallbackLeases.findIndex((l) => l.id.toString() === params.leaseId.toString());
-  if (lIdx !== -1) {
-    fallbackLeases[lIdx].status = "ENDED";
-    fallbackLeases[lIdx].vacate_reason = params.vacateReason || "Tenant moved out";
-  }
-
-  const tIdx = fallbackTenants.findIndex((t) => t.id.toString() === params.tenantId.toString());
-  if (tIdx !== -1) {
-    fallbackTenants[tIdx].status = "VACATED";
-  }
-
-  // Set unit back to VACANT
-  await updateUnit(params.unitId, { status: "VACANT" });
-
-  return true;
 }
 
-/**
- * Updates tenant details and lease terms
- */
-export async function updateTenantAndLease(params: {
+export async function vacateTenantLease(params: {
+  leaseId: number | string;
+  unitId: number | string;
+  tenantId: number | string;
+  vacateReason?: string;
+}): Promise<{ success: boolean }> {
+  return vacateTenant(params.tenantId, params.unitId, {
+    vacateReason: params.vacateReason,
+  });
+}
+
+export async function updateTenantLease(params: {
   tenantId: number | string;
   leaseId?: number | string;
-  fullName?: string;
-  phone?: string | null;
-  cnic?: string | null;
-  emergencyContact?: string | null;
+  fullName: string;
+  phone?: string;
+  cnic?: string;
+  emergencyContact?: string;
   monthlyRent?: number;
   rentDueDay?: number;
   securityAmount?: number;
   securityPaid?: number;
-  notes?: string | null;
-}): Promise<boolean> {
-  const now = new Date().toISOString();
+  notes?: string;
+}): Promise<void> {
+  await updateTenant(params.tenantId, {
+    full_name: params.fullName,
+    phone: params.phone,
+    cnic: params.cnic,
+    emergency_contact: params.emergencyContact,
+    notes: params.notes,
+  });
 
-  const tenantPayload: Record<string, any> = { updated_at: now };
-  if (params.fullName) tenantPayload.full_name = params.fullName.trim();
-  if (params.phone !== undefined) tenantPayload.phone = params.phone?.trim() || null;
-  if (params.cnic !== undefined) tenantPayload.cnic = params.cnic?.trim() || null;
-  if (params.emergencyContact !== undefined) tenantPayload.emergency_contact = params.emergencyContact?.trim() || null;
-  if (params.notes !== undefined) tenantPayload.notes = params.notes?.trim() || null;
-
-  try {
-    await supabase.from("tenants").update(tenantPayload).eq("id", params.tenantId);
-
-    if (params.leaseId) {
-      const leasePayload: Record<string, any> = { updated_at: now };
-      if (params.monthlyRent !== undefined) leasePayload.monthly_rent = params.monthlyRent;
-      if (params.rentDueDay !== undefined) leasePayload.rent_due_day = params.rentDueDay;
-      if (params.securityAmount !== undefined) leasePayload.security_amount = params.securityAmount;
-      if (params.securityPaid !== undefined) leasePayload.security_paid = params.securityPaid;
-
-      if (params.securityAmount !== undefined || params.securityPaid !== undefined) {
-        const secReq = params.securityAmount ?? 50000;
-        const secPaid = params.securityPaid ?? 0;
-        leasePayload.security_status = calculateSecurityStatus(secReq, secPaid);
-      }
-
-      await supabase.from("leases").update(leasePayload).eq("id", params.leaseId);
-    }
-  } catch (err) {
-    // Fallback
+  if (params.leaseId) {
+    await updateLease(params.leaseId, {
+      monthly_rent: params.monthlyRent,
+      rent_due_day: params.rentDueDay,
+      security_amount: params.securityAmount,
+      security_paid: params.securityPaid,
+      notes: params.notes,
+    });
   }
-
-  return true;
 }
-
-export const updateTenantLease = updateTenantAndLease;

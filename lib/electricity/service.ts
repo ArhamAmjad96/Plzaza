@@ -44,51 +44,15 @@ export interface UnitBillShare {
 }
 
 // In-memory fallback connection records
-let fallbackConnections: any[] = [
-  { id: 1, name: "Shop B-01 Meter", tenant: "Shop B-01", reference_number: "04141234567890", meter_number: "MTR-B01", active: true },
-  { id: 2, name: "Shop G-01 Meter", tenant: "Shop G-01", reference_number: "04141234567891", meter_number: "MTR-G01", active: true },
-  { id: 3, name: "Flat 1 Shared Meter", tenant: "Flat 1", reference_number: "04141234567892", meter_number: "MTR-FL1", active: true },
-];
+let fallbackConnections: any[] = [];
+let fallbackMappings: ConnectionMappingItem[] = [];
+let fallbackBills: any[] = [];
 
-let fallbackMappings: ConnectionMappingItem[] = [
-  { id: 1, connection_id: 1, unit_id: 1, split_type: "EQUAL", split_value: 100, notes: "Shop B-01 Meter" },
-  { id: 2, connection_id: 2, unit_id: 5, split_type: "EQUAL", split_value: 100, notes: "Shop G-01 Meter" },
-  { id: 3, connection_id: 3, unit_id: 15, split_type: "EQUAL", split_value: 50, notes: "Flat 1 Room 1" },
-  { id: 4, connection_id: 3, unit_id: 16, split_type: "EQUAL", split_value: 50, notes: "Flat 1 Room 2" },
-];
-
-let fallbackBills: any[] = [
-  {
-    id: 1,
-    connection_id: 1,
-    billing_month: "2026-08-01",
-    issue_date: "2026-08-02",
-    due_date: "2026-08-15",
-    bill_amount: 4500,
-    units_consumed: 145,
-    status: "unpaid",
-  },
-  {
-    id: 2,
-    connection_id: 2,
-    billing_month: "2026-08-01",
-    issue_date: "2026-08-02",
-    due_date: "2026-08-15",
-    bill_amount: 6800,
-    units_consumed: 220,
-    status: "unpaid",
-  },
-  {
-    id: 3,
-    connection_id: 3,
-    billing_month: "2026-08-01",
-    issue_date: "2026-08-02",
-    due_date: "2026-08-15",
-    bill_amount: 9200,
-    units_consumed: 310,
-    status: "unpaid",
-  },
-];
+export function resetElectricityMemory(): void {
+  fallbackConnections = [];
+  fallbackMappings = [];
+  fallbackBills = [];
+}
 
 /**
  * Retrieves all connections with their mapped units and latest bill data
@@ -105,24 +69,24 @@ export async function getConnectionsWithMappings(): Promise<ConnectionViewItem[]
       supabase.from("bills").select("*").order("billing_month", { ascending: false }),
     ]);
 
-    if (!connsRes.error && connsRes.data && connsRes.data.length > 0) {
+    if (!connsRes.error && connsRes.data) {
       rawConns = connsRes.data;
     } else {
       rawConns = [...fallbackConnections];
     }
 
-    if (!mappingsRes.error && mappingsRes.data && mappingsRes.data.length > 0) {
+    if (!mappingsRes.error && mappingsRes.data) {
       rawMappings = mappingsRes.data;
     } else {
       rawMappings = [...fallbackMappings];
     }
 
-    if (!billsRes.error && billsRes.data && billsRes.data.length > 0) {
+    if (!billsRes.error && billsRes.data) {
       rawBills = billsRes.data;
     } else {
       rawBills = [...fallbackBills];
     }
-  } catch (err) {
+  } catch {
     rawConns = [...fallbackConnections];
     rawMappings = [...fallbackMappings];
     rawBills = [...fallbackBills];

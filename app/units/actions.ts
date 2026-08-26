@@ -9,6 +9,7 @@ import {
   deleteUnit,
   savePlazaDetails,
   bulkConfigurePlazaUnits,
+  resetAllPlazaData,
   UnitElectricitySetup,
 } from "@/lib/units/service";
 
@@ -36,13 +37,63 @@ export async function savePlazaDetailsAction(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/units");
+  revalidatePath("/tenants");
+  revalidatePath("/rent");
+  revalidatePath("/connections");
+  revalidatePath("/complaints");
+  revalidatePath("/expenses");
+  revalidatePath("/reports");
   revalidatePath("/settings");
+
   return { success: true, plaza };
+}
+
+export async function resetPlazaAction(formData?: FormData) {
+  const name = formData?.get("name") as string | undefined;
+  const address = formData?.get("address") as string | undefined;
+  const floorsRaw = formData?.get("floors") as string | undefined;
+
+  let floors: string[] | undefined = undefined;
+  if (floorsRaw) {
+    try {
+      floors = JSON.parse(floorsRaw);
+    } catch {
+      floors = floorsRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    }
+  }
+
+  await resetAllPlazaData({
+    name: name || undefined,
+    address: address || undefined,
+    floors: floors || undefined,
+  });
+
+  revalidatePath("/");
+  revalidatePath("/units");
+  revalidatePath("/tenants");
+  revalidatePath("/rent");
+  revalidatePath("/connections");
+  revalidatePath("/complaints");
+  revalidatePath("/expenses");
+  revalidatePath("/reports");
+  revalidatePath("/settings");
+
+  return { success: true };
 }
 
 export async function getAvailableUnitsAction() {
   const { units } = await getAllUnits();
   return units;
+}
+
+export async function getExistingConnectionsAction(): Promise<Array<{ id: number; name: string; reference_number: string }>> {
+  const { getConnectionsWithMappings } = await import("@/lib/electricity/service");
+  const conns = await getConnectionsWithMappings();
+  return conns.map((c) => ({
+    id: Number(c.id) || 0,
+    name: c.name,
+    reference_number: c.reference_number,
+  }));
 }
 
 export async function bulkConfigurePlazaAction(formData: FormData) {
@@ -58,8 +109,14 @@ export async function bulkConfigurePlazaAction(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/units");
+  revalidatePath("/tenants");
   revalidatePath("/rent");
+  revalidatePath("/connections");
+  revalidatePath("/complaints");
+  revalidatePath("/expenses");
+  revalidatePath("/reports");
   revalidatePath("/settings");
+
   return { success: true, count: result.count };
 }
 
@@ -110,46 +167,38 @@ export async function createUnitAction(formData: FormData) {
 
   revalidatePath("/units");
   revalidatePath("/connections");
+  revalidatePath("/rent");
   revalidatePath("/");
   return { success: true, unit };
-}
-
-export async function getExistingConnectionsAction() {
-  try {
-    const { data } = await supabase
-      .from("connections")
-      .select("id, name, reference_number, meter_number")
-      .eq("active", true);
-    return data || [];
-  } catch {
-    return [];
-  }
 }
 
 export async function updateUnitAction(id: number | string, formData: FormData) {
   const unitNumber = formData.get("unit_number") as string;
   const unitName = formData.get("unit_name") as string;
-  const unitType = formData.get("unit_type") as string;
-  const floor = formData.get("floor") as string;
-  const defaultMonthlyRent = parseFloat(formData.get("default_monthly_rent") as string);
-  const defaultSecurityAmount = parseFloat(formData.get("default_security_amount") as string);
-  const defaultRentDueDay = parseInt(formData.get("default_rent_due_day") as string, 10);
-  const status = formData.get("status") as any;
+  const unitType = (formData.get("unit_type") as string) || "SHOP";
+  const floor = (formData.get("floor") as string) || "Ground";
+  const defaultMonthlyRent = parseFloat(formData.get("default_monthly_rent") as string) || 0;
+  const defaultSecurityAmount = parseFloat(formData.get("default_security_amount") as string) || 0;
+  const defaultRentDueDay = parseInt(formData.get("default_rent_due_day") as string, 10) || 5;
+  const status = (formData.get("status") as any) || "VACANT";
   const notes = (formData.get("notes") as string)?.trim() || null;
 
   const unit = await updateUnit(id, {
-    unitNumber: unitNumber || undefined,
-    unitName: unitName || undefined,
-    unitType: (unitType as any) || undefined,
-    floor: floor || undefined,
-    defaultMonthlyRent: isNaN(defaultMonthlyRent) ? undefined : defaultMonthlyRent,
-    defaultSecurityAmount: isNaN(defaultSecurityAmount) ? undefined : defaultSecurityAmount,
-    defaultRentDueDay: isNaN(defaultRentDueDay) ? undefined : defaultRentDueDay,
-    status: status || undefined,
+    unit_number: unitNumber,
+    unit_name: unitName,
+    unit_type: unitType as any,
+    floor,
+    default_monthly_rent: defaultMonthlyRent,
+    default_security_amount: defaultSecurityAmount,
+    default_rent_due_day: defaultRentDueDay,
+    status,
     notes,
   });
 
   revalidatePath("/units");
+  revalidatePath(`/units/${id}`);
+  revalidatePath("/connections");
+  revalidatePath("/rent");
   revalidatePath("/");
   return { success: true, unit };
 }

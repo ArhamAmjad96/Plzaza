@@ -49,8 +49,8 @@ export async function updateComplaintAction(id: number | string, formData: FormD
   await updateComplaint(id, {
     status: status || undefined,
     priority: priority || undefined,
-    assignedTo: assignedTo,
-    resolutionNotes: resolutionNotes,
+    assigned_to: assignedTo || undefined,
+    resolution_notes: resolutionNotes || undefined,
   });
 
   revalidatePath("/complaints");

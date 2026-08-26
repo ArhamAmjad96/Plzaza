@@ -36,47 +36,11 @@ export interface ExpenseStats {
   adminAndTaxes: number;
 }
 
-let fallbackExpenses: ExpenseItem[] = [
-  {
-    id: 1,
-    plaza_id: 1,
-    category: "Security Guard Salary",
-    title: "Monthly Security Guard Salary",
-    amount: 25000,
-    expense_date: "2026-08-01",
-    payment_method: "Cash",
-    paid_to: "Guard Muhammad Iqbal",
-    receipt_voucher_no: "EXP-2608-001",
-    is_recurring: true,
-    notes: "Monthly day/night security guard duty",
-  },
-  {
-    id: 2,
-    plaza_id: 1,
-    category: "Janitorial / Sweeper / Cleaning",
-    title: "Sweeper & Plaza Cleaning Wages",
-    amount: 8000,
-    expense_date: "2026-08-01",
-    payment_method: "Cash",
-    paid_to: "Sweeper Boota Masih",
-    receipt_voucher_no: "EXP-2608-002",
-    is_recurring: true,
-    notes: "Daily stairs, corridors, and entrance sweeping",
-  },
-  {
-    id: 3,
-    plaza_id: 1,
-    category: "Generator Fuel / Maintenance",
-    title: "Backup Generator Diesel Fuel (80 Litres)",
-    amount: 15000,
-    expense_date: "2026-08-05",
-    payment_method: "Cash",
-    paid_to: "Total Petroleum Station",
-    receipt_voucher_no: "EXP-2608-003",
-    is_recurring: false,
-    notes: "Diesel purchase for power outages",
-  },
-];
+let fallbackExpenses: ExpenseItem[] = [];
+
+export function resetGeneralExpensesMemory(): void {
+  fallbackExpenses = [];
+}
 
 export function generateVoucherNumber(dateStr?: string): string {
   const d = dateStr ? new Date(dateStr) : new Date();
@@ -102,17 +66,19 @@ export async function getPlazaExpenses(monthInput?: string | null): Promise<{
       .select("*")
       .order("expense_date", { ascending: false });
 
-    if (!error && expenses && expenses.length > 0) {
+    if (!error && expenses) {
       expList = expenses as ExpenseItem[];
     } else {
       expList = [...fallbackExpenses];
     }
-  } catch (err) {
+  } catch {
     expList = [...fallbackExpenses];
   }
 
-  // Filter by selected month
-  const filtered = expList.filter((e) => e.expense_date.startsWith(selectedMonth));
+  // Filter by selected month if not "ALL"
+  const filtered = selectedMonth === "ALL" 
+    ? expList 
+    : expList.filter((e) => e.expense_date.startsWith(selectedMonth));
 
   // Compute stats
   let totalExpenses = 0;
@@ -138,9 +104,14 @@ export async function getPlazaExpenses(monthInput?: string | null): Promise<{
       e.category === "Waste Disposal"
     ) {
       cleaningAndWaste += amt;
-    } else if (e.category === "Building Maintenance / Repairs") {
+    } else if (
+      e.category === "Building Maintenance / Repairs"
+    ) {
       maintenanceAndRepairs += amt;
-    } else {
+    } else if (
+      e.category === "Government Taxes / Property Tax" ||
+      e.category === "Legal / Admin"
+    ) {
       adminAndTaxes += amt;
     }
   }
@@ -159,74 +130,71 @@ export async function getPlazaExpenses(monthInput?: string | null): Promise<{
   };
 }
 
-export async function createPlazaExpense(data: {
+export async function createGeneralExpense(data: {
   category: GeneralExpenseCategory;
   title: string;
   amount: number;
-  expenseDate: string;
+  expenseDate?: string;
   paymentMethod?: string;
   paidTo?: string | null;
   isRecurring?: boolean;
   notes?: string | null;
 }): Promise<ExpenseItem> {
   const plaza = await getPrimaryPlaza();
-  const receiptVoucherNo = generateVoucherNumber(data.expenseDate);
+  const today = data.expenseDate || new Date().toISOString().split("T")[0];
+  const voucherNo = generateVoucherNumber(today);
 
-  try {
-    const { data: newExpense, error } = await supabase
-      .from("expenses")
-      .insert({
-        plaza_id: plaza.id,
-        category: data.category,
-        title: data.title.trim(),
-        amount: data.amount,
-        expense_date: data.expenseDate,
-        payment_method: data.paymentMethod || "Cash",
-        paid_to: data.paidTo?.trim() || null,
-        receipt_voucher_no: receiptVoucherNo,
-        is_recurring: Boolean(data.isRecurring),
-        notes: data.notes?.trim() || null,
-      })
-      .select()
-      .maybeSingle();
-
-    if (!error && newExpense) {
-      return newExpense;
-    }
-  } catch (err) {
-    // Fallback
-  }
-
-  const fallback: ExpenseItem = {
+  const item: ExpenseItem = {
     id: Date.now(),
     plaza_id: plaza.id,
     category: data.category,
     title: data.title.trim(),
-    amount: data.amount,
-    expense_date: data.expenseDate,
+    amount: Number(data.amount) || 0,
+    expense_date: today,
     payment_method: data.paymentMethod || "Cash",
     paid_to: data.paidTo?.trim() || null,
-    receipt_voucher_no: receiptVoucherNo,
+    receipt_voucher_no: voucherNo,
     is_recurring: Boolean(data.isRecurring),
     notes: data.notes?.trim() || null,
     created_at: new Date().toISOString(),
   };
 
-  fallbackExpenses.unshift(fallback);
-  return fallback;
+  try {
+    const { data: dbItem, error } = await supabase
+      .from("expenses")
+      .insert({
+        plaza_id: plaza.id,
+        category: item.category,
+        title: item.title,
+        amount: item.amount,
+        expense_date: item.expense_date,
+        payment_method: item.payment_method,
+        paid_to: item.paid_to,
+        receipt_voucher_no: item.receipt_voucher_no,
+        is_recurring: item.is_recurring,
+        notes: item.notes,
+      })
+      .select()
+      .maybeSingle();
+
+    if (!error && dbItem) {
+      item.id = dbItem.id;
+    }
+  } catch {
+    // Non-blocking
+  }
+
+  fallbackExpenses = [item, ...fallbackExpenses];
+  return item;
 }
 
-export async function deletePlazaExpense(id: number | string): Promise<boolean> {
+export async function deleteGeneralExpense(id: number | string): Promise<boolean> {
   try {
     await supabase.from("expenses").delete().eq("id", id);
-  } catch (err) {
-    // Fallback
+  } catch {
+    // Non-blocking
   }
 
   fallbackExpenses = fallbackExpenses.filter((e) => e.id.toString() !== id.toString());
   return true;
 }
-
-export const createGeneralExpense = createPlazaExpense;
-export const deleteGeneralExpense = deletePlazaExpense;
-

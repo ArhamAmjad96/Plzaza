@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { savePlazaDetailsAction, bulkConfigurePlazaAction } from "@/app/units/actions";
 import { formatPKR } from "@/lib/utils/format";
 import DigitalPlaza from "@/components/plaza/DigitalPlaza";
@@ -41,6 +42,7 @@ export default function PlazaSetupWizard({
   onClose,
   onSuccess,
 }: PlazaSetupWizardProps) {
+  const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
   // Step 1: Plaza Info
@@ -164,6 +166,7 @@ export default function PlazaSetupWizard({
       const res = await bulkConfigurePlazaAction(configFd);
 
       if (res.success) {
+        router.refresh();
         if (onSuccess) onSuccess();
         if (onClose) onClose();
       }

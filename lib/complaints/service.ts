@@ -57,42 +57,11 @@ export interface ComplaintStats {
   highPriorityCount: number;
 }
 
-let fallbackComplaints: ComplaintItem[] = [
-  {
-    id: 1,
-    plaza_id: 1,
-    unit_id: 3,
-    tenant_id: 101,
-    complaint_number: "CMP-2608-011",
-    category: "Leakage",
-    title: "Water seepage from back wall",
-    description: "Moisture detected on back wall during heavy rains; needs waterproofing sealant.",
-    priority: "HIGH",
-    status: "IN_PROGRESS",
-    complaint_date: "2026-08-10",
-    assigned_to: "Plumber Aslam",
-    unit_name: "Basement Shop B-03",
-    floor: "Basement",
-    tenant_name: "Arham Fabrics",
-  },
-  {
-    id: 2,
-    plaza_id: 1,
-    unit_id: 15,
-    tenant_id: 102,
-    complaint_number: "CMP-2608-012",
-    category: "Electrical",
-    title: "Main breaker tripping intermittently",
-    description: "Room main switch trips when water geyser is turned on.",
-    priority: "MEDIUM",
-    status: "ASSIGNED",
-    complaint_date: "2026-08-12",
-    assigned_to: "Electrician Tariq",
-    unit_name: "Flat 1 Room 1",
-    floor: "Flat 1",
-    tenant_name: "Ali Raza",
-  },
-];
+let fallbackComplaints: ComplaintItem[] = [];
+
+export function resetComplaintsMemory(): void {
+  fallbackComplaints = [];
+}
 
 export function generateComplaintNumber(): string {
   const dateStr = new Date().toISOString().slice(2, 7).replace("-", "");
@@ -123,12 +92,12 @@ export async function getAllComplaints(): Promise<{
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error && dbComplaints && dbComplaints.length > 0) {
+    if (!error && dbComplaints) {
       rawComplaints = dbComplaints as ComplaintItem[];
     } else {
       rawComplaints = [...fallbackComplaints];
     }
-  } catch (err) {
+  } catch {
     rawComplaints = [...fallbackComplaints];
   }
 
@@ -138,9 +107,9 @@ export async function getAllComplaints(): Promise<{
 
     return {
       ...c,
-      unit_name: unit?.unit_name || c.unit_name || "Plaza Unit",
-      floor: unit?.floor || c.floor || "Ground",
-      tenant_name: tenant?.full_name || c.tenant_name || "Unassigned",
+      unit_name: unit?.unit_name || `Unit #${c.unit_id}`,
+      floor: unit?.floor || "Ground Floor",
+      tenant_name: tenant?.full_name || undefined,
       tenant_phone: tenant?.phone || undefined,
     };
   });
@@ -172,113 +141,93 @@ export async function createComplaint(data: {
   title: string;
   description?: string | null;
   photoAttachment?: string | null;
-  complaintDate?: string;
   priority?: ComplaintPriority;
   assignedTo?: string | null;
+  complaintDate?: string;
 }): Promise<ComplaintItem> {
   const plaza = await getPrimaryPlaza();
-  const complaintNumber = generateComplaintNumber();
+  const today = data.complaintDate || new Date().toISOString().split("T")[0];
+  const cNumber = generateComplaintNumber();
 
-  try {
-    const { data: complaint, error } = await supabase
-      .from("complaints")
-      .insert({
-        plaza_id: plaza.id,
-        unit_id: data.unitId,
-        tenant_id: data.tenantId || null,
-        complaint_number: complaintNumber,
-        category: data.category,
-        title: data.title.trim(),
-        description: data.description?.trim() || null,
-        photo_attachment: data.photoAttachment || null,
-        complaint_date: data.complaintDate || new Date().toISOString().split("T")[0],
-        priority: data.priority || "MEDIUM",
-        status: data.assignedTo?.trim() ? "ASSIGNED" : "OPEN",
-        assigned_to: data.assignedTo?.trim() || null,
-      })
-      .select()
-      .maybeSingle();
-
-    if (!error && complaint) {
-      return complaint;
-    }
-  } catch (err) {
-    // Fallback
-  }
-
-  const fallback: ComplaintItem = {
+  const item: ComplaintItem = {
     id: Date.now(),
     plaza_id: plaza.id,
     unit_id: data.unitId,
     tenant_id: data.tenantId || null,
-    complaint_number: complaintNumber,
+    complaint_number: cNumber,
     category: data.category,
     title: data.title.trim(),
     description: data.description?.trim() || null,
     photo_attachment: data.photoAttachment || null,
-    complaint_date: data.complaintDate || new Date().toISOString().split("T")[0],
+    complaint_date: today,
     priority: data.priority || "MEDIUM",
-    status: data.assignedTo?.trim() ? "ASSIGNED" : "OPEN",
+    status: data.assignedTo ? "ASSIGNED" : "OPEN",
     assigned_to: data.assignedTo?.trim() || null,
     created_at: new Date().toISOString(),
   };
 
-  fallbackComplaints.unshift(fallback);
-  return fallback;
+  try {
+    const { data: dbItem, error } = await supabase
+      .from("complaints")
+      .insert({
+        plaza_id: plaza.id,
+        unit_id: item.unit_id,
+        tenant_id: item.tenant_id,
+        complaint_number: item.complaint_number,
+        category: item.category,
+        title: item.title,
+        description: item.description,
+        photo_attachment: item.photo_attachment,
+        complaint_date: item.complaint_date,
+        priority: item.priority,
+        status: item.status,
+        assigned_to: item.assigned_to,
+      })
+      .select()
+      .maybeSingle();
+
+    if (!error && dbItem) {
+      item.id = dbItem.id;
+    }
+  } catch {
+    // Non-blocking
+  }
+
+  fallbackComplaints = [item, ...fallbackComplaints];
+  return item;
 }
 
 export async function updateComplaint(
   id: number | string,
-  data: Partial<{
-    category: ComplaintCategory;
-    title: string;
-    description: string | null;
-    priority: ComplaintPriority;
-    status: ComplaintStatus;
-    assignedTo: string | null;
-    resolutionNotes: string | null;
-  }>
+  data: Partial<ComplaintItem>
 ): Promise<ComplaintItem | null> {
-  const updatePayload: Record<string, any> = {
+  const patch: any = {
+    ...data,
     updated_at: new Date().toISOString(),
   };
 
-  if (data.category !== undefined) updatePayload.category = data.category;
-  if (data.title !== undefined) updatePayload.title = data.title.trim();
-  if (data.description !== undefined) updatePayload.description = data.description;
-  if (data.priority !== undefined) updatePayload.priority = data.priority;
-  if (data.status !== undefined) {
-    updatePayload.status = data.status;
-    if (data.status === "RESOLVED" || data.status === "CLOSED") {
-      updatePayload.resolved_at = new Date().toISOString();
-    }
+  if (data.status === "RESOLVED" || data.status === "CLOSED") {
+    patch.resolved_at = new Date().toISOString();
   }
-  if (data.assignedTo !== undefined) updatePayload.assigned_to = data.assignedTo;
-  if (data.resolutionNotes !== undefined) updatePayload.resolution_notes = data.resolutionNotes;
 
   try {
     const { data: updated, error } = await supabase
       .from("complaints")
-      .update(updatePayload)
+      .update(patch)
       .eq("id", id)
       .select()
       .maybeSingle();
 
     if (!error && updated) {
-      return updated;
+      return updated as ComplaintItem;
     }
-  } catch (err) {
-    // Fallback
+  } catch {
+    // Non-blocking
   }
 
   const idx = fallbackComplaints.findIndex((c) => c.id.toString() === id.toString());
   if (idx !== -1) {
-    fallbackComplaints[idx] = {
-      ...fallbackComplaints[idx],
-      ...data,
-      assigned_to: data.assignedTo ?? fallbackComplaints[idx].assigned_to,
-      resolution_notes: data.resolutionNotes ?? fallbackComplaints[idx].resolution_notes,
-    };
+    fallbackComplaints[idx] = { ...fallbackComplaints[idx], ...patch };
     return fallbackComplaints[idx];
   }
 
@@ -288,8 +237,8 @@ export async function updateComplaint(
 export async function deleteComplaint(id: number | string): Promise<boolean> {
   try {
     await supabase.from("complaints").delete().eq("id", id);
-  } catch (err) {
-    // Fallback
+  } catch {
+    // Non-blocking
   }
 
   fallbackComplaints = fallbackComplaints.filter((c) => c.id.toString() !== id.toString());

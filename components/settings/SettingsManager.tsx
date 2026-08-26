@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PlazaItem } from "@/lib/units/service";
+import { resetPlazaAction } from "@/app/units/actions";
 import PlazaSetupWizard from "./PlazaSetupWizard";
 import {
   Sliders,
@@ -11,6 +13,9 @@ import {
   Layers,
   ArrowUpRight,
   ShieldCheck,
+  Trash2,
+  AlertTriangle,
+  RotateCcw,
 } from "lucide-react";
 
 interface SettingsManagerProps {
@@ -24,7 +29,30 @@ export default function SettingsManager({
   totalConnections,
   totalBills,
 }: SettingsManagerProps) {
+  const router = useRouter();
   const [showSetupWizard, setShowSetupWizard] = useState(false);
+  const [resetting, setResetting] = useState(false);
+
+  async function handleResetPlaza() {
+    const confirmName = window.prompt(
+      `Type "RESET" to confirm wiping all previous tenants, rent ledgers, electricity dues, and maintenance records:`
+    );
+
+    if (confirmName !== "RESET") {
+      return;
+    }
+
+    setResetting(true);
+    try {
+      await resetPlazaAction();
+      router.refresh();
+      alert("✓ Plaza completely reset! All previous records and dues have been cleared.");
+    } catch {
+      alert("Failed to reset plaza data. Please check connection.");
+    } finally {
+      setResetting(false);
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -42,14 +70,26 @@ export default function SettingsManager({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setShowSetupWizard(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition shadow-xs"
-        >
-          <Sliders size={14} />
-          <span>Launch Setup Wizard</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleResetPlaza}
+            disabled={resetting}
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-[#8E3E33] hover:bg-[#FAECE9] text-xs font-medium transition shadow-xs disabled:opacity-50"
+          >
+            <RotateCcw size={14} />
+            <span>{resetting ? "Resetting..." : "Reset All Plaza Data"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowSetupWizard(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition shadow-xs"
+          >
+            <Sliders size={14} />
+            <span>Launch Setup Wizard</span>
+          </button>
+        </div>
       </div>
 
       {/* ─── Active Plaza Overview ─── */}
@@ -99,7 +139,7 @@ export default function SettingsManager({
               Multi-Floor Plaza Builder
             </h3>
             <p className="text-xs text-[#58655E] mt-1 leading-relaxed">
-              Interactively reconfigure basement, ground, upper floors, and flat room layouts with standard rent defaults.
+              Interactively reconfigure basement, ground, upper floors, and flat room layouts with standard rent defaults. Automatically wipes all previous plaza data.
             </p>
           </div>
         </div>
@@ -123,6 +163,26 @@ export default function SettingsManager({
             </p>
           </div>
         </Link>
+      </section>
+
+      {/* ─── Danger Zone: Reset All Data ─── */}
+      <section className="p-6 rounded-3xl border border-[#D9C4AC] bg-[#FAF6F0] space-y-3">
+        <div className="flex items-center gap-2 text-[#8E3E33]">
+          <AlertTriangle size={16} />
+          <h3 className="font-semibold text-sm">Clean Start & Property Reset</h3>
+        </div>
+        <p className="text-xs text-[#58655E] leading-relaxed">
+          Wipe all previous tenants, old lease agreements, past rent dues, electricity mappings, and repair records from the system. Use this whenever you are onboarding a new commercial property.
+        </p>
+        <button
+          type="button"
+          onClick={handleResetPlaza}
+          disabled={resetting}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8E3E33] text-white text-xs font-medium hover:bg-[#723128] transition disabled:opacity-50"
+        >
+          <Trash2 size={13} />
+          <span>{resetting ? "Resetting Everything..." : "Wipe & Start Fresh"}</span>
+        </button>
       </section>
 
       {/* Setup Wizard Modal */}
