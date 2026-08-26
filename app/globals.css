@@ -203,67 +203,6 @@ select:focus-visible {
   }
 }
 
-/* Small Colorful Floating Buildings Animations */
-@keyframes floatBuilding1 {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-12px) rotate(1.5deg);
-  }
-  100% {
-    transform: translateY(4px) rotate(-1deg);
-  }
-}
-
-@keyframes floatBuilding2 {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-15px) rotate(-2deg);
-  }
-  100% {
-    transform: translateY(6px) rotate(1deg);
-  }
-}
-
-@keyframes floatBuilding3 {
-  0% {
-    transform: translateY(0px) scale(1);
-  }
-  50% {
-    transform: translateY(-10px) scale(1.03);
-  }
-  100% {
-    transform: translateY(8px) scale(0.98);
-  }
-}
-
-@keyframes floatBuilding4 {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-14px) rotate(2deg);
-  }
-  100% {
-    transform: translateY(5px) rotate(-1.5deg);
-  }
-}
-
-@keyframes floatBuilding5 {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-11px) rotate(-1.5deg);
-  }
-  100% {
-    transform: translateY(7px) rotate(1.5deg);
-  }
-}
-
 /* Print specific optimizations */
 @media print {
   body {
