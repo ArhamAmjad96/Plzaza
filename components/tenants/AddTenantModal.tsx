@@ -128,20 +128,20 @@ export default function AddTenantModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4 sm:p-6 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-3xl bg-[#FAF6F0] border border-[#CBD4BC] p-7 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto text-[#17211D]"
+        className="w-full max-w-2xl sm:max-w-3xl rounded-3xl bg-[#FAF6F0] border border-[#CBD4BC] p-8 sm:p-10 shadow-2xl space-y-7 max-h-[92vh] overflow-y-auto text-[#17211D]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-4">
+        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-5">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
               OCCUPANCY ONBOARDING
             </p>
-            <h3 className="text-lg font-medium text-[#17211D]">
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#17211D] mt-1">
               Assign Tenant to Space
             </h3>
           </div>
@@ -149,22 +149,22 @@ export default function AddTenantModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-8 w-8 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
+            className="h-10 w-10 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
           >
-            <X size={15} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Selected Space Banner */}
         {selectedUnit && (
-          <div className="p-4 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-[#FAF6F0] border border-[#CBD4BC] flex items-center justify-center text-[#FF704D]">
-                <Building2 size={18} />
+          <div className="p-5 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-3.5">
+              <div className="h-11 w-11 rounded-2xl bg-[#FAF6F0] border border-[#CBD4BC] flex items-center justify-center text-[#FF704D] shadow-xs">
+                <Building2 size={22} />
               </div>
               <div>
-                <p className="text-xs font-semibold text-[#17211D]">{selectedUnit.unit_name}</p>
-                <p className="text-[11px] text-[#58655E]">
+                <p className="text-base font-bold text-[#17211D]">{selectedUnit.unit_name}</p>
+                <p className="text-xs sm:text-sm text-[#58655E] mt-0.5">
                   {selectedUnit.floor} · Asking: {formatPKR(selectedUnit.default_monthly_rent)}/mo
                 </p>
               </div>
@@ -173,9 +173,9 @@ export default function AddTenantModal({
               <button
                 type="button"
                 onClick={() => setSelectedUnit(null)}
-                className="text-[11px] font-medium text-[#FF704D] hover:underline"
+                className="text-xs font-bold text-[#FF704D] hover:underline px-3 py-1.5 rounded-xl bg-[#FAF6F0] border border-[#CBD4BC]"
               >
-                Change
+                Change Space
               </button>
             )}
           </div>
@@ -183,14 +183,14 @@ export default function AddTenantModal({
 
         {/* Step 1: Tenant Information */}
         {step === 1 && (
-          <div className="space-y-4 text-xs">
+          <div className="space-y-5 text-sm">
             {!selectedUnit && (
               <div>
-                <label className="font-semibold text-[#17211D]">Select Available Space</label>
+                <label className="font-semibold text-sm text-[#17211D]">Select Available Space</label>
                 <select
                   value={selectedUnitId}
                   onChange={(e) => handleSelectUnitId(e.target.value)}
-                  className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs text-[#17211D] focus:border-[#FF704D]"
+                  className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
                 >
                   <option value="">-- Choose Vacant Space --</option>
                   {unitsList.map((u) => (
@@ -203,59 +203,59 @@ export default function AddTenantModal({
             )}
 
             <div>
-              <label className="font-semibold text-[#17211D]">Tenant Full Name / Business Name</label>
+              <label className="font-semibold text-sm text-[#17211D]">Tenant Full Name / Business Name</label>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="e.g. Muhammad Ali"
-                className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs text-[#17211D] focus:border-[#FF704D]"
+                placeholder="e.g. Kashif Electronics (M. Kashif)"
+                className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="font-semibold text-[#17211D]">Phone Number</label>
+                <label className="font-semibold text-sm text-[#17211D]">Phone Number</label>
                 <input
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="0300 1234567"
-                  className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs text-[#17211D] focus:border-[#FF704D]"
+                  className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
                   required
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-[#17211D]">CNIC (13 Digits)</label>
+                <label className="font-semibold text-sm text-[#17211D]">CNIC (13 Digits)</label>
                 <input
                   type="text"
                   maxLength={15}
                   value={cnic}
                   onChange={(e) => setCnic(e.target.value)}
                   placeholder="37405-1234567-1"
-                  className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs text-[#17211D] focus:border-[#FF704D]"
+                  className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
                 />
               </div>
             </div>
 
             <div>
-              <label className="font-semibold text-[#17211D]">Emergency Family Contact (Optional)</label>
+              <label className="font-semibold text-sm text-[#17211D]">Emergency Family Contact (Optional)</label>
               <input
                 type="text"
                 value={emergencyContact}
                 onChange={(e) => setEmergencyContact(e.target.value)}
-                placeholder="Name & contact number"
-                className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs text-[#17211D] focus:border-[#FF704D]"
+                placeholder="Name & emergency contact number"
+                className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
               />
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#CBD4BC]/60">
+            <div className="flex items-center justify-between pt-6 border-t border-[#CBD4BC]/60">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-medium text-[#58655E] hover:text-[#17211D]"
+                className="px-5 py-3 text-sm font-medium text-[#58655E] hover:text-[#17211D]"
               >
                 Cancel
               </button>
@@ -272,10 +272,10 @@ export default function AddTenantModal({
                   }
                   setStep(2);
                 }}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-sm"
               >
                 <span>Continue to Lease</span>
-                <ArrowRight size={13} />
+                <ArrowRight size={16} />
               </button>
             </div>
           </div>
@@ -283,88 +283,88 @@ export default function AddTenantModal({
 
         {/* Step 2: Lease & Deposit */}
         {step === 2 && (
-          <div className="space-y-4 text-xs">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-5 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="font-semibold text-[#17211D]">Agreed Monthly Rent (PKR)</label>
-                <div className="relative mt-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-[#58655E]">Rs.</span>
+                <label className="font-semibold text-sm text-[#17211D]">Agreed Monthly Rent (PKR)</label>
+                <div className="relative mt-1.5">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-[#58655E]">Rs.</span>
                   <input
                     type="number"
                     value={monthlyRent}
                     onChange={(e) => setMonthlyRent(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs text-[#17211D] focus:border-[#FF704D]"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-base font-semibold text-[#17211D] focus:border-[#FF704D] shadow-xs"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-semibold text-[#17211D]">Rent Due Day (1–28)</label>
+                <label className="font-semibold text-sm text-[#17211D]">Rent Due Day (1–28)</label>
                 <input
                   type="number"
                   min="1"
                   max="28"
                   value={rentDueDay}
                   onChange={(e) => setRentDueDay(e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs text-[#17211D] focus:border-[#FF704D]"
+                  className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="font-semibold text-[#17211D]">Total Security Required</label>
-                <div className="relative mt-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-[#58655E]">Rs.</span>
+                <label className="font-semibold text-sm text-[#17211D]">Total Security Required (PKR)</label>
+                <div className="relative mt-1.5">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-[#58655E]">Rs.</span>
                   <input
                     type="number"
                     value={securityAmount}
                     onChange={(e) => setSecurityAmount(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs text-[#17211D] focus:border-[#FF704D]"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-base font-semibold text-[#17211D] focus:border-[#FF704D] shadow-xs"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-semibold text-[#17211D]">Security Paid Upfront</label>
-                <div className="relative mt-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-[#58655E]">Rs.</span>
+                <label className="font-semibold text-sm text-[#17211D]">Security Paid Upfront (PKR)</label>
+                <div className="relative mt-1.5">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-[#58655E]">Rs.</span>
                   <input
                     type="number"
                     value={securityPaid}
                     onChange={(e) => setSecurityPaid(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs text-[#17211D] focus:border-[#FF704D]"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-base font-semibold text-[#17211D] focus:border-[#FF704D] shadow-xs"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="font-semibold text-[#17211D]">Move-in Date</label>
+              <label className="font-semibold text-sm text-[#17211D]">Move-in Date</label>
               <input
                 type="date"
                 value={moveInDate}
                 onChange={(e) => setMoveInDate(e.target.value)}
-                className="w-full mt-1 px-3.5 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs font-mono text-[#17211D] focus:border-[#FF704D]"
+                className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm sm:text-base font-mono text-[#17211D] focus:border-[#FF704D] shadow-xs"
               />
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#CBD4BC]/60">
+            <div className="flex items-center justify-between pt-6 border-t border-[#CBD4BC]/60">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="inline-flex items-center gap-1 text-xs font-medium text-[#58655E] hover:text-[#17211D]"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#58655E] hover:text-[#17211D]"
               >
-                <ArrowLeft size={13} />
+                <ArrowLeft size={16} />
                 <span>Back</span>
               </button>
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-md disabled:opacity-50"
               >
-                <span>{submitting ? "Assigning..." : "Assign Tenant"}</span>
+                <span>{submitting ? "Assigning Space..." : "Confirm & Assign Tenant"}</span>
               </button>
             </div>
           </div>

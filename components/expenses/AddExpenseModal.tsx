@@ -72,20 +72,20 @@ export default function AddExpenseModal({ onClose }: AddExpenseModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4 sm:p-6 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-3xl bg-[#FAF6F0] border border-[#CBD4BC] p-7 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto text-[#17211D]"
+        className="w-full max-w-2xl sm:max-w-3xl rounded-3xl bg-[#FAF6F0] border border-[#CBD4BC] p-8 sm:p-10 shadow-2xl space-y-7 max-h-[92vh] overflow-y-auto text-[#17211D]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-4">
+        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-5">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
               OPERATIONAL LEDGER
             </p>
-            <h3 className="text-lg font-medium text-[#17211D]">
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#17211D] mt-1">
               Record Plaza Expense
             </h3>
           </div>
@@ -93,17 +93,17 @@ export default function AddExpenseModal({ onClose }: AddExpenseModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="h-8 w-8 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
+            className="h-10 w-10 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
           >
-            <X size={15} />
+            <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="space-y-5 text-sm">
           {/* Category Tiles */}
           <div>
-            <label className="font-semibold text-[#17211D]">Expense Category</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1.5">
+            <label className="font-semibold text-sm text-[#17211D] block mb-2">Expense Category</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = category === cat.key;
@@ -112,14 +112,14 @@ export default function AddExpenseModal({ onClose }: AddExpenseModalProps) {
                     key={cat.key}
                     type="button"
                     onClick={() => handleSelectCat(cat)}
-                    className={`p-2.5 rounded-xl border text-left transition flex items-center gap-2 ${
+                    className={`p-3.5 rounded-2xl border text-left transition flex items-center gap-2.5 ${
                       isSelected
-                        ? "border-[#FF704D] bg-[#FFF0EB] text-[#FF704D] font-medium"
+                        ? "border-[#FF704D] bg-[#FFF0EB] text-[#FF704D] font-semibold shadow-xs"
                         : "border-[#CBD4BC] bg-[#E8EDD9] text-[#58655E] hover:bg-[#DDE4CF]"
                     }`}
                   >
-                    <Icon size={14} className="shrink-0" />
-                    <span className="text-[11px] truncate leading-tight">{cat.label}</span>
+                    <Icon size={18} className="shrink-0" />
+                    <span className="text-xs sm:text-sm truncate leading-tight">{cat.label}</span>
                   </button>
                 );
               })}
@@ -128,53 +128,53 @@ export default function AddExpenseModal({ onClose }: AddExpenseModalProps) {
 
           {/* Title */}
           <div>
-            <label className="font-semibold text-[#17211D]">Expense Title</label>
+            <label className="font-semibold text-sm text-[#17211D]">Expense Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs text-[#17211D] focus:border-[#FF704D]"
+              className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm sm:text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
               required
             />
           </div>
 
           {/* Amount & Paid To */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-[#17211D]">Amount (PKR)</label>
-              <div className="relative mt-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-[#58655E]">Rs.</span>
+              <label className="font-semibold text-sm text-[#17211D]">Amount (PKR)</label>
+              <div className="relative mt-1.5">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-[#58655E]">Rs.</span>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs text-[#17211D] focus:border-[#FF704D]"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-base font-semibold text-[#17211D] focus:border-[#FF704D] shadow-xs"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="font-semibold text-[#17211D]">Paid To (Recipient)</label>
+              <label className="font-semibold text-sm text-[#17211D]">Paid To (Recipient)</label>
               <input
                 type="text"
                 value={paidTo}
                 onChange={(e) => setPaidTo(e.target.value)}
                 placeholder="e.g. PSO Petrol Pump, Guard Tariq"
-                className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs text-[#17211D] focus:border-[#FF704D]"
+                className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm sm:text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
               />
             </div>
           </div>
 
           {/* Method & Date */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-[#17211D]">Payment Method</label>
+              <label className="font-semibold text-sm text-[#17211D]">Payment Method</label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-full mt-1 px-3 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs text-[#17211D] focus:border-[#FF704D]"
+                className="w-full mt-1.5 px-4 py-3 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm sm:text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
               >
                 <option value="Cash">Cash</option>
                 <option value="Bank Transfer">Bank Transfer</option>
@@ -184,31 +184,31 @@ export default function AddExpenseModal({ onClose }: AddExpenseModalProps) {
             </div>
 
             <div>
-              <label className="font-semibold text-[#17211D]">Expense Date</label>
+              <label className="font-semibold text-sm text-[#17211D]">Expense Date</label>
               <input
                 type="date"
                 value={expenseDate}
                 onChange={(e) => setExpenseDate(e.target.value)}
-                className="w-full mt-1 px-3 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs text-[#17211D] focus:border-[#FF704D]"
+                className="w-full mt-1.5 px-4 py-3 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm sm:text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
               />
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-[#CBD4BC]/60">
+          <div className="flex items-center justify-between pt-6 border-t border-[#CBD4BC]/60">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-[#58655E] hover:text-[#17211D]"
+              className="px-5 py-3 text-sm font-medium text-[#58655E] hover:text-[#17211D]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition disabled:opacity-50"
+              className="px-8 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-md disabled:opacity-50"
             >
-              {submitting ? "Saving..." : "Save Expense"}
+              {submitting ? "Saving..." : "Save Expense Voucher"}
             </button>
           </div>
         </form>

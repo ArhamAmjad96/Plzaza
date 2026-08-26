@@ -129,23 +129,23 @@ export default function RecordPaymentModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4 sm:p-6 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-3xl bg-[#FAF6F0] border border-[#CBD4BC] p-7 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto text-[#17211D]"
+        className="w-full max-w-2xl sm:max-w-3xl rounded-3xl bg-[#FAF6F0] border border-[#CBD4BC] p-8 sm:p-10 shadow-2xl space-y-7 max-h-[92vh] overflow-y-auto text-[#17211D]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-4">
+        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-5">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
               FINANCIAL TRANSACTION
             </p>
-            <h3 className="text-lg font-medium text-[#17211D]">
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#17211D] mt-1">
               Record Payment
             </h3>
-            <p className="text-xs text-[#58655E] mt-0.5">
+            <p className="text-sm text-[#58655E] mt-1">
               {tenantName} · {shopName}
             </p>
           </div>
@@ -153,40 +153,40 @@ export default function RecordPaymentModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-8 w-8 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
+            className="h-10 w-10 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
           >
-            <X size={15} />
+            <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSavePayment} className="space-y-5">
+        <form onSubmit={handleSavePayment} className="space-y-6">
           {/* Oversized Numeric Input */}
-          <div className="p-4 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-1">
-            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#58655E]">
+          <div className="p-6 rounded-3xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-2 shadow-xs">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#58655E]">
               AMOUNT RECEIVED (PKR)
             </span>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-2xl font-bold text-[#58655E]">Rs.</span>
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-3xl font-bold text-[#58655E]">Rs.</span>
               <input
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0"
-                className="w-full font-mono text-3xl sm:text-4xl font-bold text-[#17211D] bg-transparent border-none focus:ring-0 p-0"
+                className="w-full font-mono text-4xl sm:text-5xl font-bold text-[#17211D] bg-transparent border-none focus:ring-0 p-0"
                 required
                 autoFocus
               />
             </div>
-            <div className="flex items-center justify-between text-[11px] font-mono text-[#58655E] pt-1">
-              <span>Total Dues: {formatPKR(totalPayable)}</span>
-              <span>Pending Balance: {formatPKR(remainingAmount)}</span>
+            <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-[#58655E] pt-2 border-t border-[#CBD4BC]/60">
+              <span>Total Dues: <strong className="text-[#17211D]">{formatPKR(totalPayable)}</strong></span>
+              <span>Pending Balance: <strong className="text-[#8E3E33]">{formatPKR(remainingAmount)}</strong></span>
             </div>
           </div>
 
           {/* Payment For Categories */}
-          <div className="space-y-1.5">
-            <span className="text-xs font-semibold text-[#17211D]">Payment For</span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="space-y-2">
+            <span className="text-sm font-bold text-[#17211D]">Payment For</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {PAYMENT_CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = paymentType === cat.id;
@@ -195,14 +195,14 @@ export default function RecordPaymentModal({
                     key={cat.id}
                     type="button"
                     onClick={() => setPaymentType(cat.id)}
-                    className={`p-2.5 rounded-xl border text-left transition flex flex-col items-start gap-1.5 ${
+                    className={`p-3.5 rounded-2xl border text-left transition flex flex-col items-start gap-2 ${
                       isSelected
-                        ? "border-[#FF704D] bg-[#FFF0EB] text-[#FF704D]"
+                        ? "border-[#FF704D] bg-[#FFF0EB] text-[#FF704D] shadow-xs"
                         : "border-[#CBD4BC] bg-[#E8EDD9] text-[#58655E] hover:bg-[#DDE4CF]"
                     }`}
                   >
-                    <Icon size={14} />
-                    <span className="text-[11px] font-medium leading-tight">{cat.label}</span>
+                    <Icon size={18} />
+                    <span className="text-xs sm:text-sm font-semibold leading-tight">{cat.label}</span>
                   </button>
                 );
               })}
@@ -210,9 +210,9 @@ export default function RecordPaymentModal({
           </div>
 
           {/* Payment Method */}
-          <div className="space-y-1.5">
-            <span className="text-xs font-semibold text-[#17211D]">Payment Method</span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="space-y-2">
+            <span className="text-sm font-bold text-[#17211D]">Payment Method</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {PAYMENT_METHODS.map((met) => {
                 const Icon = met.icon;
                 const isSelected = paymentMethod === met.id;
@@ -221,14 +221,14 @@ export default function RecordPaymentModal({
                     key={met.id}
                     type="button"
                     onClick={() => setPaymentMethod(met.id)}
-                    className={`p-2.5 rounded-xl border text-left transition flex flex-col items-start gap-1.5 ${
+                    className={`p-3.5 rounded-2xl border text-left transition flex flex-col items-start gap-2 ${
                       isSelected
-                        ? "border-[#17211D] bg-[#17211D] text-[#F4F7F2]"
+                        ? "border-[#17211D] bg-[#17211D] text-[#F4F7F2] shadow-xs"
                         : "border-[#CBD4BC] bg-[#E8EDD9] text-[#58655E] hover:bg-[#DDE4CF]"
                     }`}
                   >
-                    <Icon size={14} />
-                    <span className="text-[11px] font-medium leading-tight">{met.label}</span>
+                    <Icon size={18} />
+                    <span className="text-xs sm:text-sm font-semibold leading-tight">{met.label}</span>
                   </button>
                 );
               })}
@@ -236,43 +236,43 @@ export default function RecordPaymentModal({
           </div>
 
           {/* Date & Reference Note */}
-          <div className="grid grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div>
-              <label className="font-semibold text-[#17211D]">Payment Date</label>
+              <label className="font-semibold text-sm text-[#17211D]">Payment Date</label>
               <input
                 type="date"
                 value={paymentDate}
                 onChange={(e) => setPaymentDate(e.target.value)}
-                className="w-full mt-1 px-3 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs focus:border-[#FF704D]"
+                className="w-full mt-1.5 px-4 py-3 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm sm:text-base focus:border-[#FF704D] shadow-xs"
               />
             </div>
             <div>
-              <label className="font-semibold text-[#17211D]">Bank Slip / Note (Optional)</label>
+              <label className="font-semibold text-sm text-[#17211D]">Bank Slip / Note (Optional)</label>
               <input
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="e.g. Meezan Transfer #890"
-                className="w-full mt-1 px-3 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs focus:border-[#FF704D]"
+                placeholder="e.g. Meezan Bank Transfer #890"
+                className="w-full mt-1.5 px-4 py-3 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm sm:text-base focus:border-[#FF704D] shadow-xs"
               />
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-[#CBD4BC]/60">
+          <div className="flex items-center justify-between pt-6 border-t border-[#CBD4BC]/60">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-[#58655E] hover:text-[#17211D]"
+              className="px-5 py-3 text-sm font-medium text-[#58655E] hover:text-[#17211D]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition disabled:opacity-50"
+              className="px-8 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-md disabled:opacity-50"
             >
-              {submitting ? "Saving Transaction..." : "Save Payment"}
+              {submitting ? "Saving Transaction..." : "Save Payment & Print Receipt"}
             </button>
           </div>
         </form>

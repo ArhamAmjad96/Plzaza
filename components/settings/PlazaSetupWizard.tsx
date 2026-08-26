@@ -179,20 +179,20 @@ export default function PlazaSetupWizard({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4 sm:p-6 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl rounded-3xl bg-[#FAF6F0] border border-[#CBD4BC] p-7 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto text-[#17211D]"
+        className="w-full max-w-3xl lg:max-w-4xl rounded-3xl bg-[#FAF6F0] border border-[#CBD4BC] p-8 sm:p-10 shadow-2xl space-y-7 max-h-[92vh] overflow-y-auto text-[#17211D]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-4">
+        <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-5">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
               PLAZA ARCHITECTURE BUILDER · STEP {step} OF 3
             </p>
-            <h3 className="text-lg font-medium text-[#17211D]">
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#17211D] mt-1">
               {step === 1 && "Building Identity & Floors"}
               {step === 2 && "Floor Units & Standard Pricing"}
               {step === 3 && "Review & Build Property"}
@@ -202,43 +202,45 @@ export default function PlazaSetupWizard({
           <button
             type="button"
             onClick={onClose}
-            className="h-8 w-8 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
+            className="h-10 w-10 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
           >
-            <X size={15} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Step 1: Name & Floor Selection */}
         {step === 1 && (
-          <div className="space-y-4 text-xs">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-6 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="font-semibold text-[#17211D]">Plaza Name</label>
+                <label className="font-semibold text-sm text-[#17211D]">Plaza Name</label>
                 <input
                   type="text"
                   value={plazaName}
+                  placeholder="e.g. Al-Rehman Commercial Center"
                   onChange={(e) => setPlazaName(e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs focus:border-[#FF704D]"
+                  className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-base focus:border-[#FF704D] shadow-xs"
                   required
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-[#17211D]">Address / City</label>
+                <label className="font-semibold text-sm text-[#17211D]">Address / City</label>
                 <input
                   type="text"
                   value={location}
+                  placeholder="e.g. Blue Area, Islamabad"
                   onChange={(e) => setLocation(e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-xs focus:border-[#FF704D]"
+                  className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-base focus:border-[#FF704D] shadow-xs"
                 />
               </div>
             </div>
 
             <div>
-              <label className="font-semibold text-[#17211D] block mb-2">
+              <label className="font-semibold text-sm text-[#17211D] block mb-2.5">
                 Select Active Building Levels ({selectedFloors.length} Selected)
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {AVAILABLE_FLOOR_OPTIONS.map((f) => {
                   const isSelected = selectedFloors.includes(f);
                   return (
@@ -246,25 +248,25 @@ export default function PlazaSetupWizard({
                       key={f}
                       type="button"
                       onClick={() => toggleFloor(f)}
-                      className={`p-2.5 rounded-xl border text-left transition flex items-center justify-between text-xs ${
+                      className={`p-3.5 sm:p-4 rounded-2xl border text-left transition flex items-center justify-between text-sm sm:text-base font-semibold ${
                         isSelected
-                          ? "border-[#FF704D] bg-[#FFF0EB] text-[#FF704D] font-semibold"
+                          ? "border-[#FF704D] bg-[#FFF0EB] text-[#FF704D] shadow-xs"
                           : "border-[#CBD4BC] bg-[#E8EDD9] text-[#58655E] hover:bg-[#DDE4CF]"
                       }`}
                     >
                       <span className="truncate">{f}</span>
-                      {isSelected && <Check size={13} className="shrink-0" />}
+                      {isSelected && <Check size={16} className="shrink-0 text-[#FF704D]" />}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#CBD4BC]/60">
+            <div className="flex items-center justify-between pt-6 border-t border-[#CBD4BC]/60">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-medium text-[#58655E] hover:text-[#17211D]"
+                className="px-5 py-3 text-sm font-medium text-[#58655E] hover:text-[#17211D]"
               >
                 Cancel
               </button>
@@ -277,10 +279,10 @@ export default function PlazaSetupWizard({
                   }
                   setStep(2);
                 }}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-sm"
               >
                 <span>Continue to Unit Counts</span>
-                <ArrowRight size={13} />
+                <ArrowRight size={16} />
               </button>
             </div>
           </div>
@@ -288,32 +290,32 @@ export default function PlazaSetupWizard({
 
         {/* Step 2: Floor Counts & Pricing */}
         {step === 2 && (
-          <div className="space-y-4 text-xs max-h-96 overflow-y-auto pr-1">
+          <div className="space-y-5 text-sm max-h-[55vh] overflow-y-auto pr-1">
             {selectedFloors.map((floor) => {
               const cfg = floorConfigs[floor] || { count: 4, rent: 25000, security: 50000 };
               return (
                 <div
                   key={floor}
-                  className="p-4 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-3"
+                  className="p-5 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-4 shadow-xs"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold uppercase text-[#17211D]">
+                    <span className="font-mono text-sm sm:text-base font-bold uppercase text-[#17211D]">
                       {floor}
                     </span>
 
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] text-[#58655E]">Shops / Rooms:</span>
-                      <div className="flex items-center gap-1.5 bg-[#FAF6F0] rounded-lg border border-[#CBD4BC] px-2 py-0.5 font-mono">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-semibold text-[#58655E]">Shops / Rooms:</span>
+                      <div className="flex items-center gap-2 bg-[#FAF6F0] rounded-xl border border-[#CBD4BC] px-3 py-1 font-mono">
                         <button
                           type="button"
                           onClick={() =>
                             updateFloorConfig(floor, "count", Math.max(1, cfg.count - 1))
                           }
-                          className="text-[#58655E] hover:text-[#17211D]"
+                          className="text-[#58655E] hover:text-[#17211D] p-0.5"
                         >
-                          <Minus size={11} />
+                          <Minus size={14} />
                         </button>
-                        <span className="font-bold text-[#17211D] w-4 text-center">
+                        <span className="font-bold text-[#17211D] w-6 text-center text-sm">
                           {cfg.count}
                         </span>
                         <button
@@ -321,36 +323,40 @@ export default function PlazaSetupWizard({
                           onClick={() =>
                             updateFloorConfig(floor, "count", cfg.count + 1)
                           }
-                          className="text-[#58655E] hover:text-[#17211D]"
+                          className="text-[#58655E] hover:text-[#17211D] p-0.5"
                         >
-                          <Plus size={11} />
+                          <Plus size={14} />
                         </button>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="font-semibold text-[#58655E]">Standard Monthly Rent (PKR)</label>
+                      <label className="font-semibold text-xs text-[#58655E] uppercase tracking-wider block mb-1">
+                        Standard Monthly Rent (PKR)
+                      </label>
                       <input
                         type="number"
                         value={cfg.rent}
                         onChange={(e) =>
                           updateFloorConfig(floor, "rent", parseFloat(e.target.value) || 0)
                         }
-                        className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs focus:border-[#FF704D]"
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm sm:text-base font-semibold focus:border-[#FF704D]"
                       />
                     </div>
 
                     <div>
-                      <label className="font-semibold text-[#58655E]">Standard Security Advance</label>
+                      <label className="font-semibold text-xs text-[#58655E] uppercase tracking-wider block mb-1">
+                        Standard Security Advance (PKR)
+                      </label>
                       <input
                         type="number"
                         value={cfg.security}
                         onChange={(e) =>
                           updateFloorConfig(floor, "security", parseFloat(e.target.value) || 0)
                         }
-                        className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs focus:border-[#FF704D]"
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm sm:text-base font-semibold focus:border-[#FF704D]"
                       />
                     </div>
                   </div>
@@ -358,22 +364,22 @@ export default function PlazaSetupWizard({
               );
             })}
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#CBD4BC]/60">
+            <div className="flex items-center justify-between pt-5 border-t border-[#CBD4BC]/60">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="inline-flex items-center gap-1 text-xs font-medium text-[#58655E] hover:text-[#17211D]"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-[#58655E] hover:text-[#17211D]"
               >
-                <ArrowLeft size={13} />
+                <ArrowLeft size={16} />
                 <span>Back</span>
               </button>
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-sm"
               >
                 <span>Review Building Model</span>
-                <ArrowRight size={13} />
+                <ArrowRight size={16} />
               </button>
             </div>
           </div>
@@ -381,42 +387,48 @@ export default function PlazaSetupWizard({
 
         {/* Step 3: Review & Build */}
         {step === 3 && (
-          <div className="space-y-5 text-xs">
-            <div className="p-4 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-2">
-              <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-2">
-                <span className="font-semibold text-[#17211D]">{plazaName}</span>
-                <span className="font-mono font-bold text-[#FF704D]">{totalCalculatedUnits} Total Spaces</span>
+          <div className="space-y-6 text-sm">
+            <div className="p-6 rounded-3xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-4 shadow-xs">
+              <div className="flex items-center justify-between border-b border-[#CBD4BC]/60 pb-3">
+                <div>
+                  <span className="font-mono text-xs uppercase tracking-wider text-[#58655E] block">Plaza Name</span>
+                  <span className="text-lg sm:text-xl font-bold text-[#17211D]">{plazaName}</span>
+                </div>
+                <div className="text-right">
+                  <span className="font-mono text-xs uppercase tracking-wider text-[#58655E] block">Total Units</span>
+                  <span className="font-mono text-lg sm:text-xl font-bold text-[#FF704D]">{totalCalculatedUnits} Spaces</span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 font-mono text-xs sm:text-sm">
                 {selectedFloors.map((floor) => {
                   const cfg = floorConfigs[floor] || { count: 4, rent: 25000, security: 50000 };
                   return (
-                    <div key={floor} className="p-2 rounded-xl bg-[#FAF6F0] border border-[#CBD4BC]">
-                      <span className="font-sans font-semibold text-[#17211D] block">{floor}</span>
-                      <span className="text-[#58655E]">{cfg.count} Spaces · {formatPKR(cfg.rent)}/mo</span>
+                    <div key={floor} className="p-3.5 rounded-2xl bg-[#FAF6F0] border border-[#CBD4BC]">
+                      <span className="font-sans font-bold text-sm text-[#17211D] block">{floor}</span>
+                      <span className="text-[#58655E] font-medium">{cfg.count} Spaces · {formatPKR(cfg.rent)}/mo</span>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#CBD4BC]/60">
+            <div className="flex items-center justify-between pt-5 border-t border-[#CBD4BC]/60">
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="inline-flex items-center gap-1 text-xs font-medium text-[#58655E] hover:text-[#17211D]"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-[#58655E] hover:text-[#17211D]"
               >
-                <ArrowLeft size={13} />
+                <ArrowLeft size={16} />
                 <span>Back</span>
               </button>
               <button
                 type="button"
                 onClick={handleBuildPlaza}
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-md disabled:opacity-50"
               >
-                <span>{submitting ? "Building Model..." : "Build My Plaza"}</span>
+                <span>{submitting ? "Building Model..." : "Build Plaza Structure"}</span>
               </button>
             </div>
           </div>
