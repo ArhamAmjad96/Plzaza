@@ -222,28 +222,34 @@ export async function savePlazaDetails(data: {
   floors?: string[];
 }): Promise<PlazaItem> {
   const plaza = await getPrimaryPlaza();
+  const trimmedName = data.name.trim();
+  const validFloors = data.floors && data.floors.length > 0 ? data.floors : plaza.floors || [];
+  const isNowActive = Boolean(trimmedName && validFloors.length > 0);
+
   const updated: PlazaItem = {
-    ...plaza,
-    name: data.name.trim() || plaza.name,
-    address: data.address?.trim() || plaza.address,
-    description: data.description?.trim() || plaza.description,
-    floors: data.floors && data.floors.length > 0 ? data.floors : plaza.floors,
+    id: plaza.id || 1,
+    name: trimmedName || plaza.name,
+    address: data.address !== undefined ? data.address.trim() : plaza.address,
+    description: data.description !== undefined ? data.description.trim() : plaza.description,
+    floors: validFloors,
+    active: isNowActive,
   };
+
+  dynamicPlazaMemory = updated;
 
   try {
     await supabase.from("plazas").upsert({
-      id: plaza.id,
+      id: updated.id,
       name: updated.name,
       location: updated.address,
       description: updated.description,
       floors: updated.floors,
-      active: true,
+      active: updated.active,
     });
   } catch {
     // Fallback
   }
 
-  dynamicPlazaMemory = updated;
   return updated;
 }
 
@@ -260,10 +266,24 @@ export async function bulkConfigurePlazaUnits(
     default_security_amount: number;
     default_rent_due_day?: number;
   }>,
-  replaceExisting: boolean = false
+  replaceExisting: boolean = false,
+  plazaMetadata?: {
+    name?: string;
+    address?: string;
+    floors?: string[];
+  }
 ): Promise<{ count: number }> {
+  const currentPlaza = await getPrimaryPlaza();
+  const activeName = plazaMetadata?.name?.trim() || currentPlaza.name;
+  const activeAddress = plazaMetadata?.address?.trim() || currentPlaza.address || undefined;
+  const activeFloors = plazaMetadata?.floors || currentPlaza.floors || undefined;
+
   if (replaceExisting) {
-    await resetAllPlazaData();
+    await resetAllPlazaData({
+      name: activeName,
+      address: activeAddress,
+      floors: activeFloors,
+    });
   }
 
   const plaza = await getPrimaryPlaza();

@@ -113,14 +113,7 @@ export default function PlazaSetupWizard({
 
     setSubmitting(true);
     try {
-      // 1. Save plaza name & floors
-      const plazaFd = new FormData();
-      plazaFd.append("name", plazaName);
-      plazaFd.append("address", location);
-      plazaFd.append("floors", JSON.stringify(selectedFloors));
-      await savePlazaDetailsAction(plazaFd);
-
-      // 2. Build units list
+      // 1. Build units list
       const generatedUnits: any[] = [];
       let unitCounter = 1;
 
@@ -159,17 +152,22 @@ export default function PlazaSetupWizard({
         }
       });
 
+      // 2. Save units
       const configFd = new FormData();
       configFd.append("units_json", JSON.stringify(generatedUnits));
       configFd.append("replace_existing", "true");
+      await bulkConfigurePlazaAction(configFd);
 
-      const res = await bulkConfigurePlazaAction(configFd);
+      // 3. Save and activate plaza profile
+      const plazaFd = new FormData();
+      plazaFd.append("name", plazaName.trim() || "Main Commercial Plaza");
+      plazaFd.append("address", location.trim());
+      plazaFd.append("floors", JSON.stringify(selectedFloors));
+      await savePlazaDetailsAction(plazaFd);
 
-      if (res.success) {
-        router.refresh();
-        if (onSuccess) onSuccess();
-        if (onClose) onClose();
-      }
+      if (onSuccess) onSuccess();
+      if (onClose) onClose();
+      window.location.reload();
     } catch {
       alert("Unexpected error occurred while generating plaza.");
     } finally {
