@@ -33,7 +33,7 @@ export default function Topbar() {
       <div className="flex items-center gap-3">
         <div>
           <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-[#58655E]">
-            MAIN COMMERCIAL PLAZA · ISLAMABAD
+            PLAZA MANAGER · COMMERCIAL PROPERTY SYSTEM
           </span>
           <h1 className="text-base font-semibold text-[#17211D] leading-tight">
             {getPageTitle()}

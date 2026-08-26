@@ -1,7 +1,5 @@
 "use client";
 
-import { Zap, CheckCircle2 } from "lucide-react";
-
 export default function GhostedPlazaBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden select-none z-0">
@@ -130,40 +128,6 @@ export default function GhostedPlazaBackground() {
             opacity="0.9"
           />
         </svg>
-      </div>
-
-      {/* ─── 3 Faint Product Micro-Chips (Atmospheric Depth) ─── */}
-      {/* 1. Floor Status Chip */}
-      <div
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-[#CBD4BC]/70 bg-[#FAF6F0]/85 backdrop-blur-xs text-[10px] font-mono text-[#58655E] absolute right-12 top-14 shadow-xs"
-        style={{
-          animation: "heroChipFloat1 10s ease-in-out infinite alternate",
-        }}
-      >
-        <span className="h-1.5 w-1.5 rounded-full bg-[#8FA66B]" />
-        <span>GF // G-01 OCCUPIED</span>
-      </div>
-
-      {/* 2. Utility Grid Node */}
-      <div
-        className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-[#CBD4BC]/70 bg-[#FAF6F0]/85 backdrop-blur-xs text-[10px] font-mono text-[#58655E] absolute right-8 top-1/2 shadow-xs"
-        style={{
-          animation: "heroChipFloat2 12s ease-in-out infinite alternate",
-        }}
-      >
-        <Zap size={11} className="text-[#FF704D]" />
-        <span>IESCO // 14-DIGIT SYNC</span>
-      </div>
-
-      {/* 3. Financial Recovery Indicator */}
-      <div
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-[#CBD4BC]/70 bg-[#FAF6F0]/85 backdrop-blur-xs text-[10px] font-mono text-[#58655E] absolute right-24 bottom-14 shadow-xs"
-        style={{
-          animation: "heroChipFloat3 14s ease-in-out infinite alternate",
-        }}
-      >
-        <CheckCircle2 size={11} className="text-[#2D5A43]" />
-        <span>RECOVERY // 87% SETTLED</span>
       </div>
     </div>
   );

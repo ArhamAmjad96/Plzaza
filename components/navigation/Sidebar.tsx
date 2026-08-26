@@ -84,12 +84,12 @@ export default function Sidebar() {
           </div>
           <div>
             <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-[#8FA66B]">
-              PLAZA MANAGER
+              PROPERTY MANAGER
             </span>
             <h2 className="text-sm font-semibold text-[#F4F7F2] leading-tight">
-              Main Commercial Plaza
+              Plaza Workspace
             </h2>
-            <p className="text-[11px] text-[#85918A]">Islamabad, Pakistan</p>
+            <p className="text-[11px] text-[#85918A]">Commercial Property System</p>
           </div>
         </div>
 
