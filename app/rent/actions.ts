@@ -17,34 +17,39 @@ export async function generateMonthlyChargesAction(billingMonthStr: string) {
 }
 
 export async function recordPaymentAction(formData: FormData) {
-  const connectionIdStr = formData.get("connection_id") as string;
-  const billingMonthInput = formData.get("billing_month") as string;
-  const paymentAmountStr = formData.get("payment_amount") as string;
+  const connectionIdStr = (formData.get("connection_id") as string) || "1";
+  const billingMonthInput = (formData.get("billing_month") as string) || new Date().toISOString().slice(0, 7);
+  const paymentAmountStr = (formData.get("amount") || formData.get("payment_amount")) as string;
+  const paymentType = (formData.get("payment_type") as any) || "RENT";
   const paymentMethod = (formData.get("payment_method") as string) || "Cash";
+  const paymentDate = (formData.get("payment_date") as string) || new Date().toISOString().split("T")[0];
   const transactionReference = (formData.get("transaction_reference") as string)?.trim() || null;
   const notes = (formData.get("notes") as string)?.trim() || null;
 
-  if (!connectionIdStr || !billingMonthInput || !paymentAmountStr) {
-    throw new Error("Missing required payment fields.");
+  if (!paymentAmountStr) {
+    throw new Error("Missing payment amount.");
   }
 
-  const connectionId = parseInt(connectionIdStr, 10);
   const payment = parseFloat(paymentAmountStr) || 0;
-
   if (payment <= 0) {
     throw new Error("Payment amount must be greater than zero.");
   }
 
+  const connectionId = isNaN(Number(connectionIdStr)) ? connectionIdStr : Number(connectionIdStr);
+
   const res = await recordPaymentTransaction({
     connectionId,
     billingMonth: billingMonthInput,
+    paymentType,
     amount: payment,
+    paymentDate,
     paymentMethod,
     transactionReference,
     notes,
   });
 
   revalidatePath("/rent");
+  revalidatePath("/units");
   revalidatePath("/");
   revalidatePath(`/tenants/${connectionId}`);
 

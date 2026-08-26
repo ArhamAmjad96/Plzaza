@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase/server";
 import { normalizeBillingMonth, getOrCreateTenantLedger } from "@/lib/ledgers/service";
+import { getStore, updateStore } from "@/lib/storage/fileStore";
 
 export type PaymentType = "RENT" | "ELECTRICITY" | "SECURITY" | "MAINTENANCE" | "OTHER";
 export type PaymentMethod = "Cash" | "Bank Transfer" | "Online" | "Cheque" | "Other";
@@ -91,65 +92,75 @@ export async function recordPaymentTransaction(params: {
   const month = normalizeBillingMonth(billingMonth);
   const receiptNumber = generateReceiptNumber(paymentDate);
 
-  // 1. Insert Payment Row
-  const { data: payment, error: insertErr } = await supabase
-    .from("payments")
-    .insert({
-      connection_id: connectionId,
-      tenant_id: tenantId,
-      lease_id: leaseId,
-      payment_type: paymentType,
-      amount: amount,
-      payment_date: paymentDate,
-      payment_method: paymentMethod,
-      transaction_reference: transactionReference,
-      receipt_number: receiptNumber,
-      notes: notes,
-    })
-    .select()
-    .single();
+  // 1. Insert Payment Row in Supabase if available
+  let dbPayment: any = null;
+  try {
+    const { data: payment, error: insertErr } = await supabase
+      .from("payments")
+      .insert({
+        connection_id: connectionId,
+        tenant_id: tenantId,
+        lease_id: leaseId,
+        payment_type: paymentType,
+        amount: amount,
+        payment_date: paymentDate,
+        payment_method: paymentMethod,
+        transaction_reference: transactionReference,
+        receipt_number: receiptNumber,
+        notes: notes,
+      })
+      .select()
+      .maybeSingle();
 
-  if (insertErr) {
-    console.warn("Payment insert fallback note:", insertErr.message);
-  }
+    if (!insertErr && payment) {
+      dbPayment = payment;
+    }
+  } catch {}
 
-  // 2. If Payment is for SECURITY, update lease security_paid
+  const finalPayment: PaymentTransaction = dbPayment || {
+    id: Date.now(),
+    connection_id: connectionId,
+    tenant_id: tenantId,
+    lease_id: leaseId,
+    payment_type: paymentType,
+    amount,
+    payment_date: paymentDate,
+    payment_method: paymentMethod,
+    transaction_reference: transactionReference,
+    receipt_number: receiptNumber,
+    notes,
+    created_at: new Date().toISOString(),
+  };
+
+  // 2. Persist to fileStore
+  updateStore((s) => {
+    s.payments = [finalPayment, ...(s.payments || [])];
+
+    if (paymentType === "SECURITY" && leaseId) {
+      const idx = s.leases.findIndex((l) => l.id.toString() === leaseId.toString());
+      if (idx !== -1) {
+        const newPaid = Number(s.leases[idx].security_paid || 0) + amount;
+        const secReq = Number(s.leases[idx].security_amount || 0);
+        s.leases[idx].security_paid = newPaid;
+        s.leases[idx].security_status = newPaid >= secReq && secReq > 0 ? "PAID" : newPaid > 0 ? "PARTIAL" : "UNPAID";
+      }
+    }
+  });
+
+  // 3. If Payment is for SECURITY in Supabase
   if (paymentType === "SECURITY" && leaseId) {
-    const { data: lease } = await supabase.from("leases").select("security_paid, security_amount").eq("id", leaseId).single();
-    if (lease) {
-      const newPaid = Number(lease.security_paid || 0) + amount;
-      const secReq = Number(lease.security_amount || 0);
-      const newStatus = newPaid >= secReq && secReq > 0 ? "PAID" : newPaid > 0 ? "PARTIAL" : "UNPAID";
-      await supabase.from("leases").update({ security_paid: newPaid, security_status: newStatus }).eq("id", leaseId);
-    }
+    try {
+      const { data: lease } = await supabase.from("leases").select("security_paid, security_amount").eq("id", leaseId).single();
+      if (lease) {
+        const newPaid = Number(lease.security_paid || 0) + amount;
+        const secReq = Number(lease.security_amount || 0);
+        const newStatus = newPaid >= secReq && secReq > 0 ? "PAID" : newPaid > 0 ? "PARTIAL" : "UNPAID";
+        await supabase.from("leases").update({ security_paid: newPaid, security_status: newStatus }).eq("id", leaseId);
+      }
+    } catch {}
   }
 
-  // 3. Sync legacy tenant_monthly_ledgers if connectionId exists
-  if (connectionId) {
-    const { data: payments } = await supabase.from("payments").select("amount").eq("connection_id", connectionId);
-    const totalPaid = (payments || []).reduce((sum, p) => sum + Number(p.amount || 0), 0);
-    await supabase
-      .from("tenant_monthly_ledgers")
-      .update({ paid_amount: totalPaid, updated_at: new Date().toISOString() })
-      .eq("connection_id", connectionId)
-      .eq("billing_month", month);
-  }
-
-  return (
-    payment || {
-      id: `rcp-${Date.now()}`,
-      connection_id: connectionId,
-      tenant_id: tenantId,
-      lease_id: leaseId,
-      payment_type: paymentType,
-      amount,
-      payment_date: paymentDate,
-      payment_method: paymentMethod,
-      transaction_reference: transactionReference,
-      receipt_number: receiptNumber,
-      notes,
-    }
-  );
+  return finalPayment;
 }
 
 /**
@@ -166,14 +177,21 @@ export async function getPaymentsForConnection(
       .order("payment_date", { ascending: false })
       .order("id", { ascending: false });
 
-    if (error || !payments) return [];
-    return payments.map((p) => ({
-      ...p,
-      payment_type: p.payment_type || "RENT",
-    }));
-  } catch {
-    return [];
-  }
+    if (!error && payments && payments.length > 0) {
+      return payments.map((p) => ({
+        ...p,
+        payment_type: p.payment_type || "RENT",
+      }));
+    }
+  } catch {}
+
+  const store = getStore();
+  const filtered = (store.payments || []).filter(
+    (p) =>
+      p.connection_id?.toString() === connectionId.toString() ||
+      p.tenant_id?.toString() === connectionId.toString()
+  );
+  return filtered;
 }
 
 /**
@@ -190,14 +208,16 @@ export async function getPaymentsForTenant(
       .order("payment_date", { ascending: false })
       .order("id", { ascending: false });
 
-    if (error || !payments) return [];
-    return payments.map((p) => ({
-      ...p,
-      payment_type: p.payment_type || "RENT",
-    }));
-  } catch {
-    return [];
-  }
+    if (!error && payments && payments.length > 0) {
+      return payments.map((p) => ({
+        ...p,
+        payment_type: p.payment_type || "RENT",
+      }));
+    }
+  } catch {}
+
+  const store = getStore();
+  return (store.payments || []).filter((p) => p.tenant_id?.toString() === tenantId.toString());
 }
 
 /**

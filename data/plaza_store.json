@@ -1,132 +1,137 @@
-﻿{
-  plaza: {
-    id: 1,
-    name: Al-Rehman Commercial Center,
-    address: Blue Area, Sector F-6, Islamabad,
-    description: Prime Commercial Plaza,
-    floors: [Basement, Ground Floor, 1st Floor, 2nd Floor],
-    active: true
+{
+  "plaza": {
+    "id": 1,
+    "name": "adad",
+    "address": "adada",
+    "description": "",
+    "floors": [
+      "Ground Floor"
+    ],
+    "active": true
   },
-  units: [
+  "units": [
     {
-      id: 101,
-      plaza_id: 1,
-      unit_number: G-01,
-      unit_name: Ground Shop G-01,
-      unit_type: SHOP,
-      floor: Ground Floor,
-      default_monthly_rent: 25000,
-      default_security_amount: 50000,
-      default_rent_due_day: 5,
-      status: OCCUPIED,
-      notes: Main Corner Retail,
-      created_at: 2026-08-26T21:00:00.000Z
+      "id": 1787786725373,
+      "plaza_id": 1,
+      "unit_number": "G-01",
+      "unit_name": "Ground Floor Shop G-01",
+      "unit_type": "SHOP",
+      "floor": "Ground Floor",
+      "default_monthly_rent": 25000,
+      "default_security_amount": 50000,
+      "default_rent_due_day": 5,
+      "status": "OCCUPIED",
+      "created_at": "2026-08-26T23:25:25.373Z",
+      "reference_number": "15142165162900",
+      "meter_number": ""
     },
     {
-      id: 102,
-      plaza_id: 1,
-      unit_number: G-02,
-      unit_name: Ground Shop G-02,
-      unit_type: SHOP,
-      floor: Ground Floor,
-      default_monthly_rent: 25000,
-      default_security_amount: 50000,
-      default_rent_due_day: 5,
-      status: VACANT,
-      notes: null,
-      created_at: 2026-08-26T21:00:00.000Z
+      "id": 1787786725374,
+      "plaza_id": 1,
+      "unit_number": "G-02",
+      "unit_name": "Ground Floor Shop G-02",
+      "unit_type": "SHOP",
+      "floor": "Ground Floor",
+      "default_monthly_rent": 25000,
+      "default_security_amount": 50000,
+      "default_rent_due_day": 5,
+      "status": "VACANT",
+      "created_at": "2026-08-26T23:25:25.644Z"
     },
     {
-      id: 103,
-      plaza_id: 1,
-      unit_number: G-03,
-      unit_name: Ground Shop G-03,
-      unit_type: SHOP,
-      floor: Ground Floor,
-      default_monthly_rent: 25000,
-      default_security_amount: 50000,
-      default_rent_due_day: 5,
-      status: VACANT,
-      notes: null,
-      created_at: 2026-08-26T21:00:00.000Z
+      "id": 1787786725375,
+      "plaza_id": 1,
+      "unit_number": "G-03",
+      "unit_name": "Ground Floor Shop G-03",
+      "unit_type": "SHOP",
+      "floor": "Ground Floor",
+      "default_monthly_rent": 25000,
+      "default_security_amount": 50000,
+      "default_rent_due_day": 5,
+      "status": "VACANT",
+      "created_at": "2026-08-26T23:25:25.851Z"
     },
     {
-      id: 201,
-      plaza_id: 1,
-      unit_number: B-01,
-      unit_name: Basement Space B-01,
-      unit_type: SHOP,
-      floor: Basement,
-      default_monthly_rent: 20000,
-      default_security_amount: 40000,
-      default_rent_due_day: 5,
-      status: VACANT,
-      notes: null,
-      created_at: 2026-08-26T21:00:00.000Z
-    },
-    {
-      id: 202,
-      plaza_id: 1,
-      unit_number: B-02,
-      unit_name: Basement Space B-02,
-      unit_type: SHOP,
-      floor: Basement,
-      default_monthly_rent: 20000,
-      default_security_amount: 40000,
-      default_rent_due_day: 5,
-      status: VACANT,
-      notes: null,
-      created_at: 2026-08-26T21:00:00.000Z
-    },
-    {
-      id: 301,
-      plaza_id: 1,
-      unit_number: F1-01,
-      unit_name: First Floor Office 101,
-      unit_type: SHOP,
-      floor: 1st Floor,
-      default_monthly_rent: 30000,
-      default_security_amount: 60000,
-      default_rent_due_day: 5,
-      status: VACANT,
-      notes: null,
-      created_at: 2026-08-26T21:00:00.000Z
+      "id": 1787786725376,
+      "plaza_id": 1,
+      "unit_number": "G-04",
+      "unit_name": "Ground Floor Shop G-04",
+      "unit_type": "SHOP",
+      "floor": "Ground Floor",
+      "default_monthly_rent": 25000,
+      "default_security_amount": 50000,
+      "default_rent_due_day": 5,
+      "status": "VACANT",
+      "created_at": "2026-08-26T23:25:26.043Z"
     }
   ],
-  tenants: [
+  "tenants": [
     {
-      id: 501,
-      plaza_id: 1,
-      full_name: Arham,
-      phone: 0300-6262626,
-      cnic: 26262-6262626-1,
-      emergency_contact: 0321-5551234,
-      status: ACTIVE,
-      created_at: 2026-08-26T21:00:00.000Z
+      "id": 1787786742792,
+      "plaza_id": 1,
+      "full_name": "Arham",
+      "phone": "554545445",
+      "cnic": "665656565656",
+      "emergency_contact": null,
+      "status": "ACTIVE",
+      "notes": null,
+      "created_at": "2026-08-26T23:25:42.792Z"
     }
   ],
-  leases: [
+  "leases": [
     {
-      id: 601,
-      plaza_id: 1,
-      tenant_id: 501,
-      unit_id: 101,
-      monthly_rent: 25000,
-      rent_due_day: 5,
-      security_amount: 50000,
-      security_paid: 50000,
-      security_status: PAID,
-      move_in_date: 2026-08-26,
-      lease_start_date: 2026-08-26,
-      status: ACTIVE,
-      created_at: 2026-08-26T21:00:00.000Z
+      "id": 1787786742793,
+      "plaza_id": 1,
+      "tenant_id": 1787786742792,
+      "unit_id": "1787786725373",
+      "monthly_rent": 25000,
+      "rent_due_day": 5,
+      "security_amount": 50000,
+      "security_paid": 50000,
+      "security_status": "PAID",
+      "move_in_date": "2026-08-26",
+      "lease_start_date": "2026-08-26",
+      "lease_end_date": null,
+      "annual_increase_pct": 10,
+      "status": "ACTIVE",
+      "notes": null,
+      "created_at": "2026-08-26T23:25:42.792Z"
     }
   ],
-  connections: [],
-  connection_unit_mappings: [],
-  bills: [],
-  payments: [],
-  expenses: [],
-  complaints: [],
-  complaint_expenses: []
+  "connections": [
+    {
+      "id": 30,
+      "name": "Unit #1787786725373 Meter",
+      "tenant": "Unit #1787786725373",
+      "reference_number": "15142165162900",
+      "meter_number": null,
+      "active": true
+    }
+  ],
+  "connection_unit_mappings": [
+    {
+      "id": 1787786773246,
+      "connection_id": 30,
+      "unit_id": "1787786725373",
+      "split_type": "EQUAL",
+      "split_value": 100,
+      "notes": "Dedicated 1-to-1 meter connection"
+    }
+  ],
+  "bills": [
+    {
+      "id": 1787786773264,
+      "connection_id": 30,
+      "billing_month": "2026-08-01",
+      "issue_date": "2026-08-26",
+      "due_date": "2026-09-09",
+      "bill_amount": 5400,
+      "units_consumed": 165,
+      "status": "unpaid"
+    }
+  ],
+  "payments": [],
+  "expenses": [],
+  "complaints": [],
+  "complaint_expenses": []
 }
