@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     0
   );
 
-  const totalUnitsCount = units.length || 22;
+  const totalUnitsCount = units.length;
   const occupiedUnitsCount = units.filter((u) => u.status === "OCCUPIED").length;
   const vacantUnitsCount = totalUnitsCount - occupiedUnitsCount;
   const occupancyPct = totalUnitsCount > 0 ? Math.round((occupiedUnitsCount / totalUnitsCount) * 100) : 0;
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
 
   const floorsList = plaza?.floors && plaza.floors.length > 0
     ? plaza.floors
-    : ["Residential Flats", "1st Floor", "Ground Floor", "Basement"];
+    : Array.from(new Set(units.map((u) => u.floor).filter(Boolean)));
 
   const unpaidBillsCount = connections.filter((c) => c.latest_bill && c.latest_bill.status !== "paid").length;
 

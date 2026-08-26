@@ -51,10 +51,10 @@ export interface UnitElectricitySetup {
 
 let dynamicPlazaMemory: PlazaItem = {
   id: 1,
-  name: "Main Commercial Plaza",
-  address: "Islamabad, Pakistan",
-  description: "Commercial building with shops and rentable rooms.",
-  floors: ["Basement", "Ground Floor", "1st Floor", "Residential Flats"],
+  name: "My Commercial Plaza",
+  address: "",
+  description: "",
+  floors: [],
   active: true,
 };
 
@@ -122,27 +122,25 @@ export async function resetAllPlazaData(options?: {
   resetElectricityMemory();
 
   // 3. Update plaza profile if options provided
-  if (options?.name || options?.floors) {
-    dynamicPlazaMemory = {
-      id: plaza.id,
-      name: options.name?.trim() || "Main Commercial Plaza",
-      address: options.address?.trim() || "Islamabad, Pakistan",
-      description: "Commercial building with shops and rentable rooms.",
-      floors: options.floors && options.floors.length > 0 ? options.floors : ["Basement", "Ground Floor", "1st Floor", "Residential Flats"],
-      active: true,
-    };
+  dynamicPlazaMemory = {
+    id: plaza.id,
+    name: options?.name?.trim() || "My Commercial Plaza",
+    address: options?.address?.trim() || "",
+    description: "",
+    floors: options?.floors || [],
+    active: true,
+  };
 
-    try {
-      await supabase.from("plazas").upsert({
-        id: plaza.id,
-        name: dynamicPlazaMemory.name,
-        location: dynamicPlazaMemory.address,
-        description: dynamicPlazaMemory.description,
-        floors: dynamicPlazaMemory.floors,
-        active: true,
-      });
-    } catch {}
-  }
+  try {
+    await supabase.from("plazas").upsert({
+      id: plaza.id,
+      name: dynamicPlazaMemory.name,
+      location: dynamicPlazaMemory.address,
+      description: dynamicPlazaMemory.description,
+      floors: dynamicPlazaMemory.floors,
+      active: true,
+    });
+  } catch {}
 }
 
 /**
@@ -197,7 +195,7 @@ export async function getPrimaryPlaza(): Promise<PlazaItem> {
     if (!error && plaza) {
       return {
         ...plaza,
-        floors: plaza.floors || dynamicPlazaMemory.floors || ["Basement", "Ground Floor", "1st Floor", "Residential Flats"],
+        floors: plaza.floors || dynamicPlazaMemory.floors || [],
       };
     }
   } catch {

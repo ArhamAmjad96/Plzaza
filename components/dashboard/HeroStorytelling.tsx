@@ -107,7 +107,7 @@ export default function HeroStorytelling({
                       SPATIAL OVERVIEW
                     </span>
                     <h3 className="text-xl font-medium text-[#17211D]">
-                      {occupiedCount} of {totalUnits || 22} Spaces Occupied
+                      {occupiedCount} of {totalUnits} Spaces Occupied
                     </h3>
                     <p className="text-xs text-[#58655E] leading-relaxed">
                       Hover and move your cursor over the building model to inspect

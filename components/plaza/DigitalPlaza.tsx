@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import Link from "next/link";
 import { UnitItem } from "@/lib/units/service";
-import { Zap, Wrench, Building2, Eye } from "lucide-react";
+import { Zap, Wrench, Building2, Sliders, ArrowRight } from "lucide-react";
 
 export interface DigitalPlazaProps {
   floors?: string[];
@@ -19,7 +20,7 @@ export interface DigitalPlazaProps {
 }
 
 export default function DigitalPlaza({
-  floors = ["Residential Flats", "1st Floor", "Ground Floor", "Basement"],
+  floors = [],
   units = [],
   activeFloor,
   onSelectFloor,
@@ -35,13 +36,19 @@ export default function DigitalPlaza({
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [hoveredFloor, setHoveredFloor] = useState<string | null>(null);
 
-  // Group units by floor
-  const floorMap = floors.map((floor) => {
+  // Derive active floors strictly from configured plaza floors or existing units
+  const activeFloorsList: string[] =
+    floors.length > 0
+      ? floors
+      : Array.from(new Set(units.map((u) => u.floor).filter(Boolean)));
+
+  // Group units strictly by floor
+  const floorMap = activeFloorsList.map((floor) => {
     const floorUnits = units.filter(
-      (u) => (u.floor || "").toLowerCase() === floor.toLowerCase()
+      (u) => (u.floor || "").toLowerCase().trim() === floor.toLowerCase().trim()
     );
     const occupied = floorUnits.filter((u) => u.status === "OCCUPIED").length;
-    const total = floorUnits.length || 4;
+    const total = floorUnits.length;
     return {
       floor,
       units: floorUnits,
@@ -63,6 +70,35 @@ export default function DigitalPlaza({
 
   function handleMouseLeave() {
     setTilt({ x: 0, y: 0 });
+  }
+
+  // If no floors or units are configured yet (clean plaza)
+  if (activeFloorsList.length === 0 && units.length === 0) {
+    return (
+      <div className={`p-8 sm:p-10 rounded-3xl border border-[#CBD4BC] bg-[#FAF6F0]/90 backdrop-blur-xs text-center space-y-4 shadow-xs ${className}`}>
+        <div className="mx-auto w-12 h-12 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] flex items-center justify-center text-[#17211D]">
+          <Building2 size={22} />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-base font-semibold text-[#17211D]">
+            No Building Levels Configured
+          </h3>
+          <p className="text-xs text-[#58655E] max-w-md mx-auto leading-relaxed">
+            Your plaza is currently clean with zero floors. Use the Setup Wizard to define your floors (e.g. Basement only, Ground, etc.) and physical units.
+          </p>
+        </div>
+        <div className="pt-2">
+          <Link
+            href="/settings"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition shadow-xs"
+          >
+            <Sliders size={13} />
+            <span>Configure Plaza in Settings</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -103,7 +139,7 @@ export default function DigitalPlaza({
           )}
         </div>
 
-        {/* Floor Stacks */}
+        {/* Floor Stacks (Only the floors that actually exist) */}
         <div className={`space-y-${separated ? "6" : "2.5"} transition-all duration-700`}>
           {floorMap.map((item, idx) => {
             const isFocus =
@@ -161,54 +197,45 @@ export default function DigitalPlaza({
 
                 {/* Units Bay Architecture Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3">
-                  {item.units.length > 0
-                    ? item.units.map((u) => {
-                        const isVacant = u.status === "VACANT";
-                        return (
-                          <div
-                            key={u.id}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (onSelectUnit) onSelectUnit(u);
-                            }}
-                            className={`p-2.5 rounded-xl border text-left transition-all ${
-                              isVacant
-                                ? "border-[#FF704D]/60 bg-[#FFF0EB] text-[#FF704D] hover:border-[#FF704D]"
-                                : "border-[#CBD4BC] bg-[#FAF6F0] text-[#17211D] hover:border-[#8FA66B]"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-mono text-xs font-semibold">
-                                {u.unit_number || u.unit_name.split(" ").slice(-1)[0]}
-                              </span>
-                              <div
-                                className={`h-2 w-2 rounded-full ${
-                                  isVacant
-                                    ? "bg-[#FF704D] animate-pulse"
-                                    : "bg-[#8FA66B]"
-                                }`}
-                              />
-                            </div>
-                            <p className="text-[10px] truncate mt-1 text-[#58655E]">
-                              {isVacant ? "Vacant Space" : "Active Tenant"}
-                            </p>
-                          </div>
-                        );
-                      })
-                    : Array.from({ length: 4 }).map((_, i) => (
+                  {item.units.length > 0 ? (
+                    item.units.map((u) => {
+                      const isVacant = u.status === "VACANT";
+                      return (
                         <div
-                          key={i}
-                          className="p-2.5 rounded-xl border border-[#CBD4BC]/60 bg-[#DDE4CF]/50 text-left"
+                          key={u.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onSelectUnit) onSelectUnit(u);
+                          }}
+                          className={`p-2.5 rounded-xl border text-left transition-all ${
+                            isVacant
+                              ? "border-[#D9C4AC] bg-[#FAF6F0] text-[#58655E] hover:border-[#FF704D]"
+                              : "border-[#CBD4BC] bg-[#FAF6F0] text-[#17211D] hover:border-[#8FA66B]"
+                          }`}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="font-mono text-xs text-[#58655E]">
-                              #{i + 1}
+                            <span className="font-mono text-xs font-semibold text-[#17211D]">
+                              {u.unit_number || u.unit_name}
                             </span>
-                            <div className="h-2 w-2 rounded-full bg-[#8FA66B]" />
+                            <div
+                              className={`h-2 w-2 rounded-full ${
+                                isVacant
+                                  ? "bg-[#D9C4AC]"
+                                  : "bg-[#8FA66B]"
+                              }`}
+                            />
                           </div>
-                          <p className="text-[10px] text-[#58655E] mt-1">Occupied</p>
+                          <p className="text-[10px] truncate mt-1 text-[#58655E]">
+                            {isVacant ? "Vacant Space" : "Active Tenant"}
+                          </p>
                         </div>
-                      ))}
+                      );
+                    })
+                  ) : (
+                    <div className="col-span-full py-2 text-center text-[11px] text-[#58655E] italic">
+                      No units configured on this floor yet.
+                    </div>
+                  )}
                 </div>
               </div>
             );
