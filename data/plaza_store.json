@@ -1,151 +1,19 @@
 {
   "plaza": {
     "id": 1,
-    "name": "AL REHMAN PLAZA",
-    "address": "NEW CITY PHASE 2",
+    "name": "",
+    "address": "",
     "description": "",
-    "floors": [
-      "Ground Floor"
-    ],
-    "active": true
+    "floors": [],
+    "active": false
   },
-  "units": [
-    {
-      "id": 1787869296313,
-      "plaza_id": 1,
-      "unit_number": "G-01",
-      "unit_name": "Ground Floor Shop G-01",
-      "unit_type": "SHOP",
-      "floor": "Ground Floor",
-      "default_monthly_rent": 25000,
-      "default_security_amount": 50000,
-      "default_rent_due_day": 5,
-      "status": "OCCUPIED",
-      "created_at": "2026-08-27T22:21:36.313Z",
-      "reference_number": "15142165162900",
-      "meter_number": ""
-    },
-    {
-      "id": 1787869296314,
-      "plaza_id": 1,
-      "unit_number": "G-02",
-      "unit_name": "Ground Floor Shop G-02",
-      "unit_type": "SHOP",
-      "floor": "Ground Floor",
-      "default_monthly_rent": 25000,
-      "default_security_amount": 50000,
-      "default_rent_due_day": 5,
-      "status": "VACANT",
-      "created_at": "2026-08-27T22:21:36.562Z"
-    },
-    {
-      "id": 1787869296315,
-      "plaza_id": 1,
-      "unit_number": "G-03",
-      "unit_name": "Ground Floor Shop G-03",
-      "unit_type": "SHOP",
-      "floor": "Ground Floor",
-      "default_monthly_rent": 25000,
-      "default_security_amount": 50000,
-      "default_rent_due_day": 5,
-      "status": "VACANT",
-      "created_at": "2026-08-27T22:21:36.764Z"
-    },
-    {
-      "id": 1787869296316,
-      "plaza_id": 1,
-      "unit_number": "G-04",
-      "unit_name": "Ground Floor Shop G-04",
-      "unit_type": "SHOP",
-      "floor": "Ground Floor",
-      "default_monthly_rent": 25000,
-      "default_security_amount": 50000,
-      "default_rent_due_day": 5,
-      "status": "VACANT",
-      "created_at": "2026-08-27T22:21:37.284Z"
-    }
-  ],
-  "tenants": [
-    {
-      "id": 1787869353372,
-      "plaza_id": 1,
-      "full_name": "Arham",
-      "phone": "9595959",
-      "cnic": "8958588",
-      "emergency_contact": null,
-      "status": "ACTIVE",
-      "notes": null,
-      "created_at": "2026-08-27T22:22:33.372Z"
-    }
-  ],
-  "leases": [
-    {
-      "id": 1787869353373,
-      "plaza_id": 1,
-      "tenant_id": 1787869353372,
-      "unit_id": "1787869296313",
-      "monthly_rent": 25000,
-      "rent_due_day": 10,
-      "security_amount": 50000,
-      "security_paid": 50000,
-      "security_status": "PAID",
-      "move_in_date": "2026-08-27",
-      "lease_start_date": "2026-08-27",
-      "lease_end_date": null,
-      "annual_increase_pct": 10,
-      "status": "ACTIVE",
-      "notes": null,
-      "created_at": "2026-08-27T22:22:33.372Z"
-    }
-  ],
-  "connections": [
-    {
-      "id": 31,
-      "name": "Unit #1787869296313 Meter",
-      "tenant": "Unit #1787869296313",
-      "reference_number": "15142165162900",
-      "meter_number": null,
-      "active": true
-    }
-  ],
-  "connection_unit_mappings": [
-    {
-      "id": 1787869547368,
-      "connection_id": 31,
-      "unit_id": "1787869296313",
-      "split_type": "EQUAL",
-      "split_value": 100,
-      "notes": "Dedicated 1-to-1 meter connection"
-    }
-  ],
-  "bills": [
-    {
-      "id": 1787869547384,
-      "connection_id": 31,
-      "billing_month": "2026-08-01",
-      "issue_date": "2026-08-27",
-      "due_date": "2026-09-10",
-      "bill_amount": 5400,
-      "units_consumed": 165,
-      "status": "unpaid"
-    }
-  ],
-  "payments": [
-    {
-      "id": 1787870288371,
-      "connection_id": 1787869296313,
-      "tenant_id": null,
-      "lease_id": null,
-      "payment_type": "RENT",
-      "amount": 30400,
-      "payment_date": "2026-08-27",
-      "payment_method": "CASH",
-      "transaction_reference": null,
-      "receipt_number": "RCP-2608-9593",
-      "notes": null,
-      "created_at": "2026-08-27T22:38:08.371Z"
-    }
-  ],
+  "units": [],
+  "tenants": [],
+  "leases": [],
+  "connections": [],
+  "connection_unit_mappings": [],
+  "bills": [],
+  "payments": [],
   "expenses": [],
   "complaints": [],
   "complaint_expenses": [],

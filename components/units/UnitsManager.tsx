@@ -10,7 +10,6 @@ import ConnectMeterModal from "./ConnectMeterModal";
 import AddTenantModal from "@/components/tenants/AddTenantModal";
 import StatusBadge from "@/components/ui/StatusBadge";
 import FloorNavigator from "@/components/ui/FloorNavigator";
-import DigitalPlaza from "@/components/plaza/DigitalPlaza";
 import EmptyState from "@/components/ui/EmptyState";
 import {
   Building2,
@@ -149,7 +148,7 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
 
       {/* ─── Grid with Vertical Floor Navigator & Floor Cards ─── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Side: Vertical Floor Navigator & Digital Plaza */}
+        {/* Left Side: Vertical Floor Navigator */}
         <div className="lg:col-span-3 space-y-5 sticky top-20">
           <FloorNavigator
             floors={floorKeys}
@@ -157,19 +156,6 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
             onSelectFloor={(f) => setSelectedFloor(f)}
             unitCountsByFloor={unitCountsByFloor}
           />
-
-          <div className="hidden lg:block p-5 rounded-3xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-3.5 shadow-xs">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#58655E]">
-              BUILDING ELEVATION
-            </span>
-            <DigitalPlaza
-              floors={floorKeys}
-              units={units}
-              activeFloor={selectedFloor === "ALL" ? null : selectedFloor}
-              interactive={false}
-              mode="ELEVATION"
-            />
-          </div>
         </div>
 
         {/* Right Side: Floor-Grouped Units List */}
