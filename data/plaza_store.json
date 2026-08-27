@@ -1,8 +1,8 @@
 {
   "plaza": {
     "id": 1,
-    "name": "adad",
-    "address": "adada",
+    "name": "AL REHMAN PLAZA",
+    "address": "NEW CITY PHASE 2",
     "description": "",
     "floors": [
       "Ground Floor"
@@ -11,7 +11,7 @@
   },
   "units": [
     {
-      "id": 1787786725373,
+      "id": 1787869296313,
       "plaza_id": 1,
       "unit_number": "G-01",
       "unit_name": "Ground Floor Shop G-01",
@@ -21,12 +21,12 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "OCCUPIED",
-      "created_at": "2026-08-26T23:25:25.373Z",
+      "created_at": "2026-08-27T22:21:36.313Z",
       "reference_number": "15142165162900",
       "meter_number": ""
     },
     {
-      "id": 1787786725374,
+      "id": 1787869296314,
       "plaza_id": 1,
       "unit_number": "G-02",
       "unit_name": "Ground Floor Shop G-02",
@@ -36,10 +36,10 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "VACANT",
-      "created_at": "2026-08-26T23:25:25.644Z"
+      "created_at": "2026-08-27T22:21:36.562Z"
     },
     {
-      "id": 1787786725375,
+      "id": 1787869296315,
       "plaza_id": 1,
       "unit_number": "G-03",
       "unit_name": "Ground Floor Shop G-03",
@@ -49,10 +49,10 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "VACANT",
-      "created_at": "2026-08-26T23:25:25.851Z"
+      "created_at": "2026-08-27T22:21:36.764Z"
     },
     {
-      "id": 1787786725376,
+      "id": 1787869296316,
       "plaza_id": 1,
       "unit_number": "G-04",
       "unit_name": "Ground Floor Shop G-04",
@@ -62,47 +62,47 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "VACANT",
-      "created_at": "2026-08-26T23:25:26.043Z"
+      "created_at": "2026-08-27T22:21:37.284Z"
     }
   ],
   "tenants": [
     {
-      "id": 1787786742792,
+      "id": 1787869353372,
       "plaza_id": 1,
       "full_name": "Arham",
-      "phone": "554545445",
-      "cnic": "665656565656",
+      "phone": "9595959",
+      "cnic": "8958588",
       "emergency_contact": null,
       "status": "ACTIVE",
       "notes": null,
-      "created_at": "2026-08-26T23:25:42.792Z"
+      "created_at": "2026-08-27T22:22:33.372Z"
     }
   ],
   "leases": [
     {
-      "id": 1787786742793,
+      "id": 1787869353373,
       "plaza_id": 1,
-      "tenant_id": 1787786742792,
-      "unit_id": "1787786725373",
+      "tenant_id": 1787869353372,
+      "unit_id": "1787869296313",
       "monthly_rent": 25000,
-      "rent_due_day": 5,
+      "rent_due_day": 10,
       "security_amount": 50000,
       "security_paid": 50000,
       "security_status": "PAID",
-      "move_in_date": "2026-08-26",
-      "lease_start_date": "2026-08-26",
+      "move_in_date": "2026-08-27",
+      "lease_start_date": "2026-08-27",
       "lease_end_date": null,
       "annual_increase_pct": 10,
       "status": "ACTIVE",
       "notes": null,
-      "created_at": "2026-08-26T23:25:42.792Z"
+      "created_at": "2026-08-27T22:22:33.372Z"
     }
   ],
   "connections": [
     {
-      "id": 30,
-      "name": "Unit #1787786725373 Meter",
-      "tenant": "Unit #1787786725373",
+      "id": 31,
+      "name": "Unit #1787869296313 Meter",
+      "tenant": "Unit #1787869296313",
       "reference_number": "15142165162900",
       "meter_number": null,
       "active": true
@@ -110,9 +110,9 @@
   ],
   "connection_unit_mappings": [
     {
-      "id": 1787786773246,
-      "connection_id": 30,
-      "unit_id": "1787786725373",
+      "id": 1787869547368,
+      "connection_id": 31,
+      "unit_id": "1787869296313",
       "split_type": "EQUAL",
       "split_value": 100,
       "notes": "Dedicated 1-to-1 meter connection"
@@ -120,11 +120,11 @@
   ],
   "bills": [
     {
-      "id": 1787786773264,
-      "connection_id": 30,
+      "id": 1787869547384,
+      "connection_id": 31,
       "billing_month": "2026-08-01",
-      "issue_date": "2026-08-26",
-      "due_date": "2026-09-09",
+      "issue_date": "2026-08-27",
+      "due_date": "2026-09-10",
       "bill_amount": 5400,
       "units_consumed": 165,
       "status": "unpaid"
@@ -132,34 +132,18 @@
   ],
   "payments": [
     {
-      "id": 1787789751886,
-      "connection_id": 1787786725373,
+      "id": 1787870288371,
+      "connection_id": 1787869296313,
       "tenant_id": null,
       "lease_id": null,
       "payment_type": "RENT",
-      "amount": 5400,
+      "amount": 30400,
       "payment_date": "2026-08-27",
       "payment_method": "CASH",
       "transaction_reference": null,
-      "receipt_number": "RCP-2608-9731",
+      "receipt_number": "RCP-2608-9593",
       "notes": null,
-      "created_at": "2026-08-27T00:15:51.886Z"
-    },
-    {
-      "id": 1787789071559,
-      "connection_id": 1787786725373,
-      "tenant_id": 1787786742792,
-      "lease_id": 1787786742793,
-      "unit_id": 1787786725373,
-      "payment_type": "RENT",
-      "amount": 25000,
-      "payment_date": "2026-08-26",
-      "billing_month": "2026-08-01",
-      "payment_method": "CASH",
-      "transaction_reference": null,
-      "receipt_number": "RCP-2608-5192",
-      "notes": null,
-      "created_at": "2026-08-26T23:41:37.455Z"
+      "created_at": "2026-08-27T22:38:08.371Z"
     }
   ],
   "expenses": [],
@@ -167,12 +151,62 @@
   "complaint_expenses": [],
   "logs": [
     {
+      "id": 1787870289157,
+      "category": "PAYMENTS",
+      "action": "PAYMENT_RECORDED",
+      "title": "Payment Received",
+      "description": "Received Rs. 30,400 for RENT via CASH [Receipt #RCP-2608-9593].",
+      "metadata": {
+        "amount": 30400,
+        "paymentType": "RENT",
+        "paymentMethod": "CASH",
+        "receiptNumber": "RCP-2608-9593",
+        "connectionId": 1787869296313,
+        "tenantId": null,
+        "billingMonth": "2026-08-01"
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-27T22:38:08.372Z"
+    },
+    {
+      "id": 1787869354472,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded Arham for unit #1787869296313 at monthly rent Rs. 25000.",
+      "metadata": {
+        "tenantId": 1787869353372,
+        "tenantName": "Arham",
+        "unitId": "1787869296313",
+        "rent": 25000
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-27T22:22:34.263Z"
+    },
+    {
+      "id": 1787869298531,
+      "category": "PLAZA",
+      "action": "PLAZA_REBUILT",
+      "title": "Plaza Rebuilt & Configured",
+      "description": "Configured 4 units for Plaza.",
+      "metadata": {
+        "unitCount": 4,
+        "plazaName": ""
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-27T22:21:37.773Z"
+    },
+    {
       "id": 1787791000001,
       "category": "PAYMENTS",
       "action": "PAYMENT_RECORDED",
       "title": "Payment Received",
       "description": "Received Rs. 25,000 for Monthly Rent via Cash from Arham (Receipt #RCP-2608-5192).",
-      "metadata": { "amount": 25000, "tenantName": "Arham", "unit": "G-01" },
+      "metadata": {
+        "amount": 25000,
+        "tenantName": "Arham",
+        "unit": "G-01"
+      },
       "actor": "Manager",
       "created_at": "2026-08-27T05:10:00.000Z"
     },
@@ -182,7 +216,10 @@
       "action": "METER_CONNECTED",
       "title": "Electricity Meter Attached",
       "description": "Attached 14-digit reference #15142165162900 to Ground Floor Shop G-01.",
-      "metadata": { "referenceNumber": "15142165162900", "unit": "G-01" },
+      "metadata": {
+        "referenceNumber": "15142165162900",
+        "unit": "G-01"
+      },
       "actor": "Manager",
       "created_at": "2026-08-27T04:45:00.000Z"
     },
@@ -192,7 +229,11 @@
       "action": "TENANT_ONBOARDED",
       "title": "New Tenant Onboarded",
       "description": "Onboarded tenant Arham to Ground Floor Shop G-01 with monthly rent of Rs. 25,000.",
-      "metadata": { "tenantName": "Arham", "unit": "G-01", "rent": 25000 },
+      "metadata": {
+        "tenantName": "Arham",
+        "unit": "G-01",
+        "rent": 25000
+      },
       "actor": "Manager",
       "created_at": "2026-08-27T04:25:00.000Z"
     },
@@ -202,7 +243,10 @@
       "action": "UNIT_CREATED",
       "title": "Units Created",
       "description": "Created Ground Floor units G-01, G-02, G-03, G-04.",
-      "metadata": { "unitCount": 4, "floor": "Ground Floor" },
+      "metadata": {
+        "unitCount": 4,
+        "floor": "Ground Floor"
+      },
       "actor": "Manager",
       "created_at": "2026-08-27T04:20:00.000Z"
     },
@@ -212,12 +256,46 @@
       "action": "PLAZA_CONFIGURED",
       "title": "Plaza Setup Completed",
       "description": "Initialized plaza setup with customized floor layouts and pricing tiers.",
-      "metadata": { "floors": ["Ground Floor"] },
+      "metadata": {
+        "floors": [
+          "Ground Floor"
+        ]
+      },
       "actor": "Manager",
       "created_at": "2026-08-27T04:00:00.000Z"
     }
   ],
   "notifications": [
+    {
+      "id": "notif-1787870289157",
+      "log_id": 1787870289157,
+      "category": "PAYMENTS",
+      "title": "Payment Received",
+      "message": "Received Rs. 30,400 for RENT via CASH [Receipt #RCP-2608-9593].",
+      "href": "/rent",
+      "read": true,
+      "created_at": "2026-08-27T22:38:08.372Z"
+    },
+    {
+      "id": "notif-1787869354472",
+      "log_id": 1787869354472,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded Arham for unit #1787869296313 at monthly rent Rs. 25000.",
+      "href": "/tenants",
+      "read": true,
+      "created_at": "2026-08-27T22:22:34.263Z"
+    },
+    {
+      "id": "notif-1787869298531",
+      "log_id": 1787869298531,
+      "category": "PLAZA",
+      "title": "Plaza Rebuilt & Configured",
+      "message": "Configured 4 units for Plaza.",
+      "href": "/units",
+      "read": true,
+      "created_at": "2026-08-27T22:21:37.773Z"
+    },
     {
       "id": "notif-1787791000001",
       "log_id": 1787791000001,
@@ -225,7 +303,7 @@
       "title": "Payment Received",
       "message": "Received Rs. 25,000 for Monthly Rent from Arham.",
       "href": "/rent",
-      "read": false,
+      "read": true,
       "created_at": "2026-08-27T05:10:00.000Z"
     },
     {
@@ -235,7 +313,7 @@
       "title": "Electricity Meter Attached",
       "message": "Attached reference #15142165162900 to Shop G-01.",
       "href": "/connections",
-      "read": false,
+      "read": true,
       "created_at": "2026-08-27T04:45:00.000Z"
     },
     {
@@ -245,7 +323,7 @@
       "title": "New Tenant Onboarded",
       "message": "Onboarded tenant Arham to Shop G-01.",
       "href": "/tenants",
-      "read": false,
+      "read": true,
       "created_at": "2026-08-27T04:25:00.000Z"
     }
   ]

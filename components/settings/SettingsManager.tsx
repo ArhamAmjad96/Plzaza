@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlazaItem } from "@/lib/units/service";
@@ -16,6 +16,8 @@ import {
   Trash2,
   AlertTriangle,
   RotateCcw,
+  X,
+  CheckCircle2,
 } from "lucide-react";
 
 interface SettingsManagerProps {
@@ -31,7 +33,13 @@ export default function SettingsManager({
 }: SettingsManagerProps) {
   const router = useRouter();
   const [showSetupWizard, setShowSetupWizard] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [confirmInput, setConfirmInput] = useState("");
   const [resetting, setResetting] = useState(false);
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   const isConfigured = Boolean(
     plaza.name &&
@@ -41,22 +49,52 @@ export default function SettingsManager({
     plaza.active !== false
   );
 
-  async function handleResetPlaza() {
-    const confirmName = window.prompt(
-      `Type "RESET" to confirm wiping all previous tenants, rent ledgers, electricity dues, and maintenance records:`
-    );
+  // ESC key listener for modal
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && showResetModal && !resetting) {
+        setShowResetModal(false);
+        setConfirmInput("");
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showResetModal, resetting]);
 
-    if (confirmName !== "RESET") {
+  function handleOpenResetModal() {
+    setConfirmInput("");
+    setNotification(null);
+    setShowResetModal(true);
+  }
+
+  function handleCloseResetModal() {
+    if (resetting) return;
+    setShowResetModal(false);
+    setConfirmInput("");
+  }
+
+  async function handleConfirmReset() {
+    if (confirmInput.trim() !== "RESET" || resetting) {
       return;
     }
 
     setResetting(true);
+    setNotification(null);
+
     try {
       await resetPlazaAction();
+      setShowResetModal(false);
+      setConfirmInput("");
+      setNotification({
+        type: "success",
+        message: "Plaza has been completely reset. All previous units, leases, and records have been cleared.",
+      });
       router.refresh();
-      alert("✓ Plaza completely reset! All previous records and dues have been cleared.");
     } catch {
-      alert("Failed to reset plaza data. Please check connection.");
+      setNotification({
+        type: "error",
+        message: "Failed to reset plaza data. Please check your connection and try again.",
+      });
     } finally {
       setResetting(false);
     }
@@ -64,6 +102,34 @@ export default function SettingsManager({
 
   return (
     <div className="space-y-8">
+      {/* ─── Notification Banner ─── */}
+      {notification && (
+        <div
+          className={`p-4 rounded-2xl border flex items-center justify-between gap-3 shadow-xs animate-in fade-in duration-150 ${
+            notification.type === "success"
+              ? "bg-[#E8EDD9] border-[#CBD4BC] text-[#17211D]"
+              : "bg-[#FAECE9] border-[#EAC4BE] text-[#8E3E33]"
+          }`}
+        >
+          <div className="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
+            {notification.type === "success" ? (
+              <CheckCircle2 size={18} className="text-[#2D5A27] shrink-0" />
+            ) : (
+              <AlertTriangle size={18} className="text-[#8E3E33] shrink-0" />
+            )}
+            <span>{notification.message}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setNotification(null)}
+            className="p-1 rounded-lg hover:bg-black/5 transition text-[#58655E]"
+            aria-label="Dismiss notification"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
+
       {/* ─── Header ─── */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-4 border-b border-[#CBD4BC]">
         <div>
@@ -81,18 +147,18 @@ export default function SettingsManager({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={handleResetPlaza}
+            onClick={handleOpenResetModal}
             disabled={resetting}
-            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-[#8E3E33] hover:bg-[#FAECE9] text-xs font-medium transition shadow-xs disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-[#8E3E33] hover:bg-[#FAECE9] text-xs font-medium transition shadow-xs disabled:opacity-50 cursor-pointer"
           >
             <RotateCcw size={14} />
-            <span>{resetting ? "Resetting..." : "Reset All Plaza Data"}</span>
+            <span>Reset All Plaza Data</span>
           </button>
 
           <button
             type="button"
             onClick={() => setShowSetupWizard(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition shadow-xs"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#17211D] text-[#F4F7F2] text-xs font-medium hover:bg-[#24332D] transition shadow-xs cursor-pointer"
           >
             <Sliders size={14} />
             <span>Launch Setup Wizard</span>
@@ -149,7 +215,7 @@ export default function SettingsManager({
             <button
               type="button"
               onClick={() => setShowSetupWizard(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-xs font-semibold hover:bg-[#24332D] transition shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-xs font-semibold hover:bg-[#24332D] transition shadow-md cursor-pointer"
             >
               <Sliders size={15} />
               <span>Launch Plaza Setup Wizard</span>
@@ -212,14 +278,112 @@ export default function SettingsManager({
         </p>
         <button
           type="button"
-          onClick={handleResetPlaza}
+          onClick={handleOpenResetModal}
           disabled={resetting}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8E3E33] text-white text-xs font-medium hover:bg-[#723128] transition disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#8E3E33] text-white text-xs font-medium hover:bg-[#723128] transition disabled:opacity-50 cursor-pointer"
         >
           <Trash2 size={13} />
           <span>{resetting ? "Resetting Everything..." : "Wipe & Start Fresh"}</span>
         </button>
       </section>
+
+      {/* ─── In-App Reset Confirmation Modal ─── */}
+      {showResetModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
+          onClick={handleCloseResetModal}
+        >
+          <div
+            className="w-full max-w-md bg-[#FAF6F0] rounded-3xl border border-[#CBD4BC] shadow-2xl p-6 sm:p-8 space-y-6 text-[#17211D] animate-in zoom-in-95 duration-150 relative"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reset-modal-title"
+          >
+            {/* Close Icon */}
+            <button
+              type="button"
+              onClick={handleCloseResetModal}
+              disabled={resetting}
+              className="absolute top-5 right-5 p-1.5 rounded-xl hover:bg-[#E8EDD9] text-[#58655E] hover:text-[#17211D] transition disabled:opacity-50 cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Modal Header & Icon */}
+            <div className="flex items-start gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-[#FAECE9] border border-[#EAC4BE] flex items-center justify-center text-[#8E3E33] shrink-0">
+                <AlertTriangle size={24} />
+              </div>
+              <div className="space-y-1 pr-6">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8E3E33]">
+                  DESTRUCTIVE ACTION
+                </span>
+                <h2 id="reset-modal-title" className="text-xl font-bold text-[#17211D] leading-tight">
+                  Reset Plaza Setup?
+                </h2>
+              </div>
+            </div>
+
+            {/* Description & Destructive Warning */}
+            <div className="space-y-3">
+              <p className="text-xs sm:text-sm text-[#58655E] leading-relaxed">
+                This will permanently remove the current plaza setup and allow you to start fresh. This action cannot be undone.
+              </p>
+
+              <div className="p-3.5 rounded-2xl bg-[#FAECE9] border border-[#EAC4BE] text-xs text-[#8E3E33] space-y-1 leading-relaxed">
+                <p className="font-bold flex items-center gap-1.5">
+                  <AlertTriangle size={14} className="shrink-0" />
+                  <span>Permanent Data Wipe Warning:</span>
+                </p>
+                <p className="text-[11.5px] text-[#8E3E33]/90">
+                  All physical units, tenant profiles, lease contracts, rent ledger dues, electricity meters, and maintenance complaints will be erased.
+                </p>
+              </div>
+            </div>
+
+            {/* Safety Confirmation Input */}
+            <div className="space-y-2">
+              <label htmlFor="confirm-reset-input" className="block text-xs font-semibold text-[#17211D]">
+                To confirm, type <span className="font-mono font-bold text-[#8E3E33] bg-[#FAECE9] px-1.5 py-0.5 rounded-md border border-[#EAC4BE]">RESET</span> below:
+              </label>
+              <input
+                id="confirm-reset-input"
+                type="text"
+                value={confirmInput}
+                onChange={(e) => setConfirmInput(e.target.value)}
+                placeholder="Type RESET to confirm"
+                disabled={resetting}
+                autoFocus
+                className="w-full px-4 py-2.5 rounded-xl border border-[#CBD4BC] bg-white text-sm font-mono text-[#17211D] placeholder-[#85918A] focus:outline-hidden focus:ring-2 focus:ring-[#8E3E33] transition shadow-xs"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleCloseResetModal}
+                disabled={resetting}
+                className="flex-1 py-2.5 px-4 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] hover:bg-[#E8EDD9] text-xs sm:text-sm font-semibold text-[#58655E] hover:text-[#17211D] transition shadow-xs disabled:opacity-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleConfirmReset}
+                disabled={confirmInput.trim() !== "RESET" || resetting}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-[#8E3E33] hover:bg-[#723128] text-white text-xs sm:text-sm font-semibold transition shadow-xs disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Trash2 size={15} />
+                <span>{resetting ? "Resetting..." : "Yes, Wipe & Start Fresh"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Setup Wizard Modal */}
       {showSetupWizard && (
