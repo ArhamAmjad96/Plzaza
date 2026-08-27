@@ -13,6 +13,7 @@ import {
   Wrench,
   Sliders,
   Sparkles,
+  History,
 } from "lucide-react";
 
 interface NavGroup {
@@ -60,6 +61,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "SYSTEM",
     items: [
+      { name: "Activity Logs", href: "/logs", icon: History },
       { name: "Plaza Setup", href: "/settings", icon: Sliders },
     ],
   },

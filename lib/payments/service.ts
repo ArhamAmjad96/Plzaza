@@ -160,6 +160,24 @@ export async function recordPaymentTransaction(params: {
     } catch {}
   }
 
+  const { logActivity } = await import("@/lib/logs/service");
+  logActivity({
+    category: "PAYMENTS",
+    action: "PAYMENT_RECORDED",
+    title: "Payment Received",
+    description: `Received Rs. ${amount.toLocaleString()} for ${paymentType} via ${paymentMethod} [Receipt #${receiptNumber}].`,
+    metadata: {
+      amount,
+      paymentType,
+      paymentMethod,
+      receiptNumber,
+      connectionId,
+      tenantId,
+      billingMonth,
+    },
+    href: "/rent",
+  });
+
   return finalPayment;
 }
 

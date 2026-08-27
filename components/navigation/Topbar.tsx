@@ -2,11 +2,9 @@
 
 import { usePathname } from "next/navigation";
 import { formatBillingMonth } from "@/lib/utils/format";
+import NotificationBell from "./NotificationBell";
 import {
   Calendar,
-  Search,
-  Bell,
-  Sparkles,
   Building2,
 } from "lucide-react";
 
@@ -22,7 +20,7 @@ export default function Topbar() {
     if (pathname.startsWith("/connections")) return "Electricity Meters";
     if (pathname.startsWith("/complaints")) return "Maintenance";
     if (pathname.startsWith("/expenses")) return "Plaza Expenses";
-    if (pathname.startsWith("/reports")) return "Financial Reports";
+    if (pathname.startsWith("/logs")) return "Activity & Audit Logs";
     if (pathname.startsWith("/settings")) return "Plaza Setup";
     return "Property Workspace";
   }
@@ -49,8 +47,11 @@ export default function Topbar() {
           <span>{formatBillingMonth(currentMonth)}</span>
         </div>
 
+        {/* Real-Time Notification Bell */}
+        <NotificationBell />
+
         {/* Manager Avatar */}
-        <div className="h-9 w-9 rounded-2xl bg-[#17211D] text-[#F4F7F2] flex items-center justify-center text-sm font-mono font-bold shadow-xs">
+        <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-[#17211D] text-[#F4F7F2] flex items-center justify-center text-sm font-mono font-bold shadow-xs">
           PM
         </div>
       </div>

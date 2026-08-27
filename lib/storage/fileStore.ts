@@ -17,6 +17,8 @@ export interface PlazaStoreData {
   expenses: any[];
   complaints: any[];
   complaint_expenses: any[];
+  logs: any[];
+  notifications: any[];
 }
 
 const DEFAULT_STORE: PlazaStoreData = {
@@ -38,6 +40,8 @@ const DEFAULT_STORE: PlazaStoreData = {
   expenses: [],
   complaints: [],
   complaint_expenses: [],
+  logs: [],
+  notifications: [],
 };
 
 function getStoragePaths() {

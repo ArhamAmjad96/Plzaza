@@ -5,6 +5,7 @@ import { resetComplaintsMemory } from "@/lib/complaints/service";
 import { resetComplaintExpensesMemory } from "@/lib/complaints/expenses-service";
 import { resetElectricityMemory } from "@/lib/electricity/service";
 import { getStore, updateStore } from "@/lib/storage/fileStore";
+import { logActivity } from "@/lib/logs/service";
 
 export interface UnitItem {
   id: number | string;
@@ -362,6 +363,15 @@ export async function bulkConfigurePlazaUnits(
     s.units = [...s.units, ...created];
   });
 
+  logActivity({
+    category: "PLAZA",
+    action: replaceExisting ? "PLAZA_REBUILT" : "PLAZA_CONFIGURED",
+    title: replaceExisting ? "Plaza Rebuilt & Configured" : "Plaza Units Configured",
+    description: `Configured ${created.length} units for ${activeName || "Plaza"}.`,
+    metadata: { unitCount: created.length, plazaName: activeName },
+    href: "/units",
+  });
+
   return { count: created.length };
 }
 
@@ -528,6 +538,15 @@ export async function createUnit(data: {
     await configureUnitElectricity(createdUnit.id, data.electricity, createdUnit.unit_name);
   }
 
+  logActivity({
+    category: "UNITS",
+    action: "UNIT_CREATED",
+    title: "New Unit Created",
+    description: `Added unit ${createdUnit.unit_number} (${createdUnit.unit_name}) on ${createdUnit.floor}.`,
+    metadata: { unitId: createdUnit.id, unitNumber: createdUnit.unit_number, floor: createdUnit.floor },
+    href: `/units/${createdUnit.unit_number}`,
+  });
+
   return createdUnit;
 }
 
@@ -585,6 +604,16 @@ export async function deleteUnit(id: number | string): Promise<boolean> {
   updateStore((s) => {
     s.units = s.units.filter((u) => u.id.toString() !== id.toString());
   });
+
+  logActivity({
+    category: "UNITS",
+    action: "UNIT_DELETED",
+    title: "Unit Removed",
+    description: `Deleted unit record #${id}.`,
+    metadata: { unitId: id },
+    href: "/units",
+  });
+
   return true;
 }
 

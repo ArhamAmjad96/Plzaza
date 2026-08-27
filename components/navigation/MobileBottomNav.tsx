@@ -15,6 +15,7 @@ import {
   FileBarChart,
   Sliders,
   X,
+  History,
 } from "lucide-react";
 
 export default function MobileBottomNav() {
@@ -32,6 +33,7 @@ export default function MobileBottomNav() {
     { name: "Electricity Meters", href: "/connections", icon: Zap },
     { name: "Maintenance & Repairs", href: "/complaints", icon: Wrench },
     { name: "Plaza Expenses", href: "/expenses", icon: Receipt },
+    { name: "Activity Logs", href: "/logs", icon: History },
     { name: "Plaza Setup Wizard", href: "/settings", icon: Sliders },
   ];
 

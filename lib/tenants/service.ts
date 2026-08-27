@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase/server";
 import { getAllUnits, UnitItem, getPrimaryPlaza, updateUnit } from "@/lib/units/service";
+import { getStore, updateStore } from "@/lib/storage/fileStore";
+import { logActivity } from "@/lib/logs/service";
 
 export interface TenantItem {
   id: number | string;
@@ -317,6 +319,15 @@ export async function createTenantWithLease(data: {
   updateStore((s) => {
     s.tenants = [tenantItem, ...s.tenants.filter((t) => t.id.toString() !== tenantItem.id.toString())];
     s.leases = [leaseItem, ...s.leases.filter((l) => l.id.toString() !== leaseItem.id.toString())];
+  });
+
+  logActivity({
+    category: "TENANTS",
+    action: "TENANT_ONBOARDED",
+    title: "New Tenant Onboarded",
+    description: `Onboarded ${tenantItem.full_name} for unit #${data.unitId} at monthly rent Rs. ${leaseItem.monthly_rent}.`,
+    metadata: { tenantId: tenantItem.id, tenantName: tenantItem.full_name, unitId: data.unitId, rent: leaseItem.monthly_rent },
+    href: `/tenants`,
   });
 
   return { tenant: tenantItem, lease: leaseItem };
