@@ -43,7 +43,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { name: "Rent & Payments", href: "/rent", icon: CreditCard },
       { name: "Expenses", href: "/expenses", icon: Receipt },
-      { name: "Reports", href: "/reports", icon: FileBarChart },
     ],
   },
   {

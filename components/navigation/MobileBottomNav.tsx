@@ -32,7 +32,6 @@ export default function MobileBottomNav() {
     { name: "Electricity Meters", href: "/connections", icon: Zap },
     { name: "Maintenance & Repairs", href: "/complaints", icon: Wrench },
     { name: "Plaza Expenses", href: "/expenses", icon: Receipt },
-    { name: "Financial Reports", href: "/reports", icon: FileBarChart },
     { name: "Plaza Setup Wizard", href: "/settings", icon: Sliders },
   ];
 
