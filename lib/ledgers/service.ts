@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase/server";
 import { getTenantsWithLeases } from "@/lib/tenants/service";
 import { getUnitAllocatedElectricityBill } from "@/lib/electricity/service";
+import { getStore } from "@/lib/storage/fileStore";
 
 export type PaymentStatus = "paid" | "partially_paid" | "unpaid" | "overdue";
 export type IndependentStatus = "PAID" | "PARTIAL" | "UNPAID" | "OVERDUE";
@@ -154,7 +155,13 @@ export async function getMonthlyLedgers(
 
   const activeTenants = tenants.filter((tv) => tv.is_active && tv.unit);
   const connections = connsRes.data || [];
-  const allPayments = paymentsRes.data || [];
+  const store = getStore();
+
+  let allPayments: any[] = store.payments || [];
+  if (paymentsRes.data && paymentsRes.data.length > 0) {
+    allPayments = paymentsRes.data;
+  }
+
   const customRows = customLedgerRowsRes.data || [];
 
   const items: LedgerItem[] = [];
@@ -196,11 +203,21 @@ export async function getMonthlyLedgers(
     const totalPayable = rentAmount + effectiveElec + maintenanceAmount + otherCharges + previousBalance;
 
     // F. Payments recorded
-    const connPayments = allPayments.filter(
-      (p: any) =>
-        (tv.connection_id && p.connection_id?.toString() === tv.connection_id?.toString()) &&
-        p.payment_date?.startsWith(billingMonth.slice(0, 7))
-    );
+    const targetMonthPrefix = billingMonth.slice(0, 7);
+    const connPayments = allPayments.filter((p: any) => {
+      const matchesEntity =
+        (tenant?.id && p.tenant_id?.toString() === tenant.id.toString()) ||
+        (lease?.id && p.lease_id?.toString() === lease.id.toString()) ||
+        (unit?.id && (p.unit_id?.toString() === unit.id.toString() || p.connection_id?.toString() === unit.id.toString())) ||
+        (tv.connection_id && p.connection_id?.toString() === tv.connection_id.toString()) ||
+        (p.tenant_name && p.tenant_name.toLowerCase().trim() === tenant.full_name.toLowerCase().trim());
+
+      if (!matchesEntity) return false;
+
+      const pMonth = p.billing_month ? p.billing_month.slice(0, 7) : (p.payment_date ? p.payment_date.slice(0, 7) : "");
+      return !pMonth || pMonth === targetMonthPrefix;
+    });
+
     const totalPaid = connPayments.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
     const remainingBalance = Math.max(0, totalPayable - totalPaid);
 

@@ -130,7 +130,24 @@
       "status": "unpaid"
     }
   ],
-  "payments": [],
+  "payments": [
+    {
+      "id": 1787789071559,
+      "connection_id": 1787786725373,
+      "tenant_id": 1787786742792,
+      "lease_id": 1787786742793,
+      "unit_id": 1787786725373,
+      "payment_type": "RENT",
+      "amount": 25000,
+      "payment_date": "2026-08-26",
+      "billing_month": "2026-08-01",
+      "payment_method": "CASH",
+      "transaction_reference": null,
+      "receipt_number": "RCP-2608-5192",
+      "notes": null,
+      "created_at": "2026-08-26T23:41:37.455Z"
+    }
+  ],
   "expenses": [],
   "complaints": [],
   "complaint_expenses": []

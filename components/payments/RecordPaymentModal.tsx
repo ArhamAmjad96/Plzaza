@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { recordPaymentAction } from "@/app/rent/actions";
 import { formatPKR, formatBillingMonth } from "@/lib/utils/format";
 import PaymentReceiptModal from "./PaymentReceiptModal";
@@ -47,6 +48,7 @@ export default function RecordPaymentModal({
   remainingAmount,
   onClose,
 }: RecordPaymentModalProps) {
+  const router = useRouter();
   const [amount, setAmount] = useState<string>(remainingAmount > 0 ? remainingAmount.toString() : rentAmount.toString());
   const [paymentType, setPaymentType] = useState<string>("RENT");
   const [paymentMethod, setPaymentMethod] = useState<string>("CASH");
@@ -94,6 +96,7 @@ export default function RecordPaymentModal({
       const result = await recordPaymentAction(formData);
 
       if (result.success) {
+        router.refresh();
         setCreatedReceipt({
           receiptNumber: result.payment?.receipt_number || `REC-${Date.now().toString().slice(-6)}`,
           paymentDate,
@@ -122,7 +125,10 @@ export default function RecordPaymentModal({
     return (
       <PaymentReceiptModal
         {...createdReceipt}
-        onClose={onClose}
+        onClose={() => {
+          router.refresh();
+          onClose();
+        }}
       />
     );
   }
