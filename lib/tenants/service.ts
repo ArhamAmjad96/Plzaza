@@ -57,8 +57,6 @@ export interface TenantStats {
   totalSecurityHeld: number;
 }
 
-import { getStore, updateStore } from "@/lib/storage/fileStore";
-
 export function resetTenantsMemory(): void {
   updateStore((s) => {
     s.tenants = [];

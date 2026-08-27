@@ -1,15 +1,15 @@
-﻿import { supabase } from @/lib/supabase/server;
-import { getStore, updateStore } from @/lib/storage/fileStore;
+import { supabase } from "@/lib/supabase/server";
+import { getStore, updateStore } from "@/lib/storage/fileStore";
 
 export type ActivityCategory =
-  | PLAZA
-  | UNITS
-  | TENANTS
-  | PAYMENTS
-  | ELECTRICITY
-  | MAINTENANCE
-  | EXPENSES
-  | SYSTEM;
+  | "PLAZA"
+  | "UNITS"
+  | "TENANTS"
+  | "PAYMENTS"
+  | "ELECTRICITY"
+  | "MAINTENANCE"
+  | "EXPENSES"
+  | "SYSTEM";
 
 export interface ActivityLogItem {
   id: string | number;
@@ -52,7 +52,7 @@ export async function logActivity(params: {
     title,
     description,
     metadata = null,
-    actor = Manager,
+    actor = "Manager",
     notify = true,
     href,
   } = params;
@@ -71,8 +71,7 @@ export async function logActivity(params: {
 
   const notifItem: NotificationItem | null = notify
     ? {
-        id: 
-otif-,
+        id: `notif-${logItem.id}`,
         log_id: logItem.id,
         category,
         title,
@@ -93,7 +92,7 @@ otif-,
 
   // Also try Supabase if audit table exists
   try {
-    await supabase.from(activity_logs).insert({
+    await supabase.from("activity_logs").insert({
       category: logItem.category,
       action: logItem.action,
       title: logItem.title,
@@ -108,22 +107,22 @@ otif-,
 
 function getCategoryDefaultHref(category: ActivityCategory): string {
   switch (category) {
-    case PLAZA:
-      return /settings;
-    case UNITS:
-      return /units;
-    case TENANTS:
-      return /tenants;
-    case PAYMENTS:
-      return /rent;
-    case ELECTRICITY:
-      return /connections;
-    case MAINTENANCE:
-      return /complaints;
-    case EXPENSES:
-      return /expenses;
+    case "PLAZA":
+      return "/settings";
+    case "UNITS":
+      return "/units";
+    case "TENANTS":
+      return "/tenants";
+    case "PAYMENTS":
+      return "/rent";
+    case "ELECTRICITY":
+      return "/connections";
+    case "MAINTENANCE":
+      return "/complaints";
+    case "EXPENSES":
+      return "/expenses";
     default:
-      return /;
+      return "/";
   }
 }
 
@@ -140,9 +139,9 @@ export async function getActivityLogs(options?: {
 
   try {
     const { data: dbLogs } = await supabase
-      .from(activity_logs)
-      .select(*)
-      .order(created_at, { ascending: false })
+      .from("activity_logs")
+      .select("*")
+      .order("created_at", { ascending: false })
       .limit(100);
 
     if (dbLogs && dbLogs.length > 0) {
@@ -156,7 +155,7 @@ export async function getActivityLogs(options?: {
   } catch {}
 
   // Apply filters
-  if (options?.category && options.category !== ALL) {
+  if (options?.category && options.category !== "ALL") {
     const targetCat = options.category.toUpperCase();
     list = list.filter((l) => l.category.toUpperCase() === targetCat);
   }
