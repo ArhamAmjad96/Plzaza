@@ -21,8 +21,12 @@ export async function createTenantAction(formData: FormData) {
   const leaseStartDate = formData.get("lease_start_date") as string;
   const leaseEndDate = formData.get("lease_end_date") as string;
   const notes = formData.get("notes") as string;
+  const electricityOption = (formData.get("electricity_option") as any) || undefined;
   const referenceNumber = (formData.get("reference_number") as string)?.trim() || null;
   const meterNumber = (formData.get("meter_number") as string)?.trim() || null;
+  const sharedConnectionId = (formData.get("shared_connection_id") as string)?.trim() || null;
+  const splitType = (formData.get("split_type") as any) || undefined;
+  const splitValue = parseFloat(formData.get("split_value") as string) || undefined;
 
   if (!fullName || !unitId) {
     throw new Error("Tenant Full Name and Unit assignment are required.");
@@ -42,8 +46,12 @@ export async function createTenantAction(formData: FormData) {
     leaseStartDate,
     leaseEndDate: leaseEndDate || null,
     notes,
+    electricityOption,
     referenceNumber,
     meterNumber,
+    sharedConnectionId,
+    splitType,
+    splitValue,
   });
 
   revalidatePath("/tenants");

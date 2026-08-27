@@ -221,8 +221,12 @@ export async function createTenantWithLease(data: {
   leaseEndDate?: string | null;
   annualIncreasePct?: number;
   notes?: string | null;
+  electricityOption?: "OWN_METER" | "SHARED_METER" | "NO_METER";
   referenceNumber?: string | null;
   meterNumber?: string | null;
+  sharedConnectionId?: number | string | null;
+  splitType?: "EQUAL" | "PERCENTAGE";
+  splitValue?: number;
 }): Promise<{ tenant: TenantItem; lease: LeaseItem }> {
   const plaza = await getPrimaryPlaza();
   const nextId = Date.now();
@@ -321,11 +325,19 @@ export async function createTenantWithLease(data: {
     s.leases = [leaseItem, ...s.leases.filter((l) => l.id.toString() !== leaseItem.id.toString())];
   });
 
-  // 4. If reference number is provided, automatically connect electricity meter
-  if (data.referenceNumber && data.referenceNumber.trim().length > 0) {
+  // 4. If electricity option is provided, configure electricity connection
+  if (data.electricityOption || data.referenceNumber) {
     try {
-      const { connectUnitMeter } = await import("@/lib/electricity/service");
-      await connectUnitMeter(data.unitId, data.referenceNumber.trim(), data.meterNumber?.trim() || undefined);
+      const { configureUnitElectricity } = await import("@/lib/electricity/service");
+      await configureUnitElectricity({
+        unitId: data.unitId,
+        referenceNumber: data.referenceNumber || undefined,
+        meterNumber: data.meterNumber || undefined,
+        electricityOption: (data.electricityOption as any) || (data.referenceNumber ? "OWN_METER" : "NO_METER"),
+        sharedConnectionId: data.sharedConnectionId || undefined,
+        splitType: data.splitType || undefined,
+        splitValue: data.splitValue || undefined,
+      });
     } catch (e) {
       console.warn("Auto meter connect error during tenant assignment:", e);
     }

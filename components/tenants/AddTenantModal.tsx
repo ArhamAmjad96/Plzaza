@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createTenantAction } from "@/app/tenants/actions";
-import { getAvailableUnitsAction } from "@/app/units/actions";
+import { getAvailableUnitsAction, getExistingConnectionsAction } from "@/app/units/actions";
 import { UnitItem } from "@/lib/units/service";
 import { formatPKR } from "@/lib/utils/format";
 import {
@@ -60,12 +60,18 @@ export default function AddTenantModal({
     initialFound ? initialFound.default_security_amount.toString() : "50000"
   );
 
+  // Electricity State
+  const [electricityOption, setElectricityOption] = useState<"OWN_METER" | "SHARED_METER" | "NO_METER">("OWN_METER");
   const [referenceNumber, setReferenceNumber] = useState(
     (initialFound as any)?.reference_number || ""
   );
   const [meterNumber, setMeterNumber] = useState(
     (initialFound as any)?.meter_number || ""
   );
+  const [sharedConnectionId, setSharedConnectionId] = useState<string>("");
+  const [splitType, setSplitType] = useState<"EQUAL" | "PERCENTAGE">("EQUAL");
+  const [splitValue, setSplitValue] = useState("50");
+  const [connectionsList, setConnectionsList] = useState<Array<{ id: number; name: string; reference_number: string }>>([]);
 
   const [moveInDate, setMoveInDate] = useState(new Date().toISOString().split("T")[0]);
   const [step, setStep] = useState<1 | 2>(1);
@@ -73,19 +79,27 @@ export default function AddTenantModal({
 
   useEffect(() => {
     let isMounted = true;
-    async function loadUnits() {
-      if (initialUnits && initialUnits.length > 0) {
-        if (isMounted) setUnitsList(initialUnits);
-        return;
-      }
+    async function loadData() {
       try {
-        const units = await getAvailableUnitsAction();
-        if (isMounted) setUnitsList(units);
+        if (!initialUnits || initialUnits.length === 0) {
+          const units = await getAvailableUnitsAction();
+          if (isMounted) setUnitsList(units);
+        } else {
+          if (isMounted) setUnitsList(initialUnits);
+        }
+
+        const conns = await getExistingConnectionsAction();
+        if (isMounted) {
+          setConnectionsList(conns);
+          if (conns.length > 0) {
+            setSharedConnectionId(conns[0].id.toString());
+          }
+        }
       } catch (err) {
-        console.error("Failed to load units", err);
+        console.error("Failed to load initial onboarding data", err);
       }
     }
-    loadUnits();
+    loadData();
     return () => {
       isMounted = false;
     };
@@ -102,6 +116,7 @@ export default function AddTenantModal({
       setRentDueDay(found.default_rent_due_day.toString());
       if ((found as any).reference_number) {
         setReferenceNumber((found as any).reference_number);
+        setElectricityOption("OWN_METER");
       }
       if ((found as any).meter_number) {
         setMeterNumber((found as any).meter_number);
@@ -128,8 +143,17 @@ export default function AddTenantModal({
       formData.append("security_amount", securityAmount || "0");
       formData.append("security_paid", securityPaid || "0");
       formData.append("start_date", moveInDate);
-      formData.append("reference_number", referenceNumber.trim());
-      formData.append("meter_number", meterNumber.trim());
+
+      // Electricity Utility Attachment
+      formData.append("electricity_option", electricityOption);
+      if (electricityOption === "OWN_METER") {
+        formData.append("reference_number", referenceNumber.trim());
+        formData.append("meter_number", meterNumber.trim());
+      } else if (electricityOption === "SHARED_METER") {
+        formData.append("shared_connection_id", sharedConnectionId);
+        formData.append("split_type", splitType);
+        formData.append("split_value", splitValue);
+      }
 
       const res = await createTenantAction(formData);
       if (res.success) {
@@ -165,7 +189,7 @@ export default function AddTenantModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-10 w-10 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition"
+            className="h-10 w-10 rounded-full bg-[#E8EDD9] border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] flex items-center justify-center transition cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -189,7 +213,7 @@ export default function AddTenantModal({
               <button
                 type="button"
                 onClick={() => setSelectedUnit(null)}
-                className="text-xs font-bold text-[#FF704D] hover:underline px-3 py-1.5 rounded-xl bg-[#FAF6F0] border border-[#CBD4BC]"
+                className="text-xs font-bold text-[#FF704D] hover:underline px-3 py-1.5 rounded-xl bg-[#FAF6F0] border border-[#CBD4BC] cursor-pointer"
               >
                 Change Space
               </button>
@@ -206,7 +230,7 @@ export default function AddTenantModal({
                 <select
                   value={selectedUnitId}
                   onChange={(e) => handleSelectUnitId(e.target.value)}
-                  className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-base text-[#17211D] focus:border-[#FF704D] shadow-xs"
+                  className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-base text-[#17211D] focus:border-[#FF704D] shadow-xs cursor-pointer"
                 >
                   <option value="">-- Choose Vacant Space --</option>
                   {unitsList.map((u) => (
@@ -271,7 +295,7 @@ export default function AddTenantModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-3 text-sm font-medium text-[#58655E] hover:text-[#17211D]"
+                className="px-5 py-3 text-sm font-medium text-[#58655E] hover:text-[#17211D] cursor-pointer"
               >
                 Cancel
               </button>
@@ -288,16 +312,16 @@ export default function AddTenantModal({
                   }
                   setStep(2);
                 }}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-sm"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-sm cursor-pointer"
               >
-                <span>Continue to Lease</span>
+                <span>Continue to Lease & Utility</span>
                 <ArrowRight size={16} />
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 2: Lease & Deposit */}
+        {/* Step 2: Lease & Electricity Utility */}
         {step === 2 && (
           <div className="space-y-5 text-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -355,42 +379,116 @@ export default function AddTenantModal({
               </div>
             </div>
 
-            {/* Electricity Meter Integration */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-xl bg-[#FAF6F0] border border-[#CBD4BC] flex items-center justify-center text-[#FF704D] shadow-xs">
-                  <Zap size={16} />
-                </div>
-                <div>
-                  <p className="font-bold text-sm text-[#17211D]">Electricity Meter / Reference Number</p>
-                  <p className="text-[11px] text-[#58655E]">Link 14-digit WAPDA/IESCO reference directly with this tenant</p>
+            {/* Electricity Meter Integration Box */}
+            <div className="p-5 rounded-3xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-4 shadow-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-9 w-9 rounded-2xl bg-[#FAF6F0] border border-[#CBD4BC] flex items-center justify-center text-[#FF704D] shadow-xs">
+                    <Zap size={18} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-[#17211D]">Electricity Meter / Reference Number</p>
+                    <p className="text-xs text-[#58655E]">Connect WAPDA/IESCO meter directly during tenant assignment</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div>
-                  <label className="font-semibold text-xs text-[#17211D]">14-Digit Reference Number</label>
-                  <input
-                    type="text"
-                    maxLength={14}
-                    value={referenceNumber}
-                    onChange={(e) => setReferenceNumber(e.target.value)}
-                    placeholder="e.g. 15142165162900"
-                    className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm text-[#17211D] placeholder-[#85918A] focus:border-[#FF704D] shadow-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-semibold text-xs text-[#17211D]">Meter Serial / Sub-meter (Optional)</label>
-                  <input
-                    type="text"
-                    value={meterNumber}
-                    onChange={(e) => setMeterNumber(e.target.value)}
-                    placeholder="e.g. MTR-4091"
-                    className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm text-[#17211D] placeholder-[#85918A] focus:border-[#FF704D] shadow-xs"
-                  />
-                </div>
+              {/* Meter Mode Selection */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: "OWN_METER", label: "Dedicated Meter", icon: Zap },
+                  { id: "SHARED_METER", label: "Shared Meter", icon: Users },
+                  { id: "NO_METER", label: "Skip / None", icon: X },
+                ].map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setElectricityOption(opt.id as any)}
+                    className={`py-2.5 px-3 rounded-xl border text-center transition text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer ${
+                      electricityOption === opt.id
+                        ? "border-[#FF704D] bg-[#FFF0EB] text-[#FF704D] shadow-xs font-bold"
+                        : "border-[#CBD4BC] bg-[#FAF6F0] text-[#58655E] hover:bg-[#FAF6F0]/80 hover:text-[#17211D]"
+                    }`}
+                  >
+                    <opt.icon size={13} />
+                    <span>{opt.label}</span>
+                  </button>
+                ))}
               </div>
+
+              {electricityOption === "OWN_METER" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 animate-in fade-in duration-150">
+                  <div>
+                    <label className="font-semibold text-xs text-[#17211D]">14-Digit Reference Number</label>
+                    <input
+                      type="text"
+                      maxLength={14}
+                      value={referenceNumber}
+                      onChange={(e) => setReferenceNumber(e.target.value)}
+                      placeholder="e.g. 15142165162900"
+                      className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm text-[#17211D] placeholder-[#85918A] focus:border-[#FF704D] shadow-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-xs text-[#17211D]">Meter Serial / Sub-meter (Optional)</label>
+                    <input
+                      type="text"
+                      value={meterNumber}
+                      onChange={(e) => setMeterNumber(e.target.value)}
+                      placeholder="e.g. MTR-4091"
+                      className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm text-[#17211D] placeholder-[#85918A] focus:border-[#FF704D] shadow-xs"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {electricityOption === "SHARED_METER" && (
+                <div className="space-y-3 pt-1 animate-in fade-in duration-150">
+                  <div>
+                    <label className="font-semibold text-xs text-[#17211D]">Select Shared Connection</label>
+                    <select
+                      value={sharedConnectionId}
+                      onChange={(e) => setSharedConnectionId(e.target.value)}
+                      className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm text-[#17211D] focus:border-[#FF704D] shadow-xs cursor-pointer"
+                    >
+                      {connectionsList.length === 0 ? (
+                        <option value="">No existing connections registered</option>
+                      ) : (
+                        connectionsList.map((c) => (
+                          <option key={c.id} value={c.id.toString()}>
+                            {c.name} ({c.reference_number})
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-semibold text-xs text-[#17211D]">Bill Split Type</label>
+                      <select
+                        value={splitType}
+                        onChange={(e) => setSplitType(e.target.value as any)}
+                        className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm text-[#17211D] focus:border-[#FF704D] shadow-xs cursor-pointer"
+                      >
+                        <option value="EQUAL">Equal Split</option>
+                        <option value="PERCENTAGE">Custom Percentage (%)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="font-semibold text-xs text-[#17211D]">Split Share (%)</label>
+                      <input
+                        type="number"
+                        value={splitValue}
+                        onChange={(e) => setSplitValue(e.target.value)}
+                        disabled={splitType === "EQUAL"}
+                        className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm text-[#17211D] focus:border-[#FF704D] shadow-xs disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
@@ -399,7 +497,7 @@ export default function AddTenantModal({
                 type="date"
                 value={moveInDate}
                 onChange={(e) => setMoveInDate(e.target.value)}
-                className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm sm:text-base font-mono text-[#17211D] focus:border-[#FF704D] shadow-xs"
+                className="w-full mt-1.5 px-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] text-sm sm:text-base font-mono text-[#17211D] focus:border-[#FF704D] shadow-xs cursor-pointer"
               />
             </div>
 
@@ -407,7 +505,7 @@ export default function AddTenantModal({
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#58655E] hover:text-[#17211D]"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#58655E] hover:text-[#17211D] cursor-pointer"
               >
                 <ArrowLeft size={16} />
                 <span>Back</span>
@@ -416,7 +514,7 @@ export default function AddTenantModal({
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-md disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#17211D] text-[#F4F7F2] text-sm sm:text-base font-semibold hover:bg-[#24332D] transition shadow-md disabled:opacity-50 cursor-pointer"
               >
                 <span>{submitting ? "Assigning Space..." : "Confirm & Assign Tenant"}</span>
               </button>
