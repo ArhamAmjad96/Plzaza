@@ -270,17 +270,8 @@ export default function UnitsManager({ units, stats, plaza }: UnitsManagerProps)
                             <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
-                                onClick={() => setConnectingMeterUnit(unit)}
-                                className="p-2 rounded-xl border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] hover:bg-[#E8EDD9] transition"
-                                title="Electricity Meter"
-                              >
-                                <Zap size={16} />
-                              </button>
-
-                              <button
-                                type="button"
                                 onClick={() => setEditingUnit(unit)}
-                                className="p-2 rounded-xl border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] hover:bg-[#E8EDD9] transition"
+                                className="p-2 rounded-xl border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] hover:bg-[#E8EDD9] transition cursor-pointer"
                                 title="Edit Unit Specs"
                               >
                                 <Sliders size={16} />
