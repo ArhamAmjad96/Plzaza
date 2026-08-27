@@ -14,6 +14,7 @@ import {
   Phone,
   ArrowRight,
   ArrowLeft,
+  Zap,
 } from "lucide-react";
 
 interface AddTenantModalProps {
@@ -59,6 +60,13 @@ export default function AddTenantModal({
     initialFound ? initialFound.default_security_amount.toString() : "50000"
   );
 
+  const [referenceNumber, setReferenceNumber] = useState(
+    (initialFound as any)?.reference_number || ""
+  );
+  const [meterNumber, setMeterNumber] = useState(
+    (initialFound as any)?.meter_number || ""
+  );
+
   const [moveInDate, setMoveInDate] = useState(new Date().toISOString().split("T")[0]);
   const [step, setStep] = useState<1 | 2>(1);
   const [submitting, setSubmitting] = useState(false);
@@ -92,6 +100,12 @@ export default function AddTenantModal({
       setSecurityAmount(found.default_security_amount.toString());
       setSecurityPaid(found.default_security_amount.toString());
       setRentDueDay(found.default_rent_due_day.toString());
+      if ((found as any).reference_number) {
+        setReferenceNumber((found as any).reference_number);
+      }
+      if ((found as any).meter_number) {
+        setMeterNumber((found as any).meter_number);
+      }
     }
   }
 
@@ -114,6 +128,8 @@ export default function AddTenantModal({
       formData.append("security_amount", securityAmount || "0");
       formData.append("security_paid", securityPaid || "0");
       formData.append("start_date", moveInDate);
+      formData.append("reference_number", referenceNumber.trim());
+      formData.append("meter_number", meterNumber.trim());
 
       const res = await createTenantAction(formData);
       if (res.success) {
@@ -334,6 +350,44 @@ export default function AddTenantModal({
                     value={securityPaid}
                     onChange={(e) => setSecurityPaid(e.target.value)}
                     className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-base font-semibold text-[#17211D] focus:border-[#FF704D] shadow-xs"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Electricity Meter Integration */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#E8EDD9] border border-[#CBD4BC] space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-xl bg-[#FAF6F0] border border-[#CBD4BC] flex items-center justify-center text-[#FF704D] shadow-xs">
+                  <Zap size={16} />
+                </div>
+                <div>
+                  <p className="font-bold text-sm text-[#17211D]">Electricity Meter / Reference Number</p>
+                  <p className="text-[11px] text-[#58655E]">Link 14-digit WAPDA/IESCO reference directly with this tenant</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label className="font-semibold text-xs text-[#17211D]">14-Digit Reference Number</label>
+                  <input
+                    type="text"
+                    maxLength={14}
+                    value={referenceNumber}
+                    onChange={(e) => setReferenceNumber(e.target.value)}
+                    placeholder="e.g. 15142165162900"
+                    className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm text-[#17211D] placeholder-[#85918A] focus:border-[#FF704D] shadow-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-xs text-[#17211D]">Meter Serial / Sub-meter (Optional)</label>
+                  <input
+                    type="text"
+                    value={meterNumber}
+                    onChange={(e) => setMeterNumber(e.target.value)}
+                    placeholder="e.g. MTR-4091"
+                    className="w-full mt-1 px-3.5 py-2.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-sm text-[#17211D] placeholder-[#85918A] focus:border-[#FF704D] shadow-xs"
                   />
                 </div>
               </div>

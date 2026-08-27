@@ -427,10 +427,18 @@ export async function getAllUnits(): Promise<{
     }
   });
 
+  const storeData = getStore();
+  const connMap = new Map<string, any>();
+  (storeData.connection_unit_mappings || []).forEach((m) => {
+    const c = (storeData.connections || []).find((cn) => cn.id.toString() === m.connection_id.toString());
+    if (c) connMap.set(m.unit_id.toString(), c);
+  });
+
   const enrichedUnits: UnitItem[] = unitsList.map((u) => {
     const activeLease = leaseByUnit.get(u.id.toString());
     const tenant = activeLease ? tenantMap.get(activeLease.tenant_id.toString()) : null;
     const isOccupied = Boolean(activeLease || u.status === "OCCUPIED");
+    const conn = connMap.get(u.id.toString());
 
     return {
       ...u,
@@ -439,6 +447,8 @@ export async function getAllUnits(): Promise<{
       tenant_id: tenant?.id,
       lease_id: activeLease?.id,
       monthly_rent: activeLease?.monthly_rent || u.default_monthly_rent,
+      reference_number: conn?.reference_number || (u as any).reference_number,
+      meter_number: conn?.meter_number || (u as any).meter_number,
     } as any;
   });
 

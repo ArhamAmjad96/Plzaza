@@ -21,6 +21,8 @@ export async function createTenantAction(formData: FormData) {
   const leaseStartDate = formData.get("lease_start_date") as string;
   const leaseEndDate = formData.get("lease_end_date") as string;
   const notes = formData.get("notes") as string;
+  const referenceNumber = (formData.get("reference_number") as string)?.trim() || null;
+  const meterNumber = (formData.get("meter_number") as string)?.trim() || null;
 
   if (!fullName || !unitId) {
     throw new Error("Tenant Full Name and Unit assignment are required.");
@@ -40,11 +42,15 @@ export async function createTenantAction(formData: FormData) {
     leaseStartDate,
     leaseEndDate: leaseEndDate || null,
     notes,
+    referenceNumber,
+    meterNumber,
   });
 
   revalidatePath("/tenants");
   revalidatePath("/units");
   revalidatePath("/rent");
+  revalidatePath("/connections");
+  revalidatePath("/logs");
   revalidatePath("/");
 
   return { success: true, ...res };

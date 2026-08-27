@@ -221,6 +221,8 @@ export async function createTenantWithLease(data: {
   leaseEndDate?: string | null;
   annualIncreasePct?: number;
   notes?: string | null;
+  referenceNumber?: string | null;
+  meterNumber?: string | null;
 }): Promise<{ tenant: TenantItem; lease: LeaseItem }> {
   const plaza = await getPrimaryPlaza();
   const nextId = Date.now();
@@ -319,12 +321,30 @@ export async function createTenantWithLease(data: {
     s.leases = [leaseItem, ...s.leases.filter((l) => l.id.toString() !== leaseItem.id.toString())];
   });
 
+  // 4. If reference number is provided, automatically connect electricity meter
+  if (data.referenceNumber && data.referenceNumber.trim().length > 0) {
+    try {
+      const { connectUnitMeter } = await import("@/lib/electricity/service");
+      await connectUnitMeter(data.unitId, data.referenceNumber.trim(), data.meterNumber?.trim() || undefined);
+    } catch (e) {
+      console.warn("Auto meter connect error during tenant assignment:", e);
+    }
+  }
+
   logActivity({
     category: "TENANTS",
     action: "TENANT_ONBOARDED",
     title: "New Tenant Onboarded",
-    description: `Onboarded ${tenantItem.full_name} for unit #${data.unitId} at monthly rent Rs. ${leaseItem.monthly_rent}.`,
-    metadata: { tenantId: tenantItem.id, tenantName: tenantItem.full_name, unitId: data.unitId, rent: leaseItem.monthly_rent },
+    description: `Onboarded ${tenantItem.full_name} for unit #${data.unitId} at monthly rent Rs. ${leaseItem.monthly_rent}.${
+      data.referenceNumber ? ` Attached meter ref #${data.referenceNumber.trim()}.` : ""
+    }`,
+    metadata: {
+      tenantId: tenantItem.id,
+      tenantName: tenantItem.full_name,
+      unitId: data.unitId,
+      rent: leaseItem.monthly_rent,
+      referenceNumber: data.referenceNumber?.trim() || null,
+    },
     href: `/tenants`,
   });
 
