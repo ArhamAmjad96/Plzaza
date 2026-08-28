@@ -479,3 +479,5 @@ export async function saveConnectionUnitMappings(
 
   return true;
 }
+
+export const configureUnitElectricity = connectUnitMeter;

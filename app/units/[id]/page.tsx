@@ -62,11 +62,14 @@ export default async function UnitDetailPage({
 
   // Connection info
   const matchingConn = allConnections.find((c) =>
-    c.mappings.some((m) => m.unit_id.toString() === unit.id.toString())
+    c.mappings.some((m) => m.unit_id.toString() === unit.id.toString()) ||
+    ((unit as any).reference_number && c.reference_number === (unit as any).reference_number)
   );
   const matchedMapping = matchingConn?.mappings.find((m) => m.unit_id.toString() === unit.id.toString());
+  const refNumber = matchingConn?.reference_number || electricityAlloc?.connection_reference || (unit as any).reference_number || "";
+  const meterNumber = matchingConn?.meter_number || electricityAlloc?.meter_number || (unit as any).meter_number || null;
   const connectionId = matchingConn?.id || tenantView?.connection_id || unit.id;
-  const hasMeter = Boolean(matchingConn || electricityAlloc?.connection_reference);
+  const hasMeter = Boolean(refNumber && refNumber.trim().length > 0);
 
   // Fetch payments
   const payments = await getPaymentsForConnection(connectionId);
@@ -78,8 +81,8 @@ export default async function UnitDetailPage({
 
   const electricityProp = hasMeter ? {
     connection_id: matchingConn?.id || connectionId,
-    reference_number: matchingConn?.reference_number || electricityAlloc?.connection_reference || "",
-    meter_number: matchingConn?.meter_number || electricityAlloc?.meter_number || null,
+    reference_number: refNumber,
+    meter_number: meterNumber,
     is_shared: Boolean(matchingConn?.is_shared || electricityAlloc?.is_shared),
     split_formula: matchingConn?.is_shared ? `${matchedMapping?.split_value || 50}% Split` : undefined,
     latest_bill: matchingConn?.latest_bill || (electricityAlloc?.bill_amount !== null ? {

@@ -567,6 +567,18 @@ export async function updateUnit(
   id: number | string,
   data: Partial<UnitItem>
 ): Promise<UnitItem | null> {
+  let result: UnitItem | null = null;
+
+  // 1. Immediately update file store to ensure all fields persist
+  updateStore((s) => {
+    const idx = s.units.findIndex((u) => u.id.toString() === id.toString());
+    if (idx !== -1) {
+      s.units[idx] = { ...s.units[idx], ...data };
+      result = s.units[idx];
+    }
+  });
+
+  // 2. Sync to Supabase
   try {
     const { data: updated, error } = await supabase
       .from("units")
@@ -581,22 +593,13 @@ export async function updateUnit(
     if (!error && updated) {
       updateStore((s) => {
         const idx = s.units.findIndex((u) => u.id.toString() === id.toString());
-        if (idx !== -1) s.units[idx] = { ...s.units[idx], ...updated };
+        if (idx !== -1) s.units[idx] = { ...s.units[idx], ...data, ...updated };
       });
-      return updated as UnitItem;
+      return { ...result, ...updated } as UnitItem;
     }
   } catch {
     // Non-blocking
   }
-
-  let result: UnitItem | null = null;
-  updateStore((s) => {
-    const idx = s.units.findIndex((u) => u.id.toString() === id.toString());
-    if (idx !== -1) {
-      s.units[idx] = { ...s.units[idx], ...data };
-      result = s.units[idx];
-    }
-  });
 
   return result;
 }

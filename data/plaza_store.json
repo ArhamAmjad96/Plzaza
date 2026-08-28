@@ -20,7 +20,7 @@
       "default_monthly_rent": 25000,
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
-      "status": "VACANT",
+      "status": "OCCUPIED",
       "created_at": "2026-08-27T23:27:06.520Z"
     },
     {
@@ -63,8 +63,39 @@
       "created_at": "2026-08-27T23:27:07.187Z"
     }
   ],
-  "tenants": [],
-  "leases": [],
+  "tenants": [
+    {
+      "id": 1787876746549,
+      "plaza_id": 1,
+      "full_name": "Arham",
+      "phone": "0326565656",
+      "cnic": "6565656565",
+      "emergency_contact": null,
+      "status": "ACTIVE",
+      "notes": null,
+      "created_at": "2026-08-28T00:25:46.549Z"
+    }
+  ],
+  "leases": [
+    {
+      "id": 1787876746550,
+      "plaza_id": 1,
+      "tenant_id": 1787876746549,
+      "unit_id": "1787873226520",
+      "monthly_rent": 25000,
+      "rent_due_day": 5,
+      "security_amount": 50000,
+      "security_paid": 50000,
+      "security_status": "PAID",
+      "move_in_date": "2026-08-28",
+      "lease_start_date": "2026-08-28",
+      "lease_end_date": null,
+      "annual_increase_pct": 10,
+      "status": "ACTIVE",
+      "notes": null,
+      "created_at": "2026-08-28T00:25:46.549Z"
+    }
+  ],
   "connections": [],
   "connection_unit_mappings": [],
   "bills": [],
@@ -73,6 +104,22 @@
   "complaints": [],
   "complaint_expenses": [],
   "logs": [
+    {
+      "id": 1787876747881,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded Arham for unit #1787873226520 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "metadata": {
+        "tenantId": 1787876746549,
+        "tenantName": "Arham",
+        "unitId": "1787873226520",
+        "rent": 25000,
+        "referenceNumber": "15142165162900"
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-28T00:25:47.877Z"
+    },
     {
       "id": 1787873228306,
       "category": "PLAZA",
@@ -202,6 +249,16 @@
     }
   ],
   "notifications": [
+    {
+      "id": "notif-1787876747881",
+      "log_id": 1787876747881,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded Arham for unit #1787873226520 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "href": "/tenants",
+      "read": false,
+      "created_at": "2026-08-28T00:25:47.877Z"
+    },
     {
       "id": "notif-1787873228306",
       "log_id": 1787873228306,
