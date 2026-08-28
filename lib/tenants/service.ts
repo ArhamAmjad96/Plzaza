@@ -45,6 +45,8 @@ export interface TenantLeaseView {
   lease?: LeaseItem | null;
   unit?: UnitItem | null;
   connection_id?: number | string | null;
+  reference_number?: string | null;
+  meter_number?: string | null;
   is_active: boolean;
 }
 
@@ -140,14 +142,20 @@ export async function getTenantsWithLeases(): Promise<{
     const matchedConn = rawConnections.find(
       (c) =>
         (tenant.full_name && c.tenant && c.tenant.toLowerCase().includes(tenant.full_name.toLowerCase())) ||
-        (unit && c.name && c.name.toLowerCase().includes(unit.unit_name.toLowerCase()))
+        (unit && c.name && c.name.toLowerCase().includes(unit.unit_name.toLowerCase())) ||
+        (unit && (unit as any).reference_number && c.reference_number === (unit as any).reference_number)
     );
+
+    const refNum = (unit as any)?.reference_number || matchedConn?.reference_number || null;
+    const meterNum = (unit as any)?.meter_number || matchedConn?.meter_number || null;
 
     return {
       tenant,
       lease: activeLease,
       unit,
       connection_id: matchedConn?.id || null,
+      reference_number: refNum,
+      meter_number: meterNum,
       is_active: tenant.status === "ACTIVE" && activeLease?.status === "ACTIVE",
     };
   });

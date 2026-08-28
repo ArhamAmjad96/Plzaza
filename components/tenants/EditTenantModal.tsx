@@ -26,6 +26,12 @@ export default function EditTenantModal({
   const [rentDueDay, setRentDueDay] = useState(lease?.rent_due_day?.toString() || "5");
   const [securityAmount, setSecurityAmount] = useState(lease?.security_amount?.toString() || "0");
   const [securityPaid, setSecurityPaid] = useState(lease?.security_paid?.toString() || "0");
+  const [referenceNumber, setReferenceNumber] = useState(
+    (unit as any)?.reference_number || tenantView.reference_number || ""
+  );
+  const [meterNumber, setMeterNumber] = useState(
+    (unit as any)?.meter_number || tenantView.meter_number || ""
+  );
   const [notes, setNotes] = useState(tenant.notes || "");
   const [submitting, setSubmitting] = useState(false);
 
@@ -37,6 +43,7 @@ export default function EditTenantModal({
       const formData = new FormData();
       formData.append("tenant_id", tenant.id.toString());
       if (lease) formData.append("lease_id", lease.id.toString());
+      if (unit) formData.append("unit_id", unit.id.toString());
       formData.append("full_name", fullName);
       formData.append("phone", phone);
       formData.append("cnic", cnic);
@@ -45,6 +52,8 @@ export default function EditTenantModal({
       formData.append("rent_due_day", rentDueDay);
       formData.append("security_amount", securityAmount);
       formData.append("security_paid", securityPaid);
+      formData.append("reference_number", referenceNumber.trim());
+      formData.append("meter_number", meterNumber.trim());
       formData.append("notes", notes);
 
       await updateTenantLeaseAction(formData);
@@ -178,6 +187,36 @@ export default function EditTenantModal({
                     onChange={(e) => setSecurityPaid(e.target.value)}
                     className="w-full mt-1 px-3 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs focus:border-[#FF704D]"
                   />
+                </div>
+              </div>
+
+              {/* Electricity Meter Reference */}
+              <div className="pt-2 border-t border-[#CBD4BC]/40 space-y-2">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[#FF704D] font-mono">
+                  IESCO ELECTRICITY METER
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="font-semibold text-[#17211D]">14-Digit Ref No.</label>
+                    <input
+                      type="text"
+                      maxLength={14}
+                      value={referenceNumber}
+                      onChange={(e) => setReferenceNumber(e.target.value)}
+                      placeholder="e.g. 15142165162900"
+                      className="w-full mt-1 px-3 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs focus:border-[#FF704D]"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold text-[#17211D]">Meter Serial (Opt.)</label>
+                    <input
+                      type="text"
+                      value={meterNumber}
+                      onChange={(e) => setMeterNumber(e.target.value)}
+                      placeholder="e.g. MTR-4091"
+                      className="w-full mt-1 px-3 py-2 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] font-mono text-xs focus:border-[#FF704D]"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

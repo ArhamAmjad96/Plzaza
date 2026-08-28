@@ -19,6 +19,7 @@ import {
   UserX,
   Sliders,
   Building2,
+  Zap,
 } from "lucide-react";
 
 interface TenantsManagerProps {
@@ -202,6 +203,21 @@ export default function TenantsManager({
                         <span className="text-[10px] uppercase font-sans text-[#58655E]">Security Paid</span>
                         <p className="font-semibold text-[#17211D] mt-0.5">{formatPKR(lease.security_paid)}</p>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Electricity Meter Reference */}
+                  {unit && (
+                    <div className="mt-2.5 pt-2.5 border-t border-[#CBD4BC]/40 flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-[#58655E]">IESCO Meter:</span>
+                      {(unit as any).reference_number || tv.reference_number ? (
+                        <span className="font-semibold text-[#2D5A27] bg-[#E8EDD9] border border-[#CBD4BC] px-2 py-0.5 rounded-lg flex items-center gap-1">
+                          <Zap size={11} className="text-[#FF704D]" />
+                          <span>{(unit as any).reference_number || tv.reference_number}</span>
+                        </span>
+                      ) : (
+                        <span className="text-[#85918A]">No Meter Linked</span>
+                      )}
                     </div>
                   )}
                 </div>

@@ -33,8 +33,10 @@
       "default_monthly_rent": 25000,
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
-      "status": "VACANT",
-      "created_at": "2026-08-27T23:27:06.761Z"
+      "status": "OCCUPIED",
+      "created_at": "2026-08-27T23:27:06.761Z",
+      "reference_number": "15142165161800",
+      "meter_number": ""
     },
     {
       "id": 1787873226522,
@@ -65,6 +67,17 @@
   ],
   "tenants": [
     {
+      "id": 1787877616590,
+      "plaza_id": 1,
+      "full_name": "dwdwd",
+      "phone": "dwdwd",
+      "cnic": "wdwdw",
+      "emergency_contact": null,
+      "status": "ACTIVE",
+      "notes": null,
+      "created_at": "2026-08-28T00:40:16.590Z"
+    },
+    {
       "id": 1787876746549,
       "plaza_id": 1,
       "full_name": "Arham",
@@ -77,6 +90,24 @@
     }
   ],
   "leases": [
+    {
+      "id": 1787877616591,
+      "plaza_id": 1,
+      "tenant_id": 1787877616590,
+      "unit_id": "1787873226521",
+      "monthly_rent": 25000,
+      "rent_due_day": 5,
+      "security_amount": 50000,
+      "security_paid": 50000,
+      "security_status": "PAID",
+      "move_in_date": "2026-08-28",
+      "lease_start_date": "2026-08-28",
+      "lease_end_date": null,
+      "annual_increase_pct": 10,
+      "status": "ACTIVE",
+      "notes": null,
+      "created_at": "2026-08-28T00:40:16.590Z"
+    },
     {
       "id": 1787876746550,
       "plaza_id": 1,
@@ -96,14 +127,59 @@
       "created_at": "2026-08-28T00:25:46.549Z"
     }
   ],
-  "connections": [],
-  "connection_unit_mappings": [],
-  "bills": [],
+  "connections": [
+    {
+      "id": 32,
+      "name": "Unit #1787873226521 Meter",
+      "tenant": "Unit #1787873226521",
+      "reference_number": "15142165161800",
+      "meter_number": null,
+      "active": true
+    }
+  ],
+  "connection_unit_mappings": [
+    {
+      "id": 1787877619166,
+      "connection_id": 32,
+      "unit_id": "1787873226521",
+      "split_type": "EQUAL",
+      "split_value": 100,
+      "notes": "Dedicated 1-to-1 meter connection"
+    }
+  ],
+  "bills": [
+    {
+      "id": 1787877619190,
+      "connection_id": 32,
+      "billing_month": "2026-08-01",
+      "issue_date": "2026-08-28",
+      "due_date": "2026-09-11",
+      "bill_amount": 5400,
+      "units_consumed": 165,
+      "status": "unpaid"
+    }
+  ],
   "payments": [],
   "expenses": [],
   "complaints": [],
   "complaint_expenses": [],
   "logs": [
+    {
+      "id": 1787877619848,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded dwdwd for unit #1787873226521 at monthly rent Rs. 25000. Attached meter ref #15142165161800.",
+      "metadata": {
+        "tenantId": 1787877616590,
+        "tenantName": "dwdwd",
+        "unitId": "1787873226521",
+        "rent": 25000,
+        "referenceNumber": "15142165161800"
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-28T00:40:19.458Z"
+    },
     {
       "id": 1787876747881,
       "category": "TENANTS",
@@ -249,6 +325,16 @@
     }
   ],
   "notifications": [
+    {
+      "id": "notif-1787877619848",
+      "log_id": 1787877619848,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded dwdwd for unit #1787873226521 at monthly rent Rs. 25000. Attached meter ref #15142165161800.",
+      "href": "/tenants",
+      "read": false,
+      "created_at": "2026-08-28T00:40:19.458Z"
+    },
     {
       "id": "notif-1787876747881",
       "log_id": 1787876747881,

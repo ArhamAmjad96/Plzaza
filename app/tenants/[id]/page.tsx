@@ -116,10 +116,15 @@ export default async function TenantDetailPage({
     (c) => (unitId && c.unit_id?.toString() === unitId.toString()) || c.tenant_id?.toString() === tenantId.toString()
   );
 
+  const unitRef = (tenantView.unit as any)?.reference_number;
+  const unitMeter = (tenantView.unit as any)?.meter_number;
+  const refNumber = electricityAlloc?.connection_reference || connDetails?.reference_number || unitRef || tenantView.reference_number || "N/A";
+  const meterNumber = connDetails?.meter_number || unitMeter || tenantView.meter_number || "N/A";
+
   const electricityInfo = {
     connection_name: connDetails?.name || (tenantView.unit ? `${tenantView.unit.unit_name} Meter` : "Plaza Meter"),
-    reference_number: electricityAlloc?.connection_reference || connDetails?.reference_number || "N/A",
-    meter_number: connDetails?.meter_number || "N/A",
+    reference_number: refNumber,
+    meter_number: meterNumber,
     is_shared: Boolean(electricityAlloc?.is_shared),
     split_formula: electricityAlloc?.split_formula,
     latest_bill_amount: electricityAlloc?.total_connection_bill,

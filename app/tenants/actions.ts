@@ -101,6 +101,9 @@ export async function updateTenantLeaseAction(formData: FormData) {
   const securityAmount = parseFloat(formData.get("security_amount") as string);
   const securityPaid = parseFloat(formData.get("security_paid") as string);
   const notes = formData.get("notes") as string;
+  const unitId = formData.get("unit_id") as string;
+  const referenceNumber = (formData.get("reference_number") as string)?.trim() || null;
+  const meterNumber = (formData.get("meter_number") as string)?.trim() || null;
 
   if (!tenantId || !fullName) {
     throw new Error("Tenant Name is required.");
@@ -120,9 +123,24 @@ export async function updateTenantLeaseAction(formData: FormData) {
     notes,
   });
 
+  if (unitId && referenceNumber) {
+    try {
+      const { connectUnitMeter } = await import("@/lib/electricity/service");
+      await connectUnitMeter({
+        unitId,
+        referenceNumber,
+        meterNumber: meterNumber || undefined,
+        electricityOption: "OWN_METER",
+      });
+    } catch (e) {
+      console.warn("Auto meter connect error during tenant update:", e);
+    }
+  }
+
   revalidatePath("/tenants");
   revalidatePath(`/tenants/${tenantId}`);
   revalidatePath("/units");
+  revalidatePath("/connections");
   revalidatePath("/rent");
   revalidatePath("/");
 
