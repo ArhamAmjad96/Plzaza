@@ -1,8 +1,8 @@
 {
   "plaza": {
     "id": 1,
-    "name": "dada",
-    "address": "dadad",
+    "name": "adad",
+    "address": "adad",
     "description": "",
     "floors": [
       "Ground Floor"
@@ -11,7 +11,7 @@
   },
   "units": [
     {
-      "id": 1787873226520,
+      "id": 1787878508924,
       "plaza_id": 1,
       "unit_number": "G-01",
       "unit_name": "Ground Floor Shop G-01",
@@ -21,10 +21,12 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "OCCUPIED",
-      "created_at": "2026-08-27T23:27:06.520Z"
+      "created_at": "2026-08-28T00:55:08.924Z",
+      "reference_number": "15142165162900",
+      "meter_number": ""
     },
     {
-      "id": 1787873226521,
+      "id": 1787878508925,
       "plaza_id": 1,
       "unit_number": "G-02",
       "unit_name": "Ground Floor Shop G-02",
@@ -33,13 +35,11 @@
       "default_monthly_rent": 25000,
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
-      "status": "OCCUPIED",
-      "created_at": "2026-08-27T23:27:06.761Z",
-      "reference_number": "15142165161800",
-      "meter_number": ""
+      "status": "VACANT",
+      "created_at": "2026-08-28T00:55:09.160Z"
     },
     {
-      "id": 1787873226522,
+      "id": 1787878508926,
       "plaza_id": 1,
       "unit_number": "G-03",
       "unit_name": "Ground Floor Shop G-03",
@@ -49,10 +49,10 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "VACANT",
-      "created_at": "2026-08-27T23:27:06.980Z"
+      "created_at": "2026-08-28T00:55:09.415Z"
     },
     {
-      "id": 1787873226523,
+      "id": 1787878508927,
       "plaza_id": 1,
       "unit_number": "G-04",
       "unit_name": "Ground Floor Shop G-04",
@@ -62,39 +62,28 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "VACANT",
-      "created_at": "2026-08-27T23:27:07.187Z"
+      "created_at": "2026-08-28T00:55:09.680Z"
     }
   ],
   "tenants": [
     {
-      "id": 1787877616590,
+      "id": 1787878534092,
       "plaza_id": 1,
-      "full_name": "dwdwd",
-      "phone": "dwdwd",
-      "cnic": "wdwdw",
+      "full_name": "qsqsqs",
+      "phone": "sqsqsqs",
+      "cnic": "qsqsqs",
       "emergency_contact": null,
       "status": "ACTIVE",
       "notes": null,
-      "created_at": "2026-08-28T00:40:16.590Z"
-    },
-    {
-      "id": 1787876746549,
-      "plaza_id": 1,
-      "full_name": "Arham",
-      "phone": "0326565656",
-      "cnic": "6565656565",
-      "emergency_contact": null,
-      "status": "ACTIVE",
-      "notes": null,
-      "created_at": "2026-08-28T00:25:46.549Z"
+      "created_at": "2026-08-28T00:55:34.093Z"
     }
   ],
   "leases": [
     {
-      "id": 1787877616591,
+      "id": 1787878534093,
       "plaza_id": 1,
-      "tenant_id": 1787877616590,
-      "unit_id": "1787873226521",
+      "tenant_id": 1787878534092,
+      "unit_id": "1787878508924",
       "monthly_rent": 25000,
       "rent_due_day": 5,
       "security_amount": 50000,
@@ -106,42 +95,24 @@
       "annual_increase_pct": 10,
       "status": "ACTIVE",
       "notes": null,
-      "created_at": "2026-08-28T00:40:16.590Z"
-    },
-    {
-      "id": 1787876746550,
-      "plaza_id": 1,
-      "tenant_id": 1787876746549,
-      "unit_id": "1787873226520",
-      "monthly_rent": 25000,
-      "rent_due_day": 5,
-      "security_amount": 50000,
-      "security_paid": 50000,
-      "security_status": "PAID",
-      "move_in_date": "2026-08-28",
-      "lease_start_date": "2026-08-28",
-      "lease_end_date": null,
-      "annual_increase_pct": 10,
-      "status": "ACTIVE",
-      "notes": null,
-      "created_at": "2026-08-28T00:25:46.549Z"
+      "created_at": "2026-08-28T00:55:34.093Z"
     }
   ],
   "connections": [
     {
-      "id": 32,
-      "name": "Unit #1787873226521 Meter",
-      "tenant": "Unit #1787873226521",
-      "reference_number": "15142165161800",
+      "id": 33,
+      "name": "Unit #1787878508924 Meter",
+      "tenant": "Unit #1787878508924",
+      "reference_number": "15142165162900",
       "meter_number": null,
       "active": true
     }
   ],
   "connection_unit_mappings": [
     {
-      "id": 1787877619166,
-      "connection_id": 32,
-      "unit_id": "1787873226521",
+      "id": 1787878536285,
+      "connection_id": 33,
+      "unit_id": "1787878508924",
       "split_type": "EQUAL",
       "split_value": 100,
       "notes": "Dedicated 1-to-1 meter connection"
@@ -149,8 +120,8 @@
   ],
   "bills": [
     {
-      "id": 1787877619190,
-      "connection_id": 32,
+      "id": 1787878536301,
+      "connection_id": 33,
       "billing_month": "2026-08-01",
       "issue_date": "2026-08-28",
       "due_date": "2026-09-11",
@@ -164,6 +135,35 @@
   "complaints": [],
   "complaint_expenses": [],
   "logs": [
+    {
+      "id": 1787878536718,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded qsqsqs for unit #1787878508924 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "metadata": {
+        "tenantId": 1787878534092,
+        "tenantName": "qsqsqs",
+        "unitId": "1787878508924",
+        "rent": 25000,
+        "referenceNumber": "15142165162900"
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-28T00:55:36.545Z"
+    },
+    {
+      "id": 1787878510931,
+      "category": "PLAZA",
+      "action": "PLAZA_REBUILT",
+      "title": "Plaza Rebuilt & Configured",
+      "description": "Configured 4 units for Plaza.",
+      "metadata": {
+        "unitCount": 4,
+        "plazaName": ""
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-28T00:55:09.942Z"
+    },
     {
       "id": 1787877619848,
       "category": "TENANTS",
@@ -325,6 +325,26 @@
     }
   ],
   "notifications": [
+    {
+      "id": "notif-1787878536718",
+      "log_id": 1787878536718,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded qsqsqs for unit #1787878508924 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "href": "/tenants",
+      "read": false,
+      "created_at": "2026-08-28T00:55:36.545Z"
+    },
+    {
+      "id": "notif-1787878510931",
+      "log_id": 1787878510931,
+      "category": "PLAZA",
+      "title": "Plaza Rebuilt & Configured",
+      "message": "Configured 4 units for Plaza.",
+      "href": "/units",
+      "read": false,
+      "created_at": "2026-08-28T00:55:09.942Z"
+    },
     {
       "id": "notif-1787877619848",
       "log_id": 1787877619848,

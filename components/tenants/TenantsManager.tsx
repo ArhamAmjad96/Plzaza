@@ -223,11 +223,11 @@ export default function TenantsManager({
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="pt-3 border-t border-[#CBD4BC]/60 flex items-center justify-between">
+                <div className="pt-3 border-t border-[#CBD4BC]/60 flex items-center justify-between gap-2 flex-wrap">
                   {unit ? (
                     <Link
                       href={`/units/${unit.id}`}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-[#17211D] hover:text-[#FF704D] transition"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[#17211D] hover:text-[#FF704D] transition py-1"
                     >
                       <span>Open Space</span>
                       <ArrowUpRight size={13} />
@@ -236,26 +236,26 @@ export default function TenantsManager({
                     <span className="text-xs text-[#58655E]">No unit</span>
                   )}
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => setEditingTenant(tv)}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] text-[#17211D] hover:bg-[#E8EDD9] text-xs font-medium transition shadow-xs cursor-pointer"
+                    >
+                      <Sliders size={12} className="text-[#58655E]" />
+                      <span>Edit Data</span>
+                    </button>
+
                     {tv.is_active && (
                       <button
                         type="button"
                         onClick={() => setVacatingTenant(tv)}
-                        className="p-1.5 rounded-lg border border-[#CBD4BC] text-[#8E3E33] hover:bg-[#FAECE9] transition"
-                        title="Move Out Tenant"
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-[#EAC4BE] bg-[#FAECE9] text-[#8E3E33] hover:bg-[#F5D8D4] text-xs font-medium transition shadow-xs cursor-pointer"
                       >
-                        <UserX size={13} />
+                        <UserX size={12} />
+                        <span>Remove Tenant</span>
                       </button>
                     )}
-
-                    <button
-                      type="button"
-                      onClick={() => setEditingTenant(tv)}
-                      className="p-1.5 rounded-lg border border-[#CBD4BC] text-[#58655E] hover:text-[#17211D] hover:bg-[#E8EDD9] transition"
-                      title="Edit Profile"
-                    >
-                      <Sliders size={13} />
-                    </button>
                   </div>
                 </div>
               </div>
