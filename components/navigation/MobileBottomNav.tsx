@@ -22,6 +22,10 @@ export default function MobileBottomNav() {
   const pathname = usePathname();
   const [showMoreDrawer, setShowMoreDrawer] = useState(false);
 
+  if (pathname.startsWith("/login") || pathname === "/tenant" || pathname.startsWith("/tenant/")) {
+    return null;
+  }
+
   const TABS = [
     { name: "Overview", href: "/", icon: LayoutDashboard },
     { name: "Units", href: "/units", icon: Building2 },

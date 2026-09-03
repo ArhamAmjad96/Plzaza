@@ -9,6 +9,7 @@ export interface TenantItem {
   full_name: string;
   phone?: string | null;
   cnic?: string | null;
+  email?: string | null;
   emergency_contact?: string | null;
   status: "ACTIVE" | "VACATED" | "INACTIVE";
   notes?: string | null;
@@ -218,6 +219,7 @@ export async function createTenantWithLease(data: {
   fullName: string;
   phone?: string | null;
   cnic?: string | null;
+  email?: string | null;
   emergencyContact?: string | null;
   unitId: number | string;
   monthlyRent: number;
@@ -235,10 +237,37 @@ export async function createTenantWithLease(data: {
   sharedConnectionId?: number | string | null;
   splitType?: "EQUAL" | "PERCENTAGE";
   splitValue?: number;
-}): Promise<{ tenant: TenantItem; lease: LeaseItem }> {
+  createPortalLogin?: boolean;
+  loginUsername?: string | null;
+  loginEmail?: string | null;
+  loginPassword?: string | null;
+}): Promise<{
+  tenant: TenantItem;
+  lease: LeaseItem;
+  credentials?: { username: string; email: string; password?: string; hasPortalAccess: boolean } | null;
+}> {
   const plaza = await getPrimaryPlaza();
   const nextId = Date.now();
   const today = new Date().toISOString().split("T")[0];
+
+  const assignedUsername = (
+    data.loginUsername ||
+    data.fullName.toLowerCase().replace(/[^a-z0-9]/g, "") ||
+    "tenant"
+  ).trim().toLowerCase();
+
+  const assignedEmail = (data.loginEmail || data.email || `${assignedUsername}@plaza.com`).trim().toLowerCase();
+
+  // Validate duplicate login credentials before performing mutations
+  if (data.createPortalLogin) {
+    const store = getStore();
+    const duplicateCred = (store.tenant_credentials || []).find(
+      (c: any) => c.username?.toLowerCase() === assignedUsername
+    );
+    if (duplicateCred) {
+      throw new Error(`Username "${assignedUsername}" is already taken by another tenant. Please pick another username.`);
+    }
+  }
 
   const tenantItem: TenantItem = {
     id: nextId,
@@ -246,11 +275,13 @@ export async function createTenantWithLease(data: {
     full_name: data.fullName.trim(),
     phone: data.phone?.trim() || null,
     cnic: data.cnic?.trim() || null,
+    email: assignedEmail,
     emergency_contact: data.emergencyContact?.trim() || null,
     status: "ACTIVE",
     notes: data.notes || null,
     created_at: new Date().toISOString(),
   };
+  (tenantItem as any).username = assignedUsername;
 
   const securityPaid = Number(data.securityPaid) || 0;
   const securityReq = Number(data.securityAmount) || 0;
@@ -283,6 +314,7 @@ export async function createTenantWithLease(data: {
         full_name: tenantItem.full_name,
         phone: tenantItem.phone,
         cnic: tenantItem.cnic,
+        email: tenantItem.email,
         emergency_contact: tenantItem.emergency_contact,
         status: "ACTIVE",
         notes: tenantItem.notes,
@@ -333,7 +365,34 @@ export async function createTenantWithLease(data: {
     s.leases = [leaseItem, ...s.leases.filter((l) => l.id.toString() !== leaseItem.id.toString())];
   });
 
-  // 4. If electricity option is provided, configure electricity connection
+  // 4. Provision Portal Access if enabled
+  let credsResult: { username: string; email: string; password?: string; hasPortalAccess: boolean } | null = null;
+  if (data.createPortalLogin && data.loginPassword) {
+    try {
+      const { provisionTenantPortalAccess } = await import("@/lib/auth/profile-service");
+      const prov = await provisionTenantPortalAccess({
+        tenantId: tenantItem.id,
+        fullName: tenantItem.full_name,
+        username: assignedUsername,
+        email: assignedEmail,
+        password: data.loginPassword,
+        phone: tenantItem.phone,
+      });
+      credsResult = {
+        username: prov.username,
+        email: prov.email,
+        password: data.loginPassword,
+        hasPortalAccess: true,
+      };
+    } catch (authErr: any) {
+      console.warn("Portal access provisioning note:", authErr);
+      if (authErr?.message?.includes("already")) {
+        throw authErr;
+      }
+    }
+  }
+
+  // 5. If electricity option is provided, configure electricity connection
   if (data.electricityOption || data.referenceNumber) {
     try {
       const { configureUnitElectricity } = await import("@/lib/electricity/service");
@@ -357,18 +416,23 @@ export async function createTenantWithLease(data: {
     title: "New Tenant Onboarded",
     description: `Onboarded ${tenantItem.full_name} for unit #${data.unitId} at monthly rent Rs. ${leaseItem.monthly_rent}.${
       data.referenceNumber ? ` Attached meter ref #${data.referenceNumber.trim()}.` : ""
-    }`,
+    }${credsResult ? ` Portal login created for ${assignedEmail}.` : ""}`,
     metadata: {
       tenantId: tenantItem.id,
       tenantName: tenantItem.full_name,
       unitId: data.unitId,
       rent: leaseItem.monthly_rent,
       referenceNumber: data.referenceNumber?.trim() || null,
+      portalEmail: assignedEmail,
     },
     href: `/tenants`,
   });
 
-  return { tenant: tenantItem, lease: leaseItem };
+  return {
+    tenant: tenantItem,
+    lease: leaseItem,
+    credentials: credsResult,
+  };
 }
 
 /**
@@ -401,13 +465,16 @@ export async function updateTenant(
     // Non-blocking
   }
 
-  const idx = fallbackTenants.findIndex((t) => t.id.toString() === id.toString());
-  if (idx !== -1) {
-    fallbackTenants[idx] = { ...fallbackTenants[idx], ...data };
-    return fallbackTenants[idx];
-  }
+  let resultTenant: TenantItem | null = null;
+  updateStore((s) => {
+    const idx = (s.tenants || []).findIndex((t: any) => t.id.toString() === id.toString());
+    if (idx !== -1) {
+      s.tenants[idx] = { ...s.tenants[idx], ...data };
+      resultTenant = s.tenants[idx];
+    }
+  });
 
-  return null;
+  return resultTenant;
 }
 
 /**
@@ -438,19 +505,26 @@ export async function updateLease(
       .maybeSingle();
 
     if (!error && updated) {
+      updateStore((s) => {
+        const idx = (s.leases || []).findIndex((l: any) => l.id.toString() === id.toString());
+        if (idx !== -1) s.leases[idx] = { ...s.leases[idx], ...updated };
+      });
       return updated as LeaseItem;
     }
   } catch {
     // Non-blocking
   }
 
-  const idx = fallbackLeases.findIndex((l) => l.id.toString() === id.toString());
-  if (idx !== -1) {
-    fallbackLeases[idx] = { ...fallbackLeases[idx], ...patch };
-    return fallbackLeases[idx];
-  }
+  let resultLease: LeaseItem | null = null;
+  updateStore((s) => {
+    const idx = (s.leases || []).findIndex((l: any) => l.id.toString() === id.toString());
+    if (idx !== -1) {
+      s.leases[idx] = { ...s.leases[idx], ...patch };
+      resultLease = s.leases[idx];
+    }
+  });
 
-  return null;
+  return resultLease;
 }
 
 /**
@@ -466,8 +540,6 @@ export async function vacateTenant(
     refundedAmount?: number;
   }
 ): Promise<{ success: boolean }> {
-  const today = data.vacateDate || new Date().toISOString().split("T")[0];
-
   try {
     // 1. Mark lease as ENDED
     await supabase
@@ -493,16 +565,18 @@ export async function vacateTenant(
     // 3. Mark unit as VACANT
     await updateUnit(unitId, { status: "VACANT" });
 
-    // Update in-memory fallback state
-    fallbackLeases = fallbackLeases.map((l) =>
-      l.tenant_id.toString() === tenantId.toString() && l.unit_id.toString() === unitId.toString()
-        ? { ...l, status: "ENDED", ended_at: new Date().toISOString(), vacate_reason: data.vacateReason }
-        : l
-    );
+    // Update in-memory file store
+    updateStore((s) => {
+      s.leases = (s.leases || []).map((l: any) =>
+        l.tenant_id.toString() === tenantId.toString() && l.unit_id.toString() === unitId.toString()
+          ? { ...l, status: "ENDED", ended_at: new Date().toISOString(), vacate_reason: data.vacateReason }
+          : l
+      );
 
-    fallbackTenants = fallbackTenants.map((t) =>
-      t.id.toString() === tenantId.toString() ? { ...t, status: "VACATED" } : t
-    );
+      s.tenants = (s.tenants || []).map((t: any) =>
+        t.id.toString() === tenantId.toString() ? { ...t, status: "VACATED" } : t
+      );
+    });
 
     return { success: true };
   } catch {

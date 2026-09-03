@@ -1,6 +1,7 @@
 {
-  "name": "plaza-electricity-manager",
-  "version": "0.1.0",
+  "name": "plaza-management-system",
+  "version": "1.0.0",
+  "description": "Full-Stack Commercial Plaza & Property Management System with Multi-Tenant Portals, Automated Rent & Electricity Billing",
   "private": true,
   "scripts": {
     "dev": "next dev",

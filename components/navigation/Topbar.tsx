@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { formatBillingMonth } from "@/lib/utils/format";
 import NotificationBell from "./NotificationBell";
+import LiveClock from "./LiveClock";
 import {
   Calendar,
   Building2,
@@ -10,6 +11,11 @@ import {
 
 export default function Topbar() {
   const pathname = usePathname();
+
+  if (pathname.startsWith("/login") || pathname === "/tenant" || pathname.startsWith("/tenant/")) {
+    return null;
+  }
+
   const currentMonth = new Date().toISOString().slice(0, 7);
 
   function getPageTitle() {
@@ -50,10 +56,8 @@ export default function Topbar() {
         {/* Real-Time Notification Bell */}
         <NotificationBell />
 
-        {/* Manager Avatar */}
-        <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-[#17211D] text-[#F4F7F2] flex items-center justify-center text-sm font-mono font-bold shadow-xs">
-          PM
-        </div>
+        {/* Live System Time */}
+        <LiveClock />
       </div>
     </header>
   );

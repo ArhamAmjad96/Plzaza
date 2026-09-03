@@ -12,12 +12,15 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import EmptyState from "@/components/ui/EmptyState";
 import { Wrench, Search, Plus, ArrowUpRight, CheckCircle2, User } from "lucide-react";
 
+import { ComplaintExpenseItem } from "@/lib/complaints/expenses-service";
+
 interface ComplaintsManagerProps {
   complaints: ComplaintItem[];
   stats: ComplaintStats;
   units: UnitItem[];
   tenants: TenantLeaseView[];
   expenseMap?: Record<string, number>;
+  expenses?: ComplaintExpenseItem[];
 }
 
 export default function ComplaintsManager({
@@ -26,6 +29,7 @@ export default function ComplaintsManager({
   units,
   tenants,
   expenseMap = {},
+  expenses = [],
 }: ComplaintsManagerProps) {
   const [selectedTab, setSelectedTab] = useState<"ALL" | "OPEN" | "IN_PROGRESS" | "RESOLVED">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -241,6 +245,7 @@ export default function ComplaintsManager({
       {selectedComplaint && (
         <ComplaintDetailModal
           complaint={selectedComplaint}
+          expenses={expenses.filter((e) => e.complaint_id?.toString() === selectedComplaint.id.toString())}
           totalExpense={expenseMap[selectedComplaint.id.toString()] || 0}
           onClose={() => setSelectedComplaint(null)}
         />

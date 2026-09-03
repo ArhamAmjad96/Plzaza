@@ -32,11 +32,11 @@ export default function RentManagementTable({ items }: { items: LedgerItem[] }) 
               <tr>
                 <th className="py-3.5 px-4">Shop / Space</th>
                 <th className="py-3.5 px-4">Tenant</th>
-                <th className="py-3.5 px-4 text-right">Rent</th>
-                <th className="py-3.5 px-4 text-right">Electricity</th>
-                <th className="py-3.5 px-4 text-right">Total Due</th>
-                <th className="py-3.5 px-4 text-right">Paid</th>
-                <th className="py-3.5 px-4 text-right">Balance</th>
+                <th className="py-3.5 px-4 text-right">Monthly Rent</th>
+                <th className="py-3.5 px-4 text-right">IESCO Bill (Info)</th>
+                <th className="py-3.5 px-4 text-right">Rent Payable</th>
+                <th className="py-3.5 px-4 text-right">Rent Paid</th>
+                <th className="py-3.5 px-4 text-right">Rent Balance</th>
                 <th className="py-3.5 px-4 text-right">Status</th>
                 <th className="py-3.5 px-4 text-right">Action</th>
               </tr>
@@ -68,12 +68,18 @@ export default function RentManagementTable({ items }: { items: LedgerItem[] }) 
                       {formatPKR(item.rent_amount)}
                     </td>
 
-                    {/* Electricity Dues */}
+                    {/* Electricity Dues (Direct Pay by Tenant) */}
                     <td className="py-3.5 px-4 text-right text-[#58655E]">
-                      {item.has_electricity_bill ? formatPKR(item.electricity_amount) : "—"}
+                      {item.has_electricity_bill ? (
+                        <span title="Paid directly by tenant to IESCO">
+                          {formatPKR(item.electricity_amount)}
+                        </span>
+                      ) : (
+                        "—"
+                      )}
                     </td>
 
-                    {/* Total Dues */}
+                    {/* Rent Payable */}
                     <td className="py-3.5 px-4 text-right font-semibold text-[#17211D]">
                       {formatPKR(item.total_payable)}
                     </td>
@@ -125,6 +131,8 @@ export default function RentManagementTable({ items }: { items: LedgerItem[] }) 
       {selectedLedger && (
         <RecordPaymentModal
           connectionId={selectedLedger.unit_id || 1}
+          tenantId={selectedLedger.tenant_id}
+          unitId={selectedLedger.unit_id}
           tenantName={selectedLedger.tenant_name || "Tenant"}
           shopName={selectedLedger.shop_name}
           referenceNumber={selectedLedger.reference_number}

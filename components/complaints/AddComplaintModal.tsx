@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createComplaintAction } from "@/app/complaints/actions";
 import { UnitItem } from "@/lib/units/service";
 import { TenantLeaseView } from "@/lib/tenants/service";
@@ -30,6 +31,7 @@ const CATEGORIES: Array<{ key: ComplaintCategory; label: string; icon: any }> = 
 ];
 
 export default function AddComplaintModal({ units, tenants, onClose }: AddComplaintModalProps) {
+  const router = useRouter();
   const [unitId, setUnitId] = useState(units.length > 0 ? units[0].id.toString() : "");
   const [category, setCategory] = useState<ComplaintCategory>("Electrical");
   const [title, setTitle] = useState("");
@@ -59,6 +61,7 @@ export default function AddComplaintModal({ units, tenants, onClose }: AddCompla
       formData.append("complaint_date", new Date().toISOString().split("T")[0]);
 
       await createComplaintAction(formData);
+      router.refresh();
       onClose();
     } catch {
       alert("Failed to log maintenance issue.");

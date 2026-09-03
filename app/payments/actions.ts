@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import {
   recordPaymentTransaction,
   deletePaymentTransaction,
+  getReceiptData,
   PaymentType,
 } from "@/lib/payments/service";
 
@@ -11,6 +12,7 @@ export async function createPaymentAction(formData: FormData) {
   const connectionIdStr = (formData.get("connection_id") as string) || "1";
   const tenantIdStr = (formData.get("tenant_id") as string) || null;
   const leaseIdStr = (formData.get("lease_id") as string) || null;
+  const unitIdStr = (formData.get("unit_id") as string) || null;
   const billingMonth = formData.get("billing_month") as string;
   const paymentType = ((formData.get("payment_type") as string) || "RENT") as PaymentType;
   const amountStr = formData.get("amount") as string;
@@ -34,6 +36,7 @@ export async function createPaymentAction(formData: FormData) {
     connectionId,
     tenantId: tenantIdStr ? parseInt(tenantIdStr, 10) : undefined,
     leaseId: leaseIdStr ? parseInt(leaseIdStr, 10) : undefined,
+    unitId: unitIdStr ? parseInt(unitIdStr, 10) : undefined,
     billingMonth,
     paymentType,
     amount,
@@ -45,8 +48,12 @@ export async function createPaymentAction(formData: FormData) {
 
   revalidatePath("/rent");
   revalidatePath("/tenants");
+  revalidatePath("/units");
+  revalidatePath("/tenant/payments");
+  revalidatePath("/tenant");
   revalidatePath("/");
   if (connectionId) revalidatePath(`/tenants/${connectionId}`);
+  if (tenantIdStr) revalidatePath(`/tenants/${tenantIdStr}`);
 
   return { success: true, payment };
 }
@@ -64,8 +71,20 @@ export async function deletePaymentAction(
 
   revalidatePath("/rent");
   revalidatePath("/tenants");
+  revalidatePath("/units");
+  revalidatePath("/tenant/payments");
+  revalidatePath("/tenant");
   revalidatePath("/");
   if (connectionId) revalidatePath(`/tenants/${connectionId}`);
 
   return { success };
+}
+
+export async function getReceiptDataAction(paymentId: number | string) {
+  try {
+    const data = await getReceiptData(paymentId);
+    return { success: true, receipt: data };
+  } catch (err: any) {
+    return { success: false, error: err?.message || "Failed to fetch receipt data." };
+  }
 }

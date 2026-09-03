@@ -1,5 +1,5 @@
 import { getAllComplaints } from "@/lib/complaints/service";
-import { getAllComplaintExpensesMap } from "@/lib/complaints/expenses-service";
+import { getAllComplaintExpensesMap, getAllComplaintExpenses } from "@/lib/complaints/expenses-service";
 import { getAllUnits } from "@/lib/units/service";
 import { getTenantsWithLeases } from "@/lib/tenants/service";
 import ComplaintsManager from "@/components/complaints/ComplaintsManager";
@@ -7,9 +7,10 @@ import ComplaintsManager from "@/components/complaints/ComplaintsManager";
 export const dynamic = "force-dynamic";
 
 export default async function ComplaintsPage() {
-  const [{ complaints, stats }, expenseMap, { units }, { tenants }] = await Promise.all([
+  const [{ complaints, stats }, expenseMap, allExpenses, { units }, { tenants }] = await Promise.all([
     getAllComplaints(),
     getAllComplaintExpensesMap(),
+    getAllComplaintExpenses(),
     getAllUnits(),
     getTenantsWithLeases(),
   ]);
@@ -22,6 +23,7 @@ export default async function ComplaintsPage() {
         units={units}
         tenants={tenants}
         expenseMap={expenseMap}
+        expenses={allExpenses}
       />
     </div>
   );

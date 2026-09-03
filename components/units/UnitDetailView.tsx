@@ -12,6 +12,8 @@ import VacateTenantModal from "@/components/tenants/VacateTenantModal";
 import AddTenantModal from "@/components/tenants/AddTenantModal";
 import ViewBillModal from "@/components/bills/ViewBillModal";
 import ConnectMeterModal from "@/components/units/ConnectMeterModal";
+import BillHistoryList from "@/components/bills/BillHistoryList";
+import { ElectricityBillItem } from "@/lib/bills/service";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -48,11 +50,13 @@ interface UnitDetailViewProps {
       status?: string;
       due_date?: string;
       bill_image_url?: string | null;
+      bill_file_path?: string | null;
     } | null;
   } | null;
   payments?: any[];
   ledgers?: any[];
   complaints?: any[];
+  billsHistory?: ElectricityBillItem[];
 }
 
 export default function UnitDetailView({
@@ -63,8 +67,10 @@ export default function UnitDetailView({
   payments = [],
   ledgers = [],
   complaints = [],
+  billsHistory = [],
 }: UnitDetailViewProps) {
-  const [activeTab, setActiveTab] = useState<"PAYMENTS" | "LEDGERS" | "MAINTENANCE">("PAYMENTS");
+  const [activeTab, setActiveTab] = useState<"PAYMENTS" | "LEDGERS" | "BILLS" | "MAINTENANCE">("PAYMENTS");
+  const [selectedHistoryBill, setSelectedHistoryBill] = useState<ElectricityBillItem | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
@@ -330,11 +336,11 @@ export default function UnitDetailView({
 
       {/* ─── Activity & History Tabs ─── */}
       <section className="space-y-4">
-        <div className="flex items-center p-1 rounded-2xl border border-[#CBD4BC] bg-[#E8EDD9] text-xs font-medium text-[#58655E] max-w-md">
+        <div className="flex items-center p-1 rounded-2xl border border-[#CBD4BC] bg-[#E8EDD9] text-xs font-medium text-[#58655E] max-w-xl flex-wrap">
           <button
             type="button"
             onClick={() => setActiveTab("PAYMENTS")}
-            className={`flex-1 py-2 rounded-xl transition ${
+            className={`flex-1 py-2 px-3 rounded-xl transition ${
               activeTab === "PAYMENTS" ? "bg-[#17211D] text-[#F4F7F2] shadow-xs" : "hover:text-[#17211D]"
             }`}
           >
@@ -343,7 +349,7 @@ export default function UnitDetailView({
           <button
             type="button"
             onClick={() => setActiveTab("LEDGERS")}
-            className={`flex-1 py-2 rounded-xl transition ${
+            className={`flex-1 py-2 px-3 rounded-xl transition ${
               activeTab === "LEDGERS" ? "bg-[#17211D] text-[#F4F7F2] shadow-xs" : "hover:text-[#17211D]"
             }`}
           >
@@ -351,8 +357,17 @@ export default function UnitDetailView({
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab("BILLS")}
+            className={`flex-1 py-2 px-3 rounded-xl transition ${
+              activeTab === "BILLS" ? "bg-[#17211D] text-[#F4F7F2] shadow-xs" : "hover:text-[#17211D]"
+            }`}
+          >
+            Bill History ({billsHistory.length})
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("MAINTENANCE")}
-            className={`flex-1 py-2 rounded-xl transition ${
+            className={`flex-1 py-2 px-3 rounded-xl transition ${
               activeTab === "MAINTENANCE" ? "bg-[#17211D] text-[#F4F7F2] shadow-xs" : "hover:text-[#17211D]"
             }`}
           >
@@ -428,7 +443,20 @@ export default function UnitDetailView({
           </div>
         )}
 
-        {/* Tab 3: Repairs */}
+        {/* Tab 3: Bills History */}
+        {activeTab === "BILLS" && (
+          <div className="rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] p-6 shadow-xs">
+            <BillHistoryList
+              bills={billsHistory}
+              referenceNumber={electricity?.reference_number || (unit as any).reference_number}
+              isShared={electricity?.is_shared}
+              splitValue={electricity?.is_shared ? 50 : 100}
+              onSelectBill={(bill) => setSelectedHistoryBill(bill)}
+            />
+          </div>
+        )}
+
+        {/* Tab 4: Repairs */}
         {activeTab === "MAINTENANCE" && (
           <div className="rounded-2xl border border-[#CBD4BC] bg-[#FAF6F0] overflow-hidden shadow-xs">
             {complaints.length === 0 ? (
@@ -456,6 +484,9 @@ export default function UnitDetailView({
       {showRecordPayment && (
         <RecordPaymentModal
           connectionId={electricity?.connection_id || 1}
+          tenantId={tenant?.id}
+          unitId={unit.id}
+          leaseId={lease?.id}
           tenantName={tenant?.full_name || "Tenant"}
           shopName={unit.unit_name}
           referenceNumber={electricity?.reference_number}
@@ -503,19 +534,42 @@ export default function UnitDetailView({
         />
       )}
 
-      {showViewBill && electricity && (
+      {(showViewBill || selectedHistoryBill) && (
         <ViewBillModal
-          billData={{
-            referenceNumber: electricity.reference_number,
-            meterNumber: electricity.meter_number || undefined,
-            consumerName: `${unit.unit_name} (${tenant?.full_name || "Commercial Space"})`,
-            billAmount: latestBill?.bill_amount || 5400,
-            unitsConsumed: latestBill?.units_consumed || 165,
-            dueDate: latestBill?.due_date || "20 Aug 2026",
-            billStatus: latestBill?.status || "unpaid",
-            billImageUrl: latestBill?.bill_image_url || null,
+          billData={
+            selectedHistoryBill
+              ? {
+                  id: selectedHistoryBill.id,
+                  referenceNumber: selectedHistoryBill.reference_number || electricity?.reference_number || (unit as any).reference_number,
+                  meterNumber: selectedHistoryBill.meter_number || electricity?.meter_number || undefined,
+                  consumerName: selectedHistoryBill.consumer_name || `${unit.unit_name} (${tenant?.full_name || "Commercial Space"})`,
+                  billingMonth: selectedHistoryBill.billing_month,
+                  issueDate: selectedHistoryBill.issue_date || undefined,
+                  dueDate: selectedHistoryBill.due_date || "20 Aug 2026",
+                  unitsConsumed: selectedHistoryBill.units_consumed || 165,
+                  billAmount: selectedHistoryBill.bill_amount || selectedHistoryBill.amount_due || 5400,
+                  latePaymentAmount: selectedHistoryBill.late_payment_amount || undefined,
+                  billStatus: selectedHistoryBill.status || "unpaid",
+                  billImageUrl: selectedHistoryBill.bill_file_url || selectedHistoryBill.bill_image_url || null,
+                  billFilePath: selectedHistoryBill.bill_file_path || null,
+                }
+              : {
+                  id: latestBill?.id,
+                  referenceNumber: electricity?.reference_number || (unit as any).reference_number,
+                  meterNumber: electricity?.meter_number || undefined,
+                  consumerName: `${unit.unit_name} (${tenant?.full_name || "Commercial Space"})`,
+                  billingMonth: latestBill?.billing_month,
+                  billAmount: latestBill?.bill_amount || 5400,
+                  unitsConsumed: latestBill?.units_consumed || 165,
+                  dueDate: latestBill?.due_date || "20 Aug 2026",
+                  billStatus: latestBill?.status || "unpaid",
+                  billImageUrl: latestBill?.bill_image_url || null,
+                }
+          }
+          onClose={() => {
+            setShowViewBill(false);
+            setSelectedHistoryBill(null);
           }}
-          onClose={() => setShowViewBill(false)}
         />
       )}
     </div>

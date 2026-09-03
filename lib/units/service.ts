@@ -595,7 +595,7 @@ export async function updateUnit(
         const idx = s.units.findIndex((u) => u.id.toString() === id.toString());
         if (idx !== -1) s.units[idx] = { ...s.units[idx], ...data, ...updated };
       });
-      return { ...result, ...updated } as UnitItem;
+      return { ...(result || {}), ...updated } as UnitItem;
     }
   } catch {
     // Non-blocking

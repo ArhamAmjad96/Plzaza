@@ -1,7 +1,9 @@
 import { getMonthlyLedgersAll, normalizeBillingMonth } from "@/lib/ledgers/service";
+import { getPendingTenantPaymentAlerts } from "@/lib/logs/service";
 import { formatPKR, formatBillingMonth } from "@/lib/utils/format";
 import RentFilterBar from "@/components/rent/RentFilterBar";
 import RentManagementTable from "@/components/rent/RentManagementTable";
+import TenantPaymentAlertsBanner from "@/components/rent/TenantPaymentAlertsBanner";
 import { CheckCircle2, AlertCircle, CreditCard } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -18,8 +20,11 @@ export default async function RentPage({
   const search = (params.search || "").trim().toLowerCase();
   const statusFilter = params.status || "all";
 
-  // 1. Fetch all ledgers for target month
-  const allLedgers = await getMonthlyLedgersAll(billingMonth);
+  // 1. Fetch all ledgers for target month and any reported tenant payments
+  const [allLedgers, paymentAlerts] = await Promise.all([
+    getMonthlyLedgersAll(billingMonth),
+    getPendingTenantPaymentAlerts(),
+  ]);
 
   // 2. Compute Summary Collection Metrics
   const totalRentExpected = allLedgers.reduce(
@@ -86,19 +91,19 @@ export default async function RentPage({
           </div>
 
           <div>
-            <span className="text-[10px] uppercase font-sans text-[#7D6F5D] block">Expected Total</span>
+            <span className="text-[10px] uppercase font-sans text-[#7D6F5D] block">Expected Rent</span>
             <p className="text-2xl sm:text-3xl font-bold text-[#17211D] mt-1">
               {formatPKR(totalRentExpected)}
             </p>
-            <p className="text-[11px] text-[#7D6F5D] font-sans mt-0.5">Rent + electricity bills</p>
+            <p className="text-[11px] text-[#7D6F5D] font-sans mt-0.5">Active monthly rent leases</p>
           </div>
 
           <div>
-            <span className="text-[10px] uppercase font-sans text-[#7D6F5D] block">Remaining Dues</span>
+            <span className="text-[10px] uppercase font-sans text-[#7D6F5D] block">Remaining Rent Dues</span>
             <p className="text-2xl sm:text-3xl font-bold text-[#8E3E33] mt-1">
               {formatPKR(totalOutstanding)}
             </p>
-            <p className="text-[11px] text-[#7D6F5D] font-sans mt-0.5">Pending tenant settlement</p>
+            <p className="text-[11px] text-[#7D6F5D] font-sans mt-0.5">Pending collection</p>
           </div>
 
           <div>
@@ -110,6 +115,12 @@ export default async function RentPage({
           </div>
         </div>
       </section>
+
+      {/* ─── Tenant Payment Notifications & Verification Banner ─── */}
+      <TenantPaymentAlertsBanner
+        alerts={paymentAlerts}
+        ledgers={allLedgers}
+      />
 
       {/* ─── Search & Status Filters ─── */}
       <RentFilterBar

@@ -8,6 +8,9 @@ import { formatPKR } from "@/lib/utils/format";
 import AddTenantModal from "./AddTenantModal";
 import EditTenantModal from "./EditTenantModal";
 import VacateTenantModal from "./VacateTenantModal";
+import TenantPortalAccessModal from "./TenantPortalAccessModal";
+import TenantCredentialsTable from "./TenantCredentialsTable";
+import { TenantCredentialRow } from "@/lib/auth/profile-service";
 import StatusBadge from "@/components/ui/StatusBadge";
 import EmptyState from "@/components/ui/EmptyState";
 import {
@@ -20,24 +23,29 @@ import {
   Sliders,
   Building2,
   Zap,
+  KeyRound,
+  ShieldCheck,
 } from "lucide-react";
 
 interface TenantsManagerProps {
   tenants: TenantLeaseView[];
   stats: TenantStats;
   availableUnits: UnitItem[];
+  credentials?: TenantCredentialRow[];
 }
 
 export default function TenantsManager({
   tenants,
   stats,
   availableUnits,
+  credentials = [],
 }: TenantsManagerProps) {
-  const [selectedTab, setSelectedTab] = useState<"ACTIVE" | "VACATED" | "SHOPS" | "ROOMS">("ACTIVE");
+  const [selectedTab, setSelectedTab] = useState<"ACTIVE" | "CREDENTIALS" | "SHOPS" | "ROOMS" | "VACATED">("ACTIVE");
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTenant, setEditingTenant] = useState<TenantLeaseView | null>(null);
   const [vacatingTenant, setVacatingTenant] = useState<TenantLeaseView | null>(null);
+  const [portalAccessTenant, setPortalAccessTenant] = useState<TenantLeaseView | null>(null);
 
   // Filter tenants
   const filteredTenants = tenants.filter((tv) => {
@@ -99,11 +107,11 @@ export default function TenantsManager({
         </div>
 
         {/* Tab Filters */}
-        <div className="flex items-center p-1 rounded-xl border border-[#CBD4BC] bg-[#E8EDD9] text-xs font-medium text-[#58655E]">
+        <div className="flex items-center p-1 rounded-xl border border-[#CBD4BC] bg-[#E8EDD9] text-xs font-medium text-[#58655E] flex-wrap gap-1">
           <button
             type="button"
             onClick={() => setSelectedTab("ACTIVE")}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
               selectedTab === "ACTIVE"
                 ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-semibold"
                 : "hover:text-[#17211D]"
@@ -113,8 +121,20 @@ export default function TenantsManager({
           </button>
           <button
             type="button"
+            onClick={() => setSelectedTab("CREDENTIALS")}
+            className={`px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5 cursor-pointer ${
+              selectedTab === "CREDENTIALS"
+                ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-semibold"
+                : "hover:text-[#17211D]"
+            }`}
+          >
+            <KeyRound size={13} className={selectedTab === "CREDENTIALS" ? "text-[#8FA66B]" : "text-[#58655E]"} />
+            <span>Credentials Vault ({credentials.length})</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setSelectedTab("SHOPS")}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
               selectedTab === "SHOPS"
                 ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-semibold"
                 : "hover:text-[#17211D]"
@@ -125,7 +145,7 @@ export default function TenantsManager({
           <button
             type="button"
             onClick={() => setSelectedTab("ROOMS")}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
               selectedTab === "ROOMS"
                 ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-semibold"
                 : "hover:text-[#17211D]"
@@ -136,7 +156,7 @@ export default function TenantsManager({
           <button
             type="button"
             onClick={() => setSelectedTab("VACATED")}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
               selectedTab === "VACATED"
                 ? "bg-[#17211D] text-[#F4F7F2] shadow-xs font-semibold"
                 : "hover:text-[#17211D]"
@@ -147,8 +167,13 @@ export default function TenantsManager({
         </div>
       </div>
 
-      {/* ─── Tenants Cards Grid ─── */}
-      {filteredTenants.length === 0 ? (
+      {/* ─── View Switch: Credentials Vault vs Tenant Directory Grid ─── */}
+      {selectedTab === "CREDENTIALS" ? (
+        <TenantCredentialsTable
+          credentials={credentials}
+          tenants={tenants}
+        />
+      ) : filteredTenants.length === 0 ? (
         <EmptyState
           icon={Users}
           title="No tenant records found"
@@ -176,7 +201,13 @@ export default function TenantsManager({
                         {unit ? unit.unit_name : "Unassigned Space"}
                       </span>
                       <h3 className="text-base font-semibold text-[#17211D] mt-0.5">
-                        {tenant.full_name}
+                        <Link
+                          href={`/tenants/${tenant.id}`}
+                          className="hover:text-[#FF704D] hover:underline transition"
+                          title="Open 360 Tenant Profile"
+                        >
+                          {tenant.full_name}
+                        </Link>
                       </h3>
                       {tenant.phone && (
                         <p className="text-xs font-mono text-[#58655E] mt-0.5 flex items-center gap-1">
@@ -224,19 +255,39 @@ export default function TenantsManager({
 
                 {/* Bottom Actions */}
                 <div className="pt-3 border-t border-[#CBD4BC]/60 flex items-center justify-between gap-2 flex-wrap">
-                  {unit ? (
+                  <div className="flex items-center gap-2">
                     <Link
-                      href={`/units/${unit.id}`}
+                      href={`/tenants/${tenant.id}`}
                       className="inline-flex items-center gap-1 text-xs font-semibold text-[#17211D] hover:text-[#FF704D] transition py-1"
+                      title="Open 360 Tenant Profile"
                     >
-                      <span>Open Space</span>
+                      <Users size={13} className="text-[#8FA66B]" />
+                      <span>View Profile</span>
                       <ArrowUpRight size={13} />
                     </Link>
-                  ) : (
-                    <span className="text-xs text-[#58655E]">No unit</span>
-                  )}
+
+                    {unit && (
+                      <Link
+                        href={`/units/${unit.id}`}
+                        className="inline-flex items-center gap-1 text-xs text-[#58655E] hover:text-[#17211D] transition py-1 pl-1 border-l border-[#CBD4BC]"
+                        title="View Physical Space"
+                      >
+                        <span>{unit.unit_name}</span>
+                      </Link>
+                    )}
+                  </div>
 
                   <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => setPortalAccessTenant(tv)}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-[#CBD4BC] bg-[#E8EDD9] text-[#17211D] hover:bg-[#DDE4CF] text-xs font-semibold transition shadow-xs cursor-pointer"
+                      title="Manage Portal Login Credentials"
+                    >
+                      <KeyRound size={12} className="text-[#8FA66B]" />
+                      <span>Portal Access</span>
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => setEditingTenant(tv)}
@@ -284,6 +335,13 @@ export default function TenantsManager({
         <VacateTenantModal
           tenantView={vacatingTenant}
           onClose={() => setVacatingTenant(null)}
+        />
+      )}
+
+      {portalAccessTenant && (
+        <TenantPortalAccessModal
+          tenantView={portalAccessTenant}
+          onClose={() => setPortalAccessTenant(null)}
         />
       )}
     </div>

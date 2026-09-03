@@ -46,13 +46,17 @@ export async function getComplaintExpenses(
     if (!error && expenses) {
       list = expenses as ComplaintExpenseItem[];
     } else {
-      list = fallbackExpenses.filter(
-        (e) => e.complaint_id.toString() === complaintId.toString()
+      const { getStore } = await import("@/lib/storage/fileStore");
+      const storeList: any[] = getStore().complaint_expenses || fallbackExpenses;
+      list = storeList.filter(
+        (e) => e.complaint_id?.toString() === complaintId.toString()
       );
     }
   } catch {
-    list = fallbackExpenses.filter(
-      (e) => e.complaint_id.toString() === complaintId.toString()
+    const { getStore } = await import("@/lib/storage/fileStore");
+    const storeList: any[] = getStore().complaint_expenses || fallbackExpenses;
+    list = storeList.filter(
+      (e) => e.complaint_id?.toString() === complaintId.toString()
     );
   }
 
@@ -79,6 +83,32 @@ export async function getComplaintExpenses(
 }
 
 /**
+ * Retrieves all complaint expenses across all complaints
+ */
+export async function getAllComplaintExpenses(): Promise<ComplaintExpenseItem[]> {
+  try {
+    const { data: allExpenses, error } = await supabase
+      .from("complaint_expenses")
+      .select("*")
+      .order("expense_date", { ascending: false });
+
+    if (!error && allExpenses) {
+      return allExpenses as ComplaintExpenseItem[];
+    }
+  } catch {
+    // Non-blocking
+  }
+
+  try {
+    const { getStore } = await import("@/lib/storage/fileStore");
+    const storeList: any[] = getStore().complaint_expenses || fallbackExpenses;
+    return storeList;
+  } catch {}
+
+  return fallbackExpenses;
+}
+
+/**
  * Retrieves a map of total repair expenses keyed by complaint ID
  */
 export async function getAllComplaintExpensesMap(): Promise<Record<string, number>> {
@@ -99,6 +129,18 @@ export async function getAllComplaintExpensesMap(): Promise<Record<string, numbe
   } catch {
     // Non-blocking
   }
+
+  try {
+    const { getStore } = await import("@/lib/storage/fileStore");
+    const storeList: any[] = getStore().complaint_expenses || fallbackExpenses;
+    for (const row of storeList) {
+      const key = row.complaint_id?.toString();
+      if (key) {
+        map[key] = (map[key] || 0) + (Number(row.amount) || 0);
+      }
+    }
+    return map;
+  } catch {}
 
   for (const row of fallbackExpenses) {
     const key = row.complaint_id.toString();
@@ -156,8 +198,65 @@ export async function addComplaintExpense(data: {
     // Non-blocking
   }
 
+  try {
+    const { updateStore } = await import("@/lib/storage/fileStore");
+    updateStore((s) => {
+      if (!s.complaint_expenses) s.complaint_expenses = [];
+      s.complaint_expenses.unshift(item);
+    });
+  } catch {}
+
   fallbackExpenses = [item, ...fallbackExpenses];
   return item;
+}
+
+/**
+ * Updates an existing complaint repair expense
+ */
+export async function updateComplaintExpense(
+  id: number | string,
+  data: Partial<ComplaintExpenseItem>
+): Promise<ComplaintExpenseItem | null> {
+  const patch: any = { ...data };
+  if (patch.amount !== undefined) patch.amount = Number(patch.amount) || 0;
+
+  let result: ComplaintExpenseItem | null = null;
+
+  try {
+    const { data: updated, error } = await supabase
+      .from("complaint_expenses")
+      .update(patch)
+      .eq("id", id)
+      .select()
+      .maybeSingle();
+
+    if (!error && updated) {
+      result = updated as ComplaintExpenseItem;
+    }
+  } catch {
+    // Non-blocking
+  }
+
+  try {
+    const { updateStore } = await import("@/lib/storage/fileStore");
+    updateStore((s) => {
+      if (s.complaint_expenses) {
+        const storeIdx = s.complaint_expenses.findIndex((e: any) => e.id?.toString() === id.toString());
+        if (storeIdx !== -1) {
+          s.complaint_expenses[storeIdx] = { ...s.complaint_expenses[storeIdx], ...patch };
+          result = s.complaint_expenses[storeIdx];
+        }
+      }
+    });
+  } catch {}
+
+  const idx = fallbackExpenses.findIndex((e) => e.id?.toString() === id.toString());
+  if (idx !== -1) {
+    fallbackExpenses[idx] = { ...fallbackExpenses[idx], ...patch };
+    if (!result) result = fallbackExpenses[idx];
+  }
+
+  return result;
 }
 
 /**
@@ -169,6 +268,15 @@ export async function deleteComplaintExpense(id: number | string): Promise<boole
   } catch {
     // Non-blocking
   }
+
+  try {
+    const { updateStore } = await import("@/lib/storage/fileStore");
+    updateStore((s) => {
+      if (s.complaint_expenses) {
+        s.complaint_expenses = s.complaint_expenses.filter((e: any) => e.id?.toString() !== id.toString());
+      }
+    });
+  } catch {}
 
   fallbackExpenses = fallbackExpenses.filter((e) => e.id.toString() !== id.toString());
   return true;

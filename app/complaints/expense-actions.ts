@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import {
   addComplaintExpense,
+  updateComplaintExpense,
   deleteComplaintExpense,
   ExpenseType,
 } from "@/lib/complaints/expenses-service";
@@ -34,6 +35,28 @@ export async function addComplaintExpenseAction(formData: FormData) {
     paymentMethod,
     expenseDate,
   });
+
+  revalidatePath("/complaints");
+  revalidatePath("/");
+  return { success: true, expense };
+}
+
+export async function updateComplaintExpenseAction(id: number | string, formData: FormData) {
+  const description = formData.get("description") as string;
+  const amountStr = formData.get("amount") as string;
+  const vendorName = (formData.get("vendor_name") as string)?.trim() || null;
+  const expenseType = (formData.get("expense_type") as ExpenseType) || undefined;
+
+  const patch: any = {};
+  if (description) patch.description = description.trim();
+  if (amountStr) {
+    const amount = parseFloat(amountStr);
+    if (!isNaN(amount) && amount > 0) patch.amount = amount;
+  }
+  if (vendorName !== undefined) patch.vendor_name = vendorName;
+  if (expenseType) patch.expense_type = expenseType;
+
+  const expense = await updateComplaintExpense(id, patch);
 
   revalidatePath("/complaints");
   revalidatePath("/");

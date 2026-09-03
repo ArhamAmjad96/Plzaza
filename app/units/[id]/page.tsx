@@ -44,18 +44,21 @@ export default async function UnitDetailPage({
   const { tenants } = await getTenantsWithLeases();
   const tenantView = tenants.find((t) => t.unit?.id.toString() === unit.id.toString()) || null;
 
-  // 3. Parallel fetch of Ledgers, Electricity Info, Payments, and Complaints
+  // 3. Parallel fetch of Ledgers, Electricity Info, Payments, Complaints, and Bill History
   const { getConnectionsWithMappings } = await import("@/lib/electricity/service");
+  const { getBillsForUnit } = await import("@/lib/bills/service");
   const [
     { items: allLedgers },
     electricityAlloc,
     { complaints: allComplaints },
     allConnections,
+    unitBillsData,
   ] = await Promise.all([
     getMonthlyLedgers(currentMonth),
     getUnitAllocatedElectricityBill(unit.id, currentMonth),
     getAllComplaints(),
     getConnectionsWithMappings(),
+    getBillsForUnit(unit.id),
   ]);
 
   const historyLedgers = allLedgers.filter((l) => l.unit_id?.toString() === unit.id.toString());
@@ -106,6 +109,7 @@ export default async function UnitDetailPage({
         payments={payments}
         ledgers={historyLedgers}
         complaints={complaints}
+        billsHistory={unitBillsData?.bills || []}
       />
     </div>
   );

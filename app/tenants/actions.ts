@@ -11,6 +11,7 @@ export async function createTenantAction(formData: FormData) {
   const fullName = formData.get("full_name") as string;
   const phone = formData.get("phone") as string;
   const cnic = formData.get("cnic") as string;
+  const email = (formData.get("email") as string)?.trim() || null;
   const emergencyContact = formData.get("emergency_contact") as string;
   const unitId = formData.get("unit_id") as string;
   const monthlyRent = parseFloat(formData.get("monthly_rent") as string) || 0;
@@ -28,6 +29,11 @@ export async function createTenantAction(formData: FormData) {
   const splitType = (formData.get("split_type") as any) || undefined;
   const splitValue = parseFloat(formData.get("split_value") as string) || undefined;
 
+  const createPortalLogin = formData.get("create_portal_login") === "true";
+  const loginUsername = (formData.get("login_username") as string)?.trim() || undefined;
+  const loginEmail = (formData.get("login_email") as string)?.trim() || email;
+  const loginPassword = (formData.get("login_password") as string)?.trim() || undefined;
+
   if (!fullName || !unitId) {
     throw new Error("Tenant Full Name and Unit assignment are required.");
   }
@@ -36,6 +42,7 @@ export async function createTenantAction(formData: FormData) {
     fullName,
     phone,
     cnic,
+    email,
     emergencyContact,
     unitId,
     monthlyRent,
@@ -52,6 +59,10 @@ export async function createTenantAction(formData: FormData) {
     sharedConnectionId,
     splitType,
     splitValue,
+    createPortalLogin,
+    loginUsername,
+    loginEmail,
+    loginPassword,
   });
 
   revalidatePath("/tenants");

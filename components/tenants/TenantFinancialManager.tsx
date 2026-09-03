@@ -145,6 +145,9 @@ export default function TenantFinancialManager({
       {showPaymentModal && (
         <RecordPaymentModal
           connectionId={connection.id}
+          tenantId={connection.tenant_id || connection.id}
+          unitId={connection.unit_id}
+          leaseId={connection.lease_id}
           tenantName={connection.tenant || connection.name}
           shopName={connection.name}
           referenceNumber={connection.reference_number}

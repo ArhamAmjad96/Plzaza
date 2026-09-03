@@ -19,6 +19,10 @@ export interface PlazaStoreData {
   complaint_expenses: any[];
   logs: any[];
   notifications: any[];
+  profiles: any[];
+  monthly_ledgers: any[];
+  tenant_notifications: any[];
+  tenant_credentials?: any[];
 }
 
 const DEFAULT_STORE: PlazaStoreData = {
@@ -42,6 +46,10 @@ const DEFAULT_STORE: PlazaStoreData = {
   complaint_expenses: [],
   logs: [],
   notifications: [],
+  profiles: [],
+  monthly_ledgers: [],
+  tenant_notifications: [],
+  tenant_credentials: [],
 };
 
 function getStoragePaths() {

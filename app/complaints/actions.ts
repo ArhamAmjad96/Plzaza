@@ -45,6 +45,8 @@ export async function updateComplaintAction(id: number | string, formData: FormD
   const priority = formData.get("priority") as ComplaintPriority;
   const assignedTo = (formData.get("assigned_to") as string)?.trim() || null;
   const resolutionNotes = (formData.get("resolution_notes") as string)?.trim() || null;
+  const expenseAmountStr = formData.get("expense_amount") as string;
+  const expenseDescription = (formData.get("expense_description") as string)?.trim() || "Repair & Maintenance";
 
   await updateComplaint(id, {
     status: status || undefined,
@@ -52,6 +54,32 @@ export async function updateComplaintAction(id: number | string, formData: FormD
     assigned_to: assignedTo || undefined,
     resolution_notes: resolutionNotes || undefined,
   });
+
+  if (expenseAmountStr !== null && expenseAmountStr !== undefined && expenseAmountStr.trim() !== "") {
+    const expenseAmount = parseFloat(expenseAmountStr);
+    if (!isNaN(expenseAmount) && expenseAmount > 0) {
+      const { getComplaintExpenses, addComplaintExpense, updateComplaintExpense } = await import("@/lib/complaints/expenses-service");
+      const existingExpenses = await getComplaintExpenses(id);
+      if (existingExpenses.items.length > 0) {
+        // Update the existing expense
+        await updateComplaintExpense(existingExpenses.items[0].id, {
+          amount: expenseAmount,
+          description: expenseDescription,
+          vendor_name: assignedTo || undefined,
+        });
+      } else {
+        // Add new expense
+        await addComplaintExpense({
+          complaintId: id,
+          expenseType: "MATERIAL",
+          description: expenseDescription,
+          amount: expenseAmount,
+          vendorName: assignedTo || null,
+          expenseDate: new Date().toISOString().split("T")[0],
+        });
+      }
+    }
+  }
 
   revalidatePath("/complaints");
   revalidatePath("/");

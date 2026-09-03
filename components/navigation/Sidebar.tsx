@@ -70,6 +70,10 @@ const NAV_GROUPS: NavGroup[] = [
 export default function Sidebar() {
   const pathname = usePathname();
 
+  if (pathname.startsWith("/login") || pathname === "/tenant" || pathname.startsWith("/tenant/")) {
+    return null;
+  }
+
   function isActive(href: string) {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
@@ -139,7 +143,7 @@ export default function Sidebar() {
       </div>
 
       {/* ─── Bottom Status & Manager Profile ─── */}
-      <div className="pt-4 border-t border-[#32433B] space-y-2">
+      <div className="pt-4 border-t border-[#32433B] space-y-3">
         <div className="flex items-center justify-between px-1.5 text-[11px] font-mono text-[#A0B0A5]">
           <span>SYSTEM ACTIVE</span>
           <span className="flex items-center gap-1.5 text-[#8FA66B] font-semibold">
@@ -147,6 +151,13 @@ export default function Sidebar() {
             IESCO LIVE
           </span>
         </div>
+
+        <a
+          href="/api/auth/logout"
+          className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-[#32433B] bg-[#24332D] text-xs font-semibold text-[#F4F7F2] hover:bg-[#2F4139] hover:text-[#FF704D] transition cursor-pointer"
+        >
+          <span>Sign Out</span>
+        </a>
       </div>
     </aside>
   );

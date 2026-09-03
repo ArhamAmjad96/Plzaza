@@ -221,3 +221,50 @@ export async function clearAllActivityLogs(): Promise<void> {
     s.notifications = [];
   });
 }
+
+export interface TenantPaymentReportAlert {
+  id: string | number;
+  log_id?: string | number;
+  tenant_id: string | number;
+  tenant_name: string;
+  unit_name: string;
+  amount: number;
+  payment_type: string;
+  payment_method: string;
+  payment_date: string;
+  notes?: string | null;
+  created_at: string;
+  read: boolean;
+}
+
+/**
+ * Retrieves all reported tenant payment notifications for the Admin Rent & Payments section
+ */
+export async function getPendingTenantPaymentAlerts(): Promise<TenantPaymentReportAlert[]> {
+  const store = getStore();
+  const logs = store.logs || [];
+
+  const paymentLogs = logs.filter(
+    (l: any) => l.action === "TENANT_PAYMENT_SUBMITTED" && l.metadata?.tenant_id
+  );
+
+  return paymentLogs.map((l: any) => {
+    const notif = (store.notifications || []).find(
+      (n: any) => n.log_id?.toString() === l.id?.toString() || n.id === `notif-${l.id}`
+    );
+    return {
+      id: `alert-${l.id}`,
+      log_id: l.id,
+      tenant_id: l.metadata?.tenant_id,
+      tenant_name: l.metadata?.tenant_name || l.title || "Tenant",
+      unit_name: l.metadata?.unit_name || "Space",
+      amount: Number(l.metadata?.amount || 0),
+      payment_type: l.metadata?.payment_type || "FULL_RENT",
+      payment_method: l.metadata?.payment_method || "CASH",
+      payment_date: l.metadata?.payment_date || l.created_at?.slice(0, 10),
+      notes: l.metadata?.notes || null,
+      created_at: l.created_at,
+      read: notif ? Boolean(notif.read) : false,
+    };
+  });
+}

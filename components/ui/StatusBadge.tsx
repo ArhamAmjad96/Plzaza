@@ -24,7 +24,14 @@ export default function StatusBadge({ status, label, className = "" }: StatusBad
       bgColor = "bg-[#E3EFE8]";
       border = "border-[#BCD8C7]";
       if (!label) {
-        displayLabel = norm === "OCCUPIED" ? "Occupied" : norm === "FIXED" ? "Resolved" : "Paid";
+        displayLabel =
+          norm === "OCCUPIED"
+            ? "Occupied"
+            : norm === "FIXED" || norm === "RESOLVED"
+            ? "Resolved"
+            : norm === "ACTIVE"
+            ? "Active"
+            : "Paid";
       }
       break;
 

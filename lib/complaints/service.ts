@@ -95,10 +95,12 @@ export async function getAllComplaints(): Promise<{
     if (!error && dbComplaints) {
       rawComplaints = dbComplaints as ComplaintItem[];
     } else {
-      rawComplaints = [...fallbackComplaints];
+      const { getStore } = await import("@/lib/storage/fileStore");
+      rawComplaints = getStore().complaints || fallbackComplaints;
     }
   } catch {
-    rawComplaints = [...fallbackComplaints];
+    const { getStore } = await import("@/lib/storage/fileStore");
+    rawComplaints = getStore().complaints || fallbackComplaints;
   }
 
   const enriched: ComplaintItem[] = rawComplaints.map((c) => {
@@ -193,6 +195,14 @@ export async function createComplaint(data: {
     // Non-blocking
   }
 
+  try {
+    const { updateStore } = await import("@/lib/storage/fileStore");
+    updateStore((s) => {
+      if (!s.complaints) s.complaints = [];
+      s.complaints.unshift(item);
+    });
+  } catch {}
+
   fallbackComplaints = [item, ...fallbackComplaints];
   return item;
 }
@@ -210,6 +220,8 @@ export async function updateComplaint(
     patch.resolved_at = new Date().toISOString();
   }
 
+  let result: ComplaintItem | null = null;
+
   try {
     const { data: updated, error } = await supabase
       .from("complaints")
@@ -219,19 +231,31 @@ export async function updateComplaint(
       .maybeSingle();
 
     if (!error && updated) {
-      return updated as ComplaintItem;
+      result = updated as ComplaintItem;
     }
   } catch {
     // Non-blocking
   }
 
-  const idx = fallbackComplaints.findIndex((c) => c.id.toString() === id.toString());
+  try {
+    const { updateStore } = await import("@/lib/storage/fileStore");
+    updateStore((s) => {
+      if (!s.complaints) s.complaints = [];
+      const storeIdx = s.complaints.findIndex((c: any) => c.id?.toString() === id.toString());
+      if (storeIdx !== -1) {
+        s.complaints[storeIdx] = { ...s.complaints[storeIdx], ...patch };
+        result = s.complaints[storeIdx];
+      }
+    });
+  } catch {}
+
+  const idx = fallbackComplaints.findIndex((c) => c.id?.toString() === id.toString());
   if (idx !== -1) {
     fallbackComplaints[idx] = { ...fallbackComplaints[idx], ...patch };
-    return fallbackComplaints[idx];
+    if (!result) result = fallbackComplaints[idx];
   }
 
-  return null;
+  return result;
 }
 
 export async function deleteComplaint(id: number | string): Promise<boolean> {
@@ -241,6 +265,15 @@ export async function deleteComplaint(id: number | string): Promise<boolean> {
     // Non-blocking
   }
 
-  fallbackComplaints = fallbackComplaints.filter((c) => c.id.toString() !== id.toString());
+  try {
+    const { updateStore } = await import("@/lib/storage/fileStore");
+    updateStore((s) => {
+      if (s.complaints) {
+        s.complaints = s.complaints.filter((c: any) => c.id?.toString() !== id.toString());
+      }
+    });
+  } catch {}
+
+  fallbackComplaints = fallbackComplaints.filter((c) => c.id?.toString() !== id.toString());
   return true;
 }

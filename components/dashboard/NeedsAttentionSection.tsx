@@ -76,15 +76,29 @@ export default function NeedsAttentionSection({
                 <div className="h-2.5 w-2.5 rounded-full bg-[#8E3E33] mt-1.5 shrink-0" />
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-[#17211D]">
+                    <Link
+                      href={`/units/${item.unit_id}`}
+                      className="font-semibold text-sm text-[#17211D] hover:text-[#FF704D] hover:underline"
+                    >
                       {item.shop_name}
-                    </span>
+                    </Link>
                     <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#FAECE9] text-[#8E3E33] border border-[#EBC1BA]">
                       Rent Due
                     </span>
                   </div>
                   <p className="text-xs text-[#58655E] mt-0.5">
-                    Tenant: <strong className="text-[#17211D]">{item.tenant_name}</strong> · Dues: {formatPKR(item.remaining_balance)}
+                    Tenant:{" "}
+                    {item.tenant_id ? (
+                      <Link
+                        href={`/tenants/${item.tenant_id}`}
+                        className="font-semibold text-[#17211D] hover:text-[#FF704D] hover:underline"
+                      >
+                        {item.tenant_name}
+                      </Link>
+                    ) : (
+                      <strong className="text-[#17211D]">{item.tenant_name}</strong>
+                    )}{" "}
+                    · Dues: {formatPKR(item.remaining_balance)}
                   </p>
                 </div>
               </div>

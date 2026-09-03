@@ -1,14 +1,33 @@
+import { saveBillFile } from "@/lib/bills/bill-storage";
+
 /**
- * Converts the Playwright-generated bill PNG buffer into a full Data URL
- * string ready to be stored directly inside the Supabase database.
+ * Saves a Playwright-generated bill PNG buffer into persistent storage
+ * (local disk storage and Supabase storage bucket) and returns the accessible URL.
  */
 export async function storeBillImage(
   pngBuffer: Buffer,
-  _connectionId?: string | number,
-  _billingMonth?: string
+  connectionId?: string | number,
+  billingMonth?: string,
+  referenceNumber?: string
 ): Promise<string> {
-  const base64 = pngBuffer.toString("base64");
-  const dataUrl = `data:image/png;base64,${base64}`;
-  console.log(`Generated PNG bill image Data URL (${pngBuffer.length} bytes) for database storage.`);
-  return dataUrl;
+  try {
+    const month = billingMonth || new Date().toISOString().slice(0, 7) + "-01";
+    const ref = referenceNumber || "general";
+    const connId = connectionId || "general";
+
+    const result = await saveBillFile({
+      buffer: pngBuffer,
+      connectionId: connId,
+      referenceNumber: ref,
+      billingMonth: month,
+      fileType: "image/png",
+    });
+
+    console.log(`Saved persistent bill image: ${result.fileUrl} (${pngBuffer.length} bytes)`);
+    return result.fileUrl;
+  } catch (err) {
+    console.error("Error storing bill image file:", err);
+    // Fallback to data URL only if storage completely fails
+    return `data:image/png;base64,${pngBuffer.toString("base64")}`;
+  }
 }

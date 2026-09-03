@@ -1,8 +1,8 @@
 {
   "plaza": {
     "id": 1,
-    "name": "adad",
-    "address": "adad",
+    "name": "Al Falah",
+    "address": "Blue Area",
     "description": "",
     "floors": [
       "Ground Floor"
@@ -11,7 +11,7 @@
   },
   "units": [
     {
-      "id": 1787878508924,
+      "id": 1788433587402,
       "plaza_id": 1,
       "unit_number": "G-01",
       "unit_name": "Ground Floor Shop G-01",
@@ -21,12 +21,12 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "OCCUPIED",
-      "created_at": "2026-08-28T00:55:08.924Z",
+      "created_at": "2026-09-03T11:06:27.402Z",
       "reference_number": "15142165162900",
       "meter_number": ""
     },
     {
-      "id": 1787878508925,
+      "id": 1788433587403,
       "plaza_id": 1,
       "unit_number": "G-02",
       "unit_name": "Ground Floor Shop G-02",
@@ -35,11 +35,13 @@
       "default_monthly_rent": 25000,
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
-      "status": "VACANT",
-      "created_at": "2026-08-28T00:55:09.160Z"
+      "status": "OCCUPIED",
+      "created_at": "2026-09-03T11:06:27.627Z",
+      "reference_number": "15142165162000",
+      "meter_number": ""
     },
     {
-      "id": 1787878508926,
+      "id": 1788433587404,
       "plaza_id": 1,
       "unit_number": "G-03",
       "unit_name": "Ground Floor Shop G-03",
@@ -49,10 +51,10 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "VACANT",
-      "created_at": "2026-08-28T00:55:09.415Z"
+      "created_at": "2026-09-03T11:06:27.854Z"
     },
     {
-      "id": 1787878508927,
+      "id": 1788433587405,
       "plaza_id": 1,
       "unit_number": "G-04",
       "unit_name": "Ground Floor Shop G-04",
@@ -62,57 +64,108 @@
       "default_security_amount": 50000,
       "default_rent_due_day": 5,
       "status": "VACANT",
-      "created_at": "2026-08-28T00:55:09.680Z"
+      "created_at": "2026-09-03T11:06:28.077Z"
     }
   ],
   "tenants": [
     {
-      "id": 1787878534092,
+      "id": 1788438558574,
       "plaza_id": 1,
-      "full_name": "qsqsqs",
-      "phone": "sqsqsqs",
-      "cnic": "qsqsqs",
+      "full_name": "Fatiima",
+      "phone": "3243232323",
+      "cnic": "3232323232",
+      "email": "fatiima@plaza.com",
       "emergency_contact": null,
       "status": "ACTIVE",
       "notes": null,
-      "created_at": "2026-08-28T00:55:34.093Z"
+      "created_at": "2026-09-03T12:29:18.575Z",
+      "username": "fatiima"
+    },
+    {
+      "id": 1788433624101,
+      "plaza_id": 1,
+      "full_name": "Urwa",
+      "phone": "3243254252",
+      "cnic": "43242342342",
+      "email": "urwa@plaza.com",
+      "emergency_contact": null,
+      "status": "ACTIVE",
+      "notes": null,
+      "created_at": "2026-09-03T11:07:04.102Z",
+      "username": "urwa"
     }
   ],
   "leases": [
     {
-      "id": 1787878534093,
+      "id": 1788438558575,
       "plaza_id": 1,
-      "tenant_id": 1787878534092,
-      "unit_id": "1787878508924",
+      "tenant_id": 1788438558574,
+      "unit_id": "1788433587403",
+      "monthly_rent": 25000,
+      "rent_due_day": 10,
+      "security_amount": 50000,
+      "security_paid": 49998,
+      "security_status": "PARTIAL",
+      "move_in_date": "2026-09-03",
+      "lease_start_date": "2026-09-03",
+      "lease_end_date": "2027-03-01",
+      "annual_increase_pct": 10,
+      "status": "ACTIVE",
+      "notes": null,
+      "created_at": "2026-09-03T12:29:18.575Z"
+    },
+    {
+      "id": 1788433624102,
+      "plaza_id": 1,
+      "tenant_id": 1788433624101,
+      "unit_id": "1788433587402",
       "monthly_rent": 25000,
       "rent_due_day": 5,
       "security_amount": 50000,
       "security_paid": 50000,
       "security_status": "PAID",
-      "move_in_date": "2026-08-28",
-      "lease_start_date": "2026-08-28",
-      "lease_end_date": null,
+      "move_in_date": "2026-09-03",
+      "lease_start_date": "2026-09-03",
+      "lease_end_date": "2027-08-31",
       "annual_increase_pct": 10,
       "status": "ACTIVE",
       "notes": null,
-      "created_at": "2026-08-28T00:55:34.093Z"
+      "created_at": "2026-09-03T11:07:04.102Z",
+      "start_date": "2026-09-03",
+      "end_date": "2027-08-31"
     }
   ],
   "connections": [
     {
-      "id": 33,
-      "name": "Unit #1787878508924 Meter",
-      "tenant": "Unit #1787878508924",
+      "id": 39,
+      "name": "Unit #1788433587402 Meter",
+      "tenant": "Unit #1788433587402",
       "reference_number": "15142165162900",
+      "meter_number": null,
+      "active": true
+    },
+    {
+      "id": 40,
+      "name": "Unit #1788433587403 Meter",
+      "tenant": "Unit #1788433587403",
+      "reference_number": "15142165162000",
       "meter_number": null,
       "active": true
     }
   ],
   "connection_unit_mappings": [
     {
-      "id": 1787878536285,
-      "connection_id": 33,
-      "unit_id": "1787878508924",
+      "id": 1788433628621,
+      "connection_id": 39,
+      "unit_id": "1788433587402",
+      "split_type": "EQUAL",
+      "split_value": 100,
+      "notes": "Dedicated 1-to-1 meter connection"
+    },
+    {
+      "id": 1788438563531,
+      "connection_id": 40,
+      "unit_id": "1788433587403",
       "split_type": "EQUAL",
       "split_value": 100,
       "notes": "Dedicated 1-to-1 meter connection"
@@ -120,21 +173,2186 @@
   ],
   "bills": [
     {
-      "id": 1787878536301,
-      "connection_id": 33,
-      "billing_month": "2026-08-01",
-      "issue_date": "2026-08-28",
-      "due_date": "2026-09-11",
+      "id": 1788438563544,
+      "connection_id": 40,
+      "plaza_id": 1,
+      "unit_id": "1788433587403",
+      "reference_number": "15142165162000",
+      "billing_month": "2026-09-01",
+      "issue_date": "2026-09-03",
+      "due_date": "2026-09-17",
       "bill_amount": 5400,
+      "amount_due": 5400,
+      "late_payment_amount": null,
       "units_consumed": 165,
-      "status": "unpaid"
+      "present_reading": null,
+      "previous_reading": null,
+      "consumer_name": null,
+      "meter_number": null,
+      "tariff": null,
+      "status": "unpaid",
+      "bill_file_path": null,
+      "bill_file_url": null,
+      "bill_image_url": null,
+      "pdf_url": null,
+      "file_type": "image/png",
+      "source_url": null,
+      "fetched_at": "2026-09-03T12:29:23.544Z",
+      "created_at": "2026-09-03T12:29:23.544Z",
+      "updated_at": "2026-09-03T12:29:23.544Z"
+    },
+    {
+      "id": 1788433628632,
+      "connection_id": 39,
+      "plaza_id": 1,
+      "unit_id": "1788433587402",
+      "reference_number": "15142165162900",
+      "billing_month": "2026-09-01",
+      "issue_date": "2026-09-03",
+      "due_date": "2026-09-17",
+      "bill_amount": 5400,
+      "amount_due": 5400,
+      "late_payment_amount": null,
+      "units_consumed": 165,
+      "present_reading": null,
+      "previous_reading": null,
+      "consumer_name": null,
+      "meter_number": null,
+      "tariff": null,
+      "status": "unpaid",
+      "bill_file_path": null,
+      "bill_file_url": null,
+      "bill_image_url": null,
+      "pdf_url": null,
+      "file_type": "image/png",
+      "source_url": null,
+      "fetched_at": "2026-09-03T11:07:08.632Z",
+      "created_at": "2026-09-03T11:07:08.632Z",
+      "updated_at": "2026-09-03T11:07:08.632Z"
     }
   ],
-  "payments": [],
+  "payments": [
+    {
+      "id": 1788437480871,
+      "connection_id": 39,
+      "tenant_id": null,
+      "lease_id": null,
+      "payment_type": "RENT",
+      "amount": 25000,
+      "payment_date": "2026-09-03",
+      "payment_method": "CASH",
+      "transaction_reference": null,
+      "receipt_number": "RCP-2609-7943",
+      "notes": null,
+      "created_at": "2026-09-03T12:11:20.871Z"
+    }
+  ],
   "expenses": [],
   "complaints": [],
   "complaint_expenses": [],
   "logs": [
+    {
+      "id": 1788438563873,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded Fatiima for unit #1788433587403 at monthly rent Rs. 25000. Attached meter ref #15142165162000. Portal login created for fatiima@plaza.com.",
+      "metadata": {
+        "tenantId": 1788438558574,
+        "tenantName": "Fatiima",
+        "unitId": "1788433587403",
+        "rent": 25000,
+        "referenceNumber": "15142165162000",
+        "portalEmail": "fatiima@plaza.com"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T12:29:23.803Z"
+    },
+    {
+      "id": 1788437481495,
+      "category": "PAYMENTS",
+      "action": "PAYMENT_RECORDED",
+      "title": "Payment Received",
+      "description": "Received Rs. 25,000 for RENT via CASH [Receipt #RCP-2609-7943].",
+      "metadata": {
+        "amount": 25000,
+        "paymentType": "RENT",
+        "paymentMethod": "CASH",
+        "receiptNumber": "RCP-2609-7943",
+        "connectionId": 39,
+        "tenantId": null,
+        "billingMonth": "2026-09"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T12:11:20.875Z"
+    },
+    {
+      "id": 1788436202596,
+      "category": "PAYMENTS",
+      "action": "TENANT_PAYMENT_SUBMITTED",
+      "title": "🐰 Payment Reported: Urwa (Ground Floor Shop G-01)",
+      "description": "Urwa reported a Partial Rent payment of Rs. 20,000 via Bank Transfer (vvit IBFT) on 2026-09-03.",
+      "metadata": {
+        "tenant_id": 1788433624101,
+        "tenant_name": "Urwa",
+        "unit_name": "Ground Floor Shop G-01",
+        "amount": 20000,
+        "payment_type": "PARTIAL_RENT",
+        "payment_method": "BANK_TRANSFER",
+        "payment_date": "2026-09-03",
+        "notes": null,
+        "reported_at": "2026-09-03T11:50:01.951Z"
+      },
+      "actor": "Urwa",
+      "created_at": "2026-09-03T11:50:01.951Z"
+    },
+    {
+      "id": 1788433629011,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded Urwa for unit #1788433587402 at monthly rent Rs. 25000. Attached meter ref #15142165162900. Portal login created for urwa@plaza.com.",
+      "metadata": {
+        "tenantId": 1788433624101,
+        "tenantName": "Urwa",
+        "unitId": "1788433587402",
+        "rent": 25000,
+        "referenceNumber": "15142165162900",
+        "portalEmail": "urwa@plaza.com"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T11:07:08.908Z"
+    },
+    {
+      "id": 1788433589001,
+      "category": "PLAZA",
+      "action": "PLAZA_REBUILT",
+      "title": "Plaza Rebuilt & Configured",
+      "description": "Configured 4 units for Plaza.",
+      "metadata": {
+        "unitCount": 4,
+        "plazaName": ""
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T11:06:28.304Z"
+    },
+    {
+      "id": 1788429124447,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded Saif for unit #1788419008364 at monthly rent Rs. 25000. Attached meter ref #15142165162000. Portal login created for s@plaza.com.",
+      "metadata": {
+        "tenantId": 1788429119615,
+        "tenantName": "Saif",
+        "unitId": "1788419008364",
+        "rent": 25000,
+        "referenceNumber": "15142165162000",
+        "portalEmail": "s@plaza.com"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T09:52:04.428Z"
+    },
+    {
+      "id": 1788428884569,
+      "category": "PAYMENTS",
+      "action": "PAYMENT_RECORDED",
+      "title": "Payment Received",
+      "description": "Received Rs. 25,000 for RENT via CASH [Receipt #RCP-2609-6043].",
+      "metadata": {
+        "amount": 25000,
+        "paymentType": "RENT",
+        "paymentMethod": "CASH",
+        "receiptNumber": "RCP-2609-6043",
+        "connectionId": 1788419008362,
+        "tenantId": null,
+        "billingMonth": "2026-09-01"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T09:48:03.757Z"
+    },
+    {
+      "id": 1788427535341,
+      "category": "PAYMENTS",
+      "action": "PAYMENT_RECORDED",
+      "title": "Payment Received",
+      "description": "Received Rs. 25,000 for RENT via CASH [Receipt #RCP-2609-7271].",
+      "metadata": {
+        "amount": 25000,
+        "paymentType": "RENT",
+        "paymentMethod": "CASH",
+        "receiptNumber": "RCP-2609-7271",
+        "connectionId": 37,
+        "tenantId": null,
+        "billingMonth": "2026-09-01"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T09:25:35.114Z"
+    },
+    {
+      "id": 1788427495963,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded Aryan for unit #1788419008363 at monthly rent Rs. 25000. Attached meter ref #15142165161800. Portal login created for a@plaza.com.",
+      "metadata": {
+        "tenantId": 1788427489482,
+        "tenantName": "Aryan",
+        "unitId": "1788419008363",
+        "rent": 25000,
+        "referenceNumber": "15142165161800",
+        "portalEmail": "a@plaza.com"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T09:24:55.109Z"
+    },
+    {
+      "id": 1788419092502,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded Arham for unit #1788419008362 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "metadata": {
+        "tenantId": 1788419088424,
+        "tenantName": "Arham",
+        "unitId": "1788419008362",
+        "rent": 25000,
+        "referenceNumber": "15142165162900"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T07:04:51.781Z"
+    },
+    {
+      "id": 1788419009805,
+      "category": "PLAZA",
+      "action": "PLAZA_REBUILT",
+      "title": "Plaza Rebuilt & Configured",
+      "description": "Configured 4 units for Plaza.",
+      "metadata": {
+        "unitCount": 4,
+        "plazaName": ""
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-03T07:03:29.306Z"
+    },
+    {
+      "id": 1788345216944,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded waseem computer for unit #1788345087378 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "metadata": {
+        "tenantId": 1788345212860,
+        "tenantName": "waseem computer",
+        "unitId": "1788345087378",
+        "rent": 25000,
+        "referenceNumber": "15142165162900"
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-02T10:33:36.423Z"
+    },
+    {
+      "id": 1788345088729,
+      "category": "PLAZA",
+      "action": "PLAZA_REBUILT",
+      "title": "Plaza Rebuilt & Configured",
+      "description": "Configured 4 units for Plaza.",
+      "metadata": {
+        "unitCount": 4,
+        "plazaName": ""
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-02T10:31:28.457Z"
+    },
+    {
+      "id": 1788344953327,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-10-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "metadata": {
+        "karachiDate": "2026-10-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 0
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 0
+        },
+        "reminders": {
+          "sent": 0,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-02T10:29:12.356Z"
+    },
+    {
+      "id": 1788344951644,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-10",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-10-10.",
+      "metadata": {
+        "month": "2026-10-01",
+        "dueDate": "2026-10-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-02T10:29:10.786Z"
+    },
+    {
+      "id": 1788344948260,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-10",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-10-10.",
+      "metadata": {
+        "month": "2026-10-01",
+        "dueDate": "2026-10-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-02T10:29:07.700Z"
+    },
+    {
+      "id": 1788344946741,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-10",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-10-10.",
+      "metadata": {
+        "month": "2026-10-01",
+        "dueDate": "2026-10-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-02T10:29:06.425Z"
+    },
+    {
+      "id": 1788344541954,
+      "category": "PLAZA",
+      "action": "PLAZA_REBUILT",
+      "title": "Plaza Rebuilt & Configured",
+      "description": "Configured 5 units for Plaza.",
+      "metadata": {
+        "unitCount": 5,
+        "plazaName": ""
+      },
+      "actor": "Manager",
+      "created_at": "2026-09-02T10:22:21.184Z"
+    },
+    {
+      "id": 1788215336019,
+      "category": "TENANTS",
+      "action": "TENANT_ONBOARDED",
+      "title": "New Tenant Onboarded",
+      "description": "Onboarded Arham for unit #1788215199663 at monthly rent Rs. 25000. Attached meter ref #15142165161800.",
+      "metadata": {
+        "tenantId": 1788215330718,
+        "tenantName": "Arham",
+        "unitId": "1788215199663",
+        "rent": 25000,
+        "referenceNumber": "15142165161800"
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T22:28:55.441Z"
+    },
+    {
+      "id": 1788215263814,
+      "category": "UNITS",
+      "action": "UNIT_CREATED",
+      "title": "New Unit Created",
+      "description": "Added unit G-05 (Ground Shop G-05) on Ground Floor.",
+      "metadata": {
+        "unitId": 1788215263131,
+        "unitNumber": "G-05",
+        "floor": "Ground Floor"
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T22:27:43.136Z"
+    },
+    {
+      "id": 1788215201664,
+      "category": "PLAZA",
+      "action": "PLAZA_REBUILT",
+      "title": "Plaza Rebuilt & Configured",
+      "description": "Configured 4 units for Plaza.",
+      "metadata": {
+        "unitCount": 4,
+        "plazaName": ""
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T22:26:41.631Z"
+    },
+    {
+      "id": 1788212539672,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-11-13",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-11-13",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 1
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:42:18.854Z"
+    },
+    {
+      "id": 1788212533994,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-11",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "metadata": {
+        "month": "2026-11-01",
+        "dueDate": "2026-11-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:42:13.737Z"
+    },
+    {
+      "id": 1788212532200,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:42:11.701Z"
+    },
+    {
+      "id": 1788212528899,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-11-10",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-11-10",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 1
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:42:08.157Z"
+    },
+    {
+      "id": 1788212523655,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-11",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "metadata": {
+        "month": "2026-11-01",
+        "dueDate": "2026-11-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:42:02.660Z"
+    },
+    {
+      "id": 1788212521165,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:42:00.630Z"
+    },
+    {
+      "id": 1788212517403,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-11-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-11-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:57.034Z"
+    },
+    {
+      "id": 1788212511218,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-11",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "metadata": {
+        "month": "2026-11-01",
+        "dueDate": "2026-11-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:50.769Z"
+    },
+    {
+      "id": 1788212509597,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:48.759Z"
+    },
+    {
+      "id": 1788212505814,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-11-01",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "metadata": {
+        "karachiDate": "2026-11-01",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 0,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:45.128Z"
+    },
+    {
+      "id": 1788212500941,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-11",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "metadata": {
+        "month": "2026-11-01",
+        "dueDate": "2026-11-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:40.493Z"
+    },
+    {
+      "id": 1788212499389,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:38.468Z"
+    },
+    {
+      "id": 1788212495853,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-11-01",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-11-01",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:34.897Z"
+    },
+    {
+      "id": 1788212488993,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-11",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "metadata": {
+        "month": "2026-11-01",
+        "dueDate": "2026-11-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:28.623Z"
+    },
+    {
+      "id": 1788212488246,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-13",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 2, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-09-13",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 2,
+          "skipped": 0
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:27.775Z"
+    },
+    {
+      "id": 1788212486796,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:26.641Z"
+    },
+    {
+      "id": 1788212483254,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-11",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "metadata": {
+        "month": "2026-11-01",
+        "dueDate": "2026-11-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:22.986Z"
+    },
+    {
+      "id": 1788212482054,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 2,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:21.531Z"
+    },
+    {
+      "id": 1788212481271,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-11",
+      "description": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-11-10.",
+      "metadata": {
+        "month": "2026-11-01",
+        "dueDate": "2026-11-10",
+        "createdCount": 2,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:20.945Z"
+    },
+    {
+      "id": 1788212479208,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:18.745Z"
+    },
+    {
+      "id": 1788212475248,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-10",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-09-10",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 1
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:14.731Z"
+    },
+    {
+      "id": 1788212470089,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:09.621Z"
+    },
+    {
+      "id": 1788212468213,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:07.638Z"
+    },
+    {
+      "id": 1788212464627,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "metadata": {
+        "karachiDate": "2026-09-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 0,
+          "skippedPaid": 1
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:04.062Z"
+    },
+    {
+      "id": 1788212462279,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-13",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-09-13",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 1
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:41:01.922Z"
+    },
+    {
+      "id": 1788212460284,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:59.421Z"
+    },
+    {
+      "id": 1788212458043,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:57.450Z"
+    },
+    {
+      "id": 1788212457127,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:56.839Z"
+    },
+    {
+      "id": 1788212455039,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:54.502Z"
+    },
+    {
+      "id": 1788212454180,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-01",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "metadata": {
+        "karachiDate": "2026-09-01",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 0,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:53.894Z"
+    },
+    {
+      "id": 1788212451121,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-10",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-09-10",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 1
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:50.926Z"
+    },
+    {
+      "id": 1788212449611,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:49.521Z"
+    },
+    {
+      "id": 1788212448327,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:47.562Z"
+    },
+    {
+      "id": 1788212446205,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:45.403Z"
+    },
+    {
+      "id": 1788212443842,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-01",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "metadata": {
+        "karachiDate": "2026-09-01",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 0,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:43.482Z"
+    },
+    {
+      "id": 1788212444324,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:43.443Z"
+    },
+    {
+      "id": 1788212440393,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-09-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:39.924Z"
+    },
+    {
+      "id": 1788212439413,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:39.114Z"
+    },
+    {
+      "id": 1788212437932,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:37.146Z"
+    },
+    {
+      "id": 1788212434033,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:34.008Z"
+    },
+    {
+      "id": 1788212434111,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:33.582Z"
+    },
+    {
+      "id": 1788212432511,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:32.079Z"
+    },
+    {
+      "id": 1788212432048,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 2,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:31.560Z"
+    },
+    {
+      "id": 1788212428653,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-01",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-09-01",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:28.268Z"
+    },
+    {
+      "id": 1788212422338,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:22.057Z"
+    },
+    {
+      "id": 1788212420826,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:20.083Z"
+    },
+    {
+      "id": 1788212417420,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-01",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-09-01",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:16.454Z"
+    },
+    {
+      "id": 1788212410518,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:10.499Z"
+    },
+    {
+      "id": 1788212408921,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:08.481Z"
+    },
+    {
+      "id": 1788212405320,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:04.843Z"
+    },
+    {
+      "id": 1788212403008,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 2,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:40:02.811Z"
+    },
+    {
+      "id": 1788212395266,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-13",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-09-13",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:54.354Z"
+    },
+    {
+      "id": 1788212388873,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:48.395Z"
+    },
+    {
+      "id": 1788212386692,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:46.396Z"
+    },
+    {
+      "id": 1788212383567,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-10",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-09-10",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:42.779Z"
+    },
+    {
+      "id": 1788212377204,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:36.419Z"
+    },
+    {
+      "id": 1788212374797,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:34.021Z"
+    },
+    {
+      "id": 1788212370929,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-09-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:30.399Z"
+    },
+    {
+      "id": 1788212365309,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:24.450Z"
+    },
+    {
+      "id": 1788212362905,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:22.464Z"
+    },
+    {
+      "id": 1788212359069,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-01",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "metadata": {
+        "karachiDate": "2026-09-01",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 0,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:18.882Z"
+    },
+    {
+      "id": 1788212355026,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:14.110Z"
+    },
+    {
+      "id": 1788212352553,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:12.123Z"
+    },
+    {
+      "id": 1788212349240,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-01",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "metadata": {
+        "karachiDate": "2026-09-01",
+        "billSync": {
+          "synced": 0,
+          "checked": 1
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 2
+        },
+        "reminders": {
+          "sent": 2,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:08.529Z"
+    },
+    {
+      "id": 1788212343202,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:02.324Z"
+    },
+    {
+      "id": 1788212340981,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "metadata": {
+        "totalChecked": 1,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:39:00.322Z"
+    },
+    {
+      "id": 1788212336990,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:38:56.778Z"
+    },
+    {
+      "id": 1788212335130,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 2,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:38:54.760Z"
+    },
+    {
+      "id": 1788210167428,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-10",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-09-10",
+        "billSync": {
+          "synced": 0,
+          "checked": 2
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 1
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:46.946Z"
+    },
+    {
+      "id": 1788210163166,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:42.832Z"
+    },
+    {
+      "id": 1788210161403,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:40.945Z"
+    },
+    {
+      "id": 1788210156639,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "metadata": {
+        "karachiDate": "2026-09-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 2
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 1
+        },
+        "reminders": {
+          "sent": 0,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:35.676Z"
+    },
+    {
+      "id": 1788210152773,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:32.310Z"
+    },
+    {
+      "id": 1788210150844,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:30.417Z"
+    },
+    {
+      "id": 1788210147165,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-09-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 2
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 1
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:26.820Z"
+    },
+    {
+      "id": 1788210143235,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:22.254Z"
+    },
+    {
+      "id": 1788210140759,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:20.371Z"
+    },
+    {
+      "id": 1788210127715,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-10",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-09-10",
+        "billSync": {
+          "synced": 0,
+          "checked": 2
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 1
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:07.377Z"
+    },
+    {
+      "id": 1788210123251,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:03.098Z"
+    },
+    {
+      "id": 1788210121823,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:02:01.218Z"
+    },
+    {
+      "id": 1788210116807,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "metadata": {
+        "karachiDate": "2026-09-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 2
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 1
+        },
+        "reminders": {
+          "sent": 0,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:01:56.302Z"
+    },
+    {
+      "id": 1788210112831,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:01:52.440Z"
+    },
+    {
+      "id": 1788210110711,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:01:50.534Z"
+    },
+    {
+      "id": 1788210107284,
+      "category": "SYSTEM",
+      "action": "DAILY_AUTOMATION_COMPLETED",
+      "title": "Daily Automation Run — 2026-09-08",
+      "description": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "metadata": {
+        "karachiDate": "2026-09-08",
+        "billSync": {
+          "synced": 0,
+          "checked": 2
+        },
+        "rentSafety": {
+          "created": 0,
+          "skipped": 1
+        },
+        "reminders": {
+          "sent": 1,
+          "skippedPaid": 0
+        }
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:01:46.759Z"
+    },
+    {
+      "id": 1788210103054,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:01:42.256Z"
+    },
+    {
+      "id": 1788210100639,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T21:01:40.337Z"
+    },
+    {
+      "id": 1788208011689,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-08",
+      "description": "Auto-generated 1 new rent record(s), 0 existing skipped. Due date: 2026-08-10.",
+      "metadata": {
+        "month": "2026-08-01",
+        "dueDate": "2026-08-10",
+        "createdCount": 1,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T20:26:50.869Z"
+    },
+    {
+      "id": 1788208000038,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T20:26:39.783Z"
+    },
+    {
+      "id": 1788207996203,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T20:26:35.710Z"
+    },
+    {
+      "id": 1788207984393,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T20:26:24.154Z"
+    },
+    {
+      "id": 1788207980547,
+      "category": "ELECTRICITY",
+      "action": "IESCO_BILLS_SYNCED",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "description": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "metadata": {
+        "totalChecked": 2,
+        "synced": 0,
+        "skipped": 0,
+        "failed": 2
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T20:26:20.431Z"
+    },
+    {
+      "id": 1788206027426,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:46.581Z"
+    },
+    {
+      "id": 1788206017731,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2028-02",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2028-02-10.",
+      "metadata": {
+        "month": "2028-02-01",
+        "dueDate": "2028-02-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:37.314Z"
+    },
+    {
+      "id": 1788206015402,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2027-01",
+      "description": "Auto-generated 1 new rent record(s), 0 existing skipped. Due date: 2027-01-10.",
+      "metadata": {
+        "month": "2027-01-01",
+        "dueDate": "2027-01-10",
+        "createdCount": 1,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:34.848Z"
+    },
+    {
+      "id": 1788206012311,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-12",
+      "description": "Auto-generated 1 new rent record(s), 0 existing skipped. Due date: 2026-12-10.",
+      "metadata": {
+        "month": "2026-12-01",
+        "dueDate": "2026-12-10",
+        "createdCount": 1,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:31.833Z"
+    },
+    {
+      "id": 1788206008858,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 1
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:28.839Z"
+    },
+    {
+      "id": 1788206006583,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 1 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 1,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:26.370Z"
+    },
+    {
+      "id": 1788205997648,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2028-02",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2028-02-10.",
+      "metadata": {
+        "month": "2028-02-01",
+        "dueDate": "2028-02-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:17.239Z"
+    },
+    {
+      "id": 1788205995118,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2027-01",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2027-01-10.",
+      "metadata": {
+        "month": "2027-01-01",
+        "dueDate": "2027-01-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:14.772Z"
+    },
+    {
+      "id": 1788205993300,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-12",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-12-10.",
+      "metadata": {
+        "month": "2026-12-01",
+        "dueDate": "2026-12-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:12.332Z"
+    },
+    {
+      "id": 1788205990773,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:09.852Z"
+    },
+    {
+      "id": 1788205987435,
+      "category": "SYSTEM",
+      "action": "MONTHLY_RENT_AUTO_GENERATED",
+      "title": "Monthly Rent Generated for 2026-09",
+      "description": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "metadata": {
+        "month": "2026-09-01",
+        "dueDate": "2026-09-10",
+        "createdCount": 0,
+        "skippedCount": 0
+      },
+      "actor": "Manager",
+      "created_at": "2026-08-31T19:53:07.325Z"
+    },
     {
       "id": 1787878536718,
       "category": "TENANTS",
@@ -326,114 +2544,1330 @@
   ],
   "notifications": [
     {
-      "id": "notif-1787878536718",
-      "log_id": 1787878536718,
+      "id": "notif-1788438563873",
+      "log_id": 1788438563873,
       "category": "TENANTS",
       "title": "New Tenant Onboarded",
-      "message": "Onboarded qsqsqs for unit #1787878508924 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "message": "Onboarded Fatiima for unit #1788433587403 at monthly rent Rs. 25000. Attached meter ref #15142165162000. Portal login created for fatiima@plaza.com.",
       "href": "/tenants",
       "read": false,
-      "created_at": "2026-08-28T00:55:36.545Z"
+      "created_at": "2026-09-03T12:29:23.803Z"
     },
     {
-      "id": "notif-1787878510931",
-      "log_id": 1787878510931,
-      "category": "PLAZA",
-      "title": "Plaza Rebuilt & Configured",
-      "message": "Configured 4 units for Plaza.",
-      "href": "/units",
-      "read": false,
-      "created_at": "2026-08-28T00:55:09.942Z"
-    },
-    {
-      "id": "notif-1787877619848",
-      "log_id": 1787877619848,
-      "category": "TENANTS",
-      "title": "New Tenant Onboarded",
-      "message": "Onboarded dwdwd for unit #1787873226521 at monthly rent Rs. 25000. Attached meter ref #15142165161800.",
-      "href": "/tenants",
-      "read": false,
-      "created_at": "2026-08-28T00:40:19.458Z"
-    },
-    {
-      "id": "notif-1787876747881",
-      "log_id": 1787876747881,
-      "category": "TENANTS",
-      "title": "New Tenant Onboarded",
-      "message": "Onboarded Arham for unit #1787873226520 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
-      "href": "/tenants",
-      "read": false,
-      "created_at": "2026-08-28T00:25:47.877Z"
-    },
-    {
-      "id": "notif-1787873228306",
-      "log_id": 1787873228306,
-      "category": "PLAZA",
-      "title": "Plaza Rebuilt & Configured",
-      "message": "Configured 4 units for Plaza.",
-      "href": "/units",
-      "read": false,
-      "created_at": "2026-08-27T23:27:07.441Z"
-    },
-    {
-      "id": "notif-1787870289157",
-      "log_id": 1787870289157,
+      "id": "notif-1788437481495",
+      "log_id": 1788437481495,
       "category": "PAYMENTS",
       "title": "Payment Received",
-      "message": "Received Rs. 30,400 for RENT via CASH [Receipt #RCP-2608-9593].",
+      "message": "Received Rs. 25,000 for RENT via CASH [Receipt #RCP-2609-7943].",
       "href": "/rent",
       "read": true,
-      "created_at": "2026-08-27T22:38:08.372Z"
+      "created_at": "2026-09-03T12:11:20.875Z"
     },
     {
-      "id": "notif-1787869354472",
-      "log_id": 1787869354472,
+      "id": "notif-1788436202596",
+      "log_id": 1788436202596,
+      "category": "PAYMENTS",
+      "title": "🐰 Payment Reported: Urwa (Ground Floor Shop G-01)",
+      "message": "Urwa reported a Partial Rent payment of Rs. 20,000 via Bank Transfer (vvit IBFT) on 2026-09-03.",
+      "href": "/rent",
+      "read": true,
+      "created_at": "2026-09-03T11:50:01.951Z"
+    },
+    {
+      "id": "notif-1788435293861",
+      "log_id": 1788435293861,
+      "category": "PAYMENTS",
+      "title": "💰 Payment Reported: Saif (Ground Floor Shop G-03)",
+      "message": "Saif reported a Full Rent payment of PKR 25,000 via Bank Transfer (IBFT) on 2026-09-03. Notes: \"Transferred from Meezan App, Ref #448910\"",
+      "href": "/rent",
+      "read": true,
+      "created_at": "2026-09-03T11:34:53.861Z"
+    },
+    {
+      "id": "notif-1788433629011",
+      "log_id": 1788433629011,
       "category": "TENANTS",
       "title": "New Tenant Onboarded",
-      "message": "Onboarded Arham for unit #1787869296313 at monthly rent Rs. 25000.",
+      "message": "Onboarded Urwa for unit #1788433587402 at monthly rent Rs. 25000. Attached meter ref #15142165162900. Portal login created for urwa@plaza.com.",
       "href": "/tenants",
       "read": true,
-      "created_at": "2026-08-27T22:22:34.263Z"
+      "created_at": "2026-09-03T11:07:08.908Z"
     },
     {
-      "id": "notif-1787869298531",
-      "log_id": 1787869298531,
+      "id": "notif-1788433589001",
+      "log_id": 1788433589001,
       "category": "PLAZA",
       "title": "Plaza Rebuilt & Configured",
       "message": "Configured 4 units for Plaza.",
       "href": "/units",
       "read": true,
-      "created_at": "2026-08-27T22:21:37.773Z"
+      "created_at": "2026-09-03T11:06:28.304Z"
     },
     {
-      "id": "notif-1787791000001",
-      "log_id": 1787791000001,
+      "id": "notif-1788429124447",
+      "log_id": 1788429124447,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded Saif for unit #1788419008364 at monthly rent Rs. 25000. Attached meter ref #15142165162000. Portal login created for s@plaza.com.",
+      "href": "/tenants",
+      "read": true,
+      "created_at": "2026-09-03T09:52:04.428Z"
+    },
+    {
+      "id": "notif-1788428884569",
+      "log_id": 1788428884569,
       "category": "PAYMENTS",
       "title": "Payment Received",
-      "message": "Received Rs. 25,000 for Monthly Rent from Arham.",
+      "message": "Received Rs. 25,000 for RENT via CASH [Receipt #RCP-2609-6043].",
       "href": "/rent",
       "read": true,
-      "created_at": "2026-08-27T05:10:00.000Z"
+      "created_at": "2026-09-03T09:48:03.757Z"
     },
     {
-      "id": "notif-1787791000002",
-      "log_id": 1787791000002,
+      "id": "notif-1788427535341",
+      "log_id": 1788427535341,
+      "category": "PAYMENTS",
+      "title": "Payment Received",
+      "message": "Received Rs. 25,000 for RENT via CASH [Receipt #RCP-2609-7271].",
+      "href": "/rent",
+      "read": true,
+      "created_at": "2026-09-03T09:25:35.114Z"
+    },
+    {
+      "id": "notif-1788427495963",
+      "log_id": 1788427495963,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded Aryan for unit #1788419008363 at monthly rent Rs. 25000. Attached meter ref #15142165161800. Portal login created for a@plaza.com.",
+      "href": "/tenants",
+      "read": true,
+      "created_at": "2026-09-03T09:24:55.109Z"
+    },
+    {
+      "id": "notif-1788419092502",
+      "log_id": 1788419092502,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded Arham for unit #1788419008362 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "href": "/tenants",
+      "read": true,
+      "created_at": "2026-09-03T07:04:51.781Z"
+    },
+    {
+      "id": "notif-1788419009805",
+      "log_id": 1788419009805,
+      "category": "PLAZA",
+      "title": "Plaza Rebuilt & Configured",
+      "message": "Configured 4 units for Plaza.",
+      "href": "/units",
+      "read": true,
+      "created_at": "2026-09-03T07:03:29.306Z"
+    },
+    {
+      "id": "notif-1788345216944",
+      "log_id": 1788345216944,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded waseem computer for unit #1788345087378 at monthly rent Rs. 25000. Attached meter ref #15142165162900.",
+      "href": "/tenants",
+      "read": true,
+      "created_at": "2026-09-02T10:33:36.423Z"
+    },
+    {
+      "id": "notif-1788345088729",
+      "log_id": 1788345088729,
+      "category": "PLAZA",
+      "title": "Plaza Rebuilt & Configured",
+      "message": "Configured 4 units for Plaza.",
+      "href": "/units",
+      "read": true,
+      "created_at": "2026-09-02T10:31:28.457Z"
+    },
+    {
+      "id": "notif-1788344953327",
+      "log_id": 1788344953327,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-10-08",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-09-02T10:29:12.356Z"
+    },
+    {
+      "id": "notif-1788344951644",
+      "log_id": 1788344951644,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-10",
+      "message": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-10-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-09-02T10:29:10.786Z"
+    },
+    {
+      "id": "notif-1788344948260",
+      "log_id": 1788344948260,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-10",
+      "message": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-10-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-09-02T10:29:07.700Z"
+    },
+    {
+      "id": "notif-1788344946741",
+      "log_id": 1788344946741,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-10",
+      "message": "Auto-generated 0 new rent record(s), 0 existing skipped. Due date: 2026-10-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-09-02T10:29:06.425Z"
+    },
+    {
+      "id": "notif-1788344541954",
+      "log_id": 1788344541954,
+      "category": "PLAZA",
+      "title": "Plaza Rebuilt & Configured",
+      "message": "Configured 5 units for Plaza.",
+      "href": "/units",
+      "read": true,
+      "created_at": "2026-09-02T10:22:21.184Z"
+    },
+    {
+      "id": "notif-1788215336019",
+      "log_id": 1788215336019,
+      "category": "TENANTS",
+      "title": "New Tenant Onboarded",
+      "message": "Onboarded Arham for unit #1788215199663 at monthly rent Rs. 25000. Attached meter ref #15142165161800.",
+      "href": "/tenants",
+      "read": true,
+      "created_at": "2026-08-31T22:28:55.441Z"
+    },
+    {
+      "id": "notif-1788215263814",
+      "log_id": 1788215263814,
+      "category": "UNITS",
+      "title": "New Unit Created",
+      "message": "Added unit G-05 (Ground Shop G-05) on Ground Floor.",
+      "href": "/units/G-05",
+      "read": true,
+      "created_at": "2026-08-31T22:27:43.136Z"
+    },
+    {
+      "id": "notif-1788215201664",
+      "log_id": 1788215201664,
+      "category": "PLAZA",
+      "title": "Plaza Rebuilt & Configured",
+      "message": "Configured 4 units for Plaza.",
+      "href": "/units",
+      "read": true,
+      "created_at": "2026-08-31T22:26:41.631Z"
+    },
+    {
+      "id": "notif-1788212539672",
+      "log_id": 1788212539672,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-11-13",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:42:18.854Z"
+    },
+    {
+      "id": "notif-1788212533994",
+      "log_id": 1788212533994,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-11",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:42:13.737Z"
+    },
+    {
+      "id": "notif-1788212532200",
+      "log_id": 1788212532200,
       "category": "ELECTRICITY",
-      "title": "Electricity Meter Attached",
-      "message": "Attached reference #15142165162900 to Shop G-01.",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
       "href": "/connections",
       "read": true,
-      "created_at": "2026-08-27T04:45:00.000Z"
+      "created_at": "2026-08-31T21:42:11.701Z"
     },
     {
-      "id": "notif-1787791000003",
-      "log_id": 1787791000003,
-      "category": "TENANTS",
-      "title": "New Tenant Onboarded",
-      "message": "Onboarded tenant Arham to Shop G-01.",
-      "href": "/tenants",
+      "id": "notif-1788212528899",
+      "log_id": 1788212528899,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-11-10",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "href": "/",
       "read": true,
-      "created_at": "2026-08-27T04:25:00.000Z"
+      "created_at": "2026-08-31T21:42:08.157Z"
+    },
+    {
+      "id": "notif-1788212523655",
+      "log_id": 1788212523655,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-11",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:42:02.660Z"
+    },
+    {
+      "id": "notif-1788212521165",
+      "log_id": 1788212521165,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:42:00.630Z"
+    },
+    {
+      "id": "notif-1788212517403",
+      "log_id": 1788212517403,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-11-08",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:57.034Z"
+    },
+    {
+      "id": "notif-1788212511218",
+      "log_id": 1788212511218,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-11",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:50.769Z"
+    },
+    {
+      "id": "notif-1788212509597",
+      "log_id": 1788212509597,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:41:48.759Z"
+    },
+    {
+      "id": "notif-1788212505814",
+      "log_id": 1788212505814,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-11-01",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:45.128Z"
+    },
+    {
+      "id": "notif-1788212500941",
+      "log_id": 1788212500941,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-11",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:40.493Z"
+    },
+    {
+      "id": "notif-1788212499389",
+      "log_id": 1788212499389,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:41:38.468Z"
+    },
+    {
+      "id": "notif-1788212495853",
+      "log_id": 1788212495853,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-11-01",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:34.897Z"
+    },
+    {
+      "id": "notif-1788212488993",
+      "log_id": 1788212488993,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-11",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:28.623Z"
+    },
+    {
+      "id": "notif-1788212488246",
+      "log_id": 1788212488246,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-13",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 2, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:27.775Z"
+    },
+    {
+      "id": "notif-1788212486796",
+      "log_id": 1788212486796,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:41:26.641Z"
+    },
+    {
+      "id": "notif-1788212483254",
+      "log_id": 1788212483254,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-11",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-11-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:22.986Z"
+    },
+    {
+      "id": "notif-1788212482054",
+      "log_id": 1788212482054,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:21.531Z"
+    },
+    {
+      "id": "notif-1788212481271",
+      "log_id": 1788212481271,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-11",
+      "message": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-11-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:20.945Z"
+    },
+    {
+      "id": "notif-1788212479208",
+      "log_id": 1788212479208,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:41:18.745Z"
+    },
+    {
+      "id": "notif-1788212475248",
+      "log_id": 1788212475248,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-10",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:14.731Z"
+    },
+    {
+      "id": "notif-1788212470089",
+      "log_id": 1788212470089,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:09.621Z"
+    },
+    {
+      "id": "notif-1788212468213",
+      "log_id": 1788212468213,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:41:07.638Z"
+    },
+    {
+      "id": "notif-1788212464627",
+      "log_id": 1788212464627,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-08",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:04.062Z"
+    },
+    {
+      "id": "notif-1788212462279",
+      "log_id": 1788212462279,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-13",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:41:01.922Z"
+    },
+    {
+      "id": "notif-1788212460284",
+      "log_id": 1788212460284,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:59.421Z"
+    },
+    {
+      "id": "notif-1788212458043",
+      "log_id": 1788212458043,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:40:57.450Z"
+    },
+    {
+      "id": "notif-1788212457127",
+      "log_id": 1788212457127,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:56.839Z"
+    },
+    {
+      "id": "notif-1788212455039",
+      "log_id": 1788212455039,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:40:54.502Z"
+    },
+    {
+      "id": "notif-1788212454180",
+      "log_id": 1788212454180,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-01",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:53.894Z"
+    },
+    {
+      "id": "notif-1788212451121",
+      "log_id": 1788212451121,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-10",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:50.926Z"
+    },
+    {
+      "id": "notif-1788212449611",
+      "log_id": 1788212449611,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:49.521Z"
+    },
+    {
+      "id": "notif-1788212448327",
+      "log_id": 1788212448327,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:40:47.562Z"
+    },
+    {
+      "id": "notif-1788212446205",
+      "log_id": 1788212446205,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:45.403Z"
+    },
+    {
+      "id": "notif-1788212443842",
+      "log_id": 1788212443842,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-01",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:43.482Z"
+    },
+    {
+      "id": "notif-1788212444324",
+      "log_id": 1788212444324,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:40:43.443Z"
+    },
+    {
+      "id": "notif-1788212440393",
+      "log_id": 1788212440393,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-08",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:39.924Z"
+    },
+    {
+      "id": "notif-1788212439413",
+      "log_id": 1788212439413,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:39.114Z"
+    },
+    {
+      "id": "notif-1788212437932",
+      "log_id": 1788212437932,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:40:37.146Z"
+    },
+    {
+      "id": "notif-1788212434033",
+      "log_id": 1788212434033,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:34.008Z"
+    },
+    {
+      "id": "notif-1788212434111",
+      "log_id": 1788212434111,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:33.582Z"
+    },
+    {
+      "id": "notif-1788212432511",
+      "log_id": 1788212432511,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:40:32.079Z"
+    },
+    {
+      "id": "notif-1788212432048",
+      "log_id": 1788212432048,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:31.560Z"
+    },
+    {
+      "id": "notif-1788212428653",
+      "log_id": 1788212428653,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-01",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:28.268Z"
+    },
+    {
+      "id": "notif-1788212422338",
+      "log_id": 1788212422338,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:22.057Z"
+    },
+    {
+      "id": "notif-1788212420826",
+      "log_id": 1788212420826,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:40:20.083Z"
+    },
+    {
+      "id": "notif-1788212417420",
+      "log_id": 1788212417420,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-01",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:16.454Z"
+    },
+    {
+      "id": "notif-1788212410518",
+      "log_id": 1788212410518,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:10.499Z"
+    },
+    {
+      "id": "notif-1788212408921",
+      "log_id": 1788212408921,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:40:08.481Z"
+    },
+    {
+      "id": "notif-1788212405320",
+      "log_id": 1788212405320,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:04.843Z"
+    },
+    {
+      "id": "notif-1788212403008",
+      "log_id": 1788212403008,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:40:02.811Z"
+    },
+    {
+      "id": "notif-1788212395266",
+      "log_id": 1788212395266,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-13",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:54.354Z"
+    },
+    {
+      "id": "notif-1788212388873",
+      "log_id": 1788212388873,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:48.395Z"
+    },
+    {
+      "id": "notif-1788212386692",
+      "log_id": 1788212386692,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:39:46.396Z"
+    },
+    {
+      "id": "notif-1788212383567",
+      "log_id": 1788212383567,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-10",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:42.779Z"
+    },
+    {
+      "id": "notif-1788212377204",
+      "log_id": 1788212377204,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:36.419Z"
+    },
+    {
+      "id": "notif-1788212374797",
+      "log_id": 1788212374797,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:39:34.021Z"
+    },
+    {
+      "id": "notif-1788212370929",
+      "log_id": 1788212370929,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-08",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:30.399Z"
+    },
+    {
+      "id": "notif-1788212365309",
+      "log_id": 1788212365309,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:24.450Z"
+    },
+    {
+      "id": "notif-1788212362905",
+      "log_id": 1788212362905,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:39:22.464Z"
+    },
+    {
+      "id": "notif-1788212359069",
+      "log_id": 1788212359069,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-01",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:18.882Z"
+    },
+    {
+      "id": "notif-1788212355026",
+      "log_id": 1788212355026,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:14.110Z"
+    },
+    {
+      "id": "notif-1788212352553",
+      "log_id": 1788212352553,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:39:12.123Z"
+    },
+    {
+      "id": "notif-1788212349240",
+      "log_id": 1788212349240,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-01",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 2.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:08.529Z"
+    },
+    {
+      "id": "notif-1788212343202",
+      "log_id": 1788212343202,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:39:02.324Z"
+    },
+    {
+      "id": "notif-1788212340981",
+      "log_id": 1788212340981,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 1 connection(s): 0 new bill(s) synced, 0 skipped, 1 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:39:00.322Z"
+    },
+    {
+      "id": "notif-1788212336990",
+      "log_id": 1788212336990,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 2 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:38:56.778Z"
+    },
+    {
+      "id": "notif-1788212335130",
+      "log_id": 1788212335130,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 2 new rent record(s), 0 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:38:54.760Z"
+    },
+    {
+      "id": "notif-1788210167428",
+      "log_id": 1788210167428,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-10",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:02:46.946Z"
+    },
+    {
+      "id": "notif-1788210163166",
+      "log_id": 1788210163166,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:02:42.832Z"
+    },
+    {
+      "id": "notif-1788210161403",
+      "log_id": 1788210161403,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:02:40.945Z"
+    },
+    {
+      "id": "notif-1788210156639",
+      "log_id": 1788210156639,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-08",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 0.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:02:35.676Z"
+    },
+    {
+      "id": "notif-1788210152773",
+      "log_id": 1788210152773,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:02:32.310Z"
+    },
+    {
+      "id": "notif-1788210150844",
+      "log_id": 1788210150844,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:02:30.417Z"
+    },
+    {
+      "id": "notif-1788210147165",
+      "log_id": 1788210147165,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-08",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:02:26.820Z"
+    },
+    {
+      "id": "notif-1788210143235",
+      "log_id": 1788210143235,
+      "category": "SYSTEM",
+      "title": "Monthly Rent Generated for 2026-09",
+      "message": "Auto-generated 0 new rent record(s), 1 existing skipped. Due date: 2026-09-10.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:02:22.254Z"
+    },
+    {
+      "id": "notif-1788210140759",
+      "log_id": 1788210140759,
+      "category": "ELECTRICITY",
+      "title": "Plaza-wide Electricity Bill Sync",
+      "message": "Checked 2 connection(s): 0 new bill(s) synced, 0 skipped, 2 failed.",
+      "href": "/connections",
+      "read": true,
+      "created_at": "2026-08-31T21:02:20.371Z"
+    },
+    {
+      "id": "notif-1788210127715",
+      "log_id": 1788210127715,
+      "category": "SYSTEM",
+      "title": "Daily Automation Run — 2026-09-10",
+      "message": "Daily check completed. Bills synced: 0, Rent created: 0, Notifications dispatched: 1.",
+      "href": "/",
+      "read": true,
+      "created_at": "2026-08-31T21:02:07.377Z"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "full_name": "Plaza Administrator",
+      "role": "ADMIN",
+      "tenant_id": null,
+      "email": "admin@plaza.com",
+      "phone": null,
+      "created_at": "2026-09-03T10:33:49.937Z",
+      "updated_at": "2026-09-03T10:33:49.937Z"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000002",
+      "full_name": "Saif",
+      "role": "TENANT",
+      "tenant_id": 1788429119615,
+      "email": "tenant@plaza.com",
+      "phone": null,
+      "created_at": "2026-09-03T10:52:27.134Z",
+      "updated_at": "2026-09-03T10:52:27.134Z",
+      "username": "tenant"
+    },
+    {
+      "id": "tenant-usr-1",
+      "full_name": "Arham Plaza Tenant",
+      "role": "TENANT",
+      "tenant_id": "1",
+      "email": "tenant.vip@plaza.com",
+      "phone": null,
+      "created_at": "2026-08-31T19:09:35.256Z",
+      "updated_at": "2026-08-31T19:09:35.256Z"
+    },
+    {
+      "id": "tenant-usr-1788419088424",
+      "full_name": "Arham",
+      "role": "TENANT",
+      "tenant_id": "1788419088424",
+      "email": "arham@plaza.com",
+      "phone": null,
+      "created_at": "2026-09-03T07:06:25.195Z",
+      "updated_at": "2026-09-03T07:06:25.195Z"
+    },
+    {
+      "id": "tenant-usr-1788427489482",
+      "full_name": "Aryan",
+      "role": "TENANT",
+      "tenant_id": 1788427489482,
+      "email": "a@plaza.com",
+      "phone": null,
+      "created_at": "2026-09-03T09:26:26.100Z",
+      "updated_at": "2026-09-03T09:26:26.100Z"
+    },
+    {
+      "id": "tenant-usr-1788429119615",
+      "full_name": "Saif",
+      "role": "TENANT",
+      "tenant_id": 1788429119615,
+      "email": "s@plaza.com",
+      "phone": null,
+      "created_at": "2026-09-03T10:52:55.164Z",
+      "updated_at": "2026-09-03T10:52:55.164Z",
+      "username": "s"
+    },
+    {
+      "id": "tenant-usr-1788433624101",
+      "full_name": "Urwa",
+      "role": "TENANT",
+      "tenant_id": 1788433624101,
+      "username": "urwa",
+      "email": "urwa@plaza.com",
+      "phone": null,
+      "created_at": "2026-09-03T12:18:39.609Z",
+      "updated_at": "2026-09-03T12:18:39.609Z"
+    },
+    {
+      "id": "tenant-usr-1788438558574",
+      "full_name": "Fatiima",
+      "role": "TENANT",
+      "tenant_id": 1788438558574,
+      "username": "fatiima",
+      "email": "fatiima@plaza.com",
+      "phone": null,
+      "created_at": "2026-09-03T12:30:13.515Z",
+      "updated_at": "2026-09-03T12:30:13.515Z"
+    }
+  ],
+  "monthly_ledgers": [
+    {
+      "id": 1788212480557,
+      "tenant_id": 1001,
+      "lease_id": 3001,
+      "unit_id": 2001,
+      "connection_id": 4001,
+      "tenant_name": "Ahmed Khan",
+      "unit_name": "Shop 101-A",
+      "billing_month": "2026-11-01",
+      "rent_amount": 50000,
+      "rent_due_date": "2026-11-10",
+      "rent_paid": 50000,
+      "rent_status": "PAID",
+      "total_payable": 50000,
+      "paid_amount": 50000,
+      "remaining_balance": 50000,
+      "status": "paid",
+      "created_at": "2026-08-31T21:41:20.535Z"
+    },
+    {
+      "id": 1788212481216,
+      "tenant_id": 1002,
+      "lease_id": 3002,
+      "unit_id": 2002,
+      "connection_id": 4001,
+      "tenant_name": "Bilal Hussain",
+      "unit_name": "Shop 101-B",
+      "billing_month": "2026-11-01",
+      "rent_amount": 40000,
+      "rent_due_date": "2026-11-10",
+      "rent_paid": 0,
+      "rent_status": "UNPAID",
+      "total_payable": 40000,
+      "paid_amount": 0,
+      "remaining_balance": 40000,
+      "status": "unpaid",
+      "created_at": "2026-08-31T21:41:20.944Z"
+    },
+    {
+      "id": 1788212481798,
+      "tenant_id": 1001,
+      "lease_id": 3001,
+      "unit_id": 2001,
+      "connection_id": 4001,
+      "tenant_name": "Ahmed Khan",
+      "unit_name": "Shop 101-A",
+      "billing_month": "2026-09-01",
+      "rent_amount": 50000,
+      "rent_due_date": "2026-09-10",
+      "rent_paid": 0,
+      "rent_status": "UNPAID",
+      "total_payable": 50000,
+      "paid_amount": 0,
+      "remaining_balance": 50000,
+      "status": "unpaid",
+      "created_at": "2026-08-31T21:41:21.156Z"
+    },
+    {
+      "id": 1788212481703,
+      "tenant_id": 1002,
+      "lease_id": 3002,
+      "unit_id": 2002,
+      "connection_id": 4001,
+      "tenant_name": "Bilal Hussain",
+      "unit_name": "Shop 101-B",
+      "billing_month": "2026-09-01",
+      "rent_amount": 40000,
+      "rent_due_date": "2026-09-10",
+      "rent_paid": 0,
+      "rent_status": "UNPAID",
+      "total_payable": 40000,
+      "paid_amount": 0,
+      "remaining_balance": 40000,
+      "status": "unpaid",
+      "created_at": "2026-08-31T21:41:21.530Z"
+    }
+  ],
+  "tenant_notifications": [
+    {
+      "id": 1788436202860,
+      "plaza_id": 1,
+      "tenant_id": 1788433624101,
+      "lease_id": null,
+      "type": "GENERAL",
+      "title": "Payment Notification Sent to Admin",
+      "message": "You notified the Admin of Rs. 20,000 (Partial Rent, Bank Transfer (vvit IBFT)). The admin will review and record your payment.",
+      "href": "/tenant/payments",
+      "read": false,
+      "dedup_key": "tenant-notif-payment-1788433624101-1788436202249",
+      "created_at": "2026-09-03T11:50:02.523Z"
+    },
+    {
+      "id": 1788212539332,
+      "plaza_id": 1,
+      "tenant_id": 1002,
+      "lease_id": 3002,
+      "type": "RENT_OVERDUE",
+      "title": "Rent Payment Overdue",
+      "message": "Your rent payment of Rs. 40,000 was due on the 10th and is currently overdue. Please settle your account immediately.",
+      "href": "/tenant/payments",
+      "read": false,
+      "dedup_key": "rent-overdue-3002-2026-11",
+      "created_at": "2026-08-31T21:42:18.459Z"
+    },
+    {
+      "id": 1788212528445,
+      "plaza_id": 1,
+      "tenant_id": 1002,
+      "lease_id": 3002,
+      "type": "RENT_DUE_TODAY",
+      "title": "Rent is Due Today",
+      "message": "Your monthly rent of Rs. 40,000 is due today (10th). Please submit payment to avoid late arrears.",
+      "href": "/tenant/payments",
+      "read": false,
+      "dedup_key": "rent-due-3002-2026-11",
+      "created_at": "2026-08-31T21:42:07.772Z"
+    },
+    {
+      "id": 1788212516729,
+      "plaza_id": 1,
+      "tenant_id": 1002,
+      "lease_id": 3002,
+      "type": "RENT_REMINDER",
+      "title": "Upcoming Rent Due Date",
+      "message": "Friendly reminder: Rs. 40,000 rent balance is due on 10th.",
+      "href": "/tenant/payments",
+      "read": false,
+      "dedup_key": "rent-reminder-3002-2026-11",
+      "created_at": "2026-08-31T21:41:56.641Z"
+    },
+    {
+      "id": 1788212516287,
+      "plaza_id": 1,
+      "tenant_id": 1001,
+      "lease_id": 3001,
+      "type": "RENT_REMINDER",
+      "title": "Upcoming Rent Due Date",
+      "message": "Friendly reminder: Rs. 50,000 rent balance is due on 10th.",
+      "href": "/tenant/payments",
+      "read": true,
+      "dedup_key": "rent-reminder-3001-2026-11",
+      "created_at": "2026-08-31T21:41:55.847Z"
+    },
+    {
+      "id": 1788212495196,
+      "plaza_id": 1,
+      "tenant_id": 1002,
+      "lease_id": 3002,
+      "type": "RENT_CREATED",
+      "title": "New Monthly Rent Generated",
+      "message": "Your rent for 2026-11 has been generated. Rs. 40,000 is due by 10th.",
+      "href": "/tenant",
+      "read": false,
+      "dedup_key": "rent-created-3002-2026-11",
+      "created_at": "2026-08-31T21:41:34.493Z"
+    },
+    {
+      "id": 1788212493909,
+      "plaza_id": 1,
+      "tenant_id": 1001,
+      "lease_id": 3001,
+      "type": "RENT_CREATED",
+      "title": "New Monthly Rent Generated",
+      "message": "Your rent for 2026-11 has been generated. Rs. 50,000 is due by 10th.",
+      "href": "/tenant",
+      "read": true,
+      "dedup_key": "rent-created-3001-2026-11",
+      "created_at": "2026-08-31T21:41:33.693Z"
+    },
+    {
+      "id": 1788212488373,
+      "plaza_id": 1,
+      "tenant_id": 1002,
+      "lease_id": 3002,
+      "type": "RENT_OVERDUE",
+      "title": "Rent Payment Overdue",
+      "message": "Your rent payment of Rs. 40,000 was due on the 10th and is currently overdue. Please settle your account immediately.",
+      "href": "/tenant/payments",
+      "read": false,
+      "dedup_key": "rent-overdue-3002-2026-09",
+      "created_at": "2026-08-31T21:41:27.385Z"
+    },
+    {
+      "id": 1788212487563,
+      "plaza_id": 1,
+      "tenant_id": 1001,
+      "lease_id": 3001,
+      "type": "RENT_OVERDUE",
+      "title": "Rent Payment Overdue",
+      "message": "Your rent payment of Rs. 50,000 was due on the 10th and is currently overdue. Please settle your account immediately.",
+      "href": "/tenant/payments",
+      "read": true,
+      "dedup_key": "rent-overdue-3001-2026-09",
+      "created_at": "2026-08-31T21:41:26.575Z"
+    },
+    {
+      "id": 1788212474454,
+      "plaza_id": 1,
+      "tenant_id": 1002,
+      "lease_id": 3002,
+      "type": "RENT_DUE_TODAY",
+      "title": "Rent is Due Today",
+      "message": "Your monthly rent of Rs. 40,000 is due today (10th). Please submit payment to avoid late arrears.",
+      "href": "/tenant/payments",
+      "read": false,
+      "dedup_key": "rent-due-3002-2026-09",
+      "created_at": "2026-08-31T21:41:14.343Z"
+    }
+  ],
+  "tenant_credentials": [
+    {
+      "tenant_id": 1788427489482,
+      "email": "a@plaza.com",
+      "password": "A123",
+      "updated_at": "2026-09-03T09:24:53.022Z",
+      "username": "a"
+    },
+    {
+      "tenant_id": 1788429119615,
+      "email": "s@plaza.com",
+      "password": "S123",
+      "updated_at": "2026-09-03T09:52:01.636Z",
+      "username": "s"
+    },
+    {
+      "tenant_id": 1788433624101,
+      "username": "urwa",
+      "email": "urwa@plaza.com",
+      "password": "A$7778",
+      "updated_at": "2026-09-03T11:07:06.580Z"
+    },
+    {
+      "tenant_id": 1788438558574,
+      "username": "fatiima",
+      "email": "fatiima@plaza.com",
+      "password": "filu",
+      "updated_at": "2026-09-03T12:29:21.436Z"
     }
   ]
 }

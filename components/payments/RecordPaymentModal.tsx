@@ -20,6 +20,9 @@ import {
 
 interface RecordPaymentModalProps {
   connectionId: number | string;
+  tenantId?: number | string;
+  leaseId?: number | string;
+  unitId?: number | string;
   tenantName: string;
   shopName: string;
   referenceNumber?: string;
@@ -37,6 +40,9 @@ interface RecordPaymentModalProps {
 
 export default function RecordPaymentModal({
   connectionId,
+  tenantId,
+  leaseId,
+  unitId,
   tenantName,
   shopName,
   referenceNumber,
@@ -61,7 +67,6 @@ export default function RecordPaymentModal({
 
   const PAYMENT_CATEGORIES = [
     { id: "RENT", label: "Monthly Rent", icon: Home },
-    { id: "ELECTRICITY", label: "Electricity", icon: Zap },
     { id: "SECURITY", label: "Security Deposit", icon: ShieldCheck },
     { id: "MAINTENANCE", label: "Maintenance", icon: Wrench },
   ];
@@ -86,6 +91,9 @@ export default function RecordPaymentModal({
     try {
       const formData = new FormData();
       formData.append("connection_id", connectionId.toString());
+      if (tenantId) formData.append("tenant_id", tenantId.toString());
+      if (leaseId) formData.append("lease_id", leaseId.toString());
+      if (unitId) formData.append("unit_id", unitId.toString());
       formData.append("billing_month", billingMonth);
       formData.append("amount", amt.toString());
       formData.append("payment_type", paymentType);
@@ -192,7 +200,7 @@ export default function RecordPaymentModal({
           {/* Payment For Categories */}
           <div className="space-y-2">
             <span className="text-sm font-bold text-[#17211D]">Payment For</span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               {PAYMENT_CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = paymentType === cat.id;

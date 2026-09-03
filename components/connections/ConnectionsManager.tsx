@@ -9,7 +9,7 @@ import ConnectionUnitMappingModal from "./ConnectionUnitMappingModal";
 import ViewBillModal from "@/components/bills/ViewBillModal";
 import StatusBadge from "@/components/ui/StatusBadge";
 import EmptyState from "@/components/ui/EmptyState";
-import { Zap, Search, ArrowUpRight, Sliders, FileText, Layers } from "lucide-react";
+import { Zap, Search, ArrowUpRight, Sliders, FileText, Layers, Download } from "lucide-react";
 
 interface ConnectionsManagerProps {
   connections: ConnectionViewItem[];
@@ -24,9 +24,11 @@ export default function ConnectionsManager({
   const [searchQuery, setSearchQuery] = useState("");
   const [mappingConnection, setMappingConnection] = useState<ConnectionViewItem | null>(null);
   const [viewingBill, setViewingBill] = useState<{
+    id?: number | string;
     referenceNumber: string;
     meterNumber?: string;
     consumerName?: string;
+    billingMonth?: string;
     billAmount: number;
     unitsConsumed?: number;
     dueDate?: string;
@@ -186,26 +188,40 @@ export default function ConnectionsManager({
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="pt-4 border-t border-[#CBD4BC]/60 flex items-center justify-between">
+                <div className="pt-4 border-t border-[#CBD4BC]/60 flex items-center justify-between gap-2 flex-wrap">
                   {bill ? (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setViewingBill({
-                          referenceNumber: conn.reference_number,
-                          meterNumber: conn.meter_number || undefined,
-                          consumerName: conn.name,
-                          billAmount: bill.bill_amount,
-                          unitsConsumed: bill.units_consumed || 165,
-                          dueDate: bill.due_date,
-                          billStatus: bill.status,
-                        })
-                      }
-                      className="inline-flex items-center gap-1 text-xs font-medium text-[#FF704D] hover:underline"
-                    >
-                      <FileText size={13} />
-                      <span>View IESCO Bill</span>
-                    </button>
+                    <div className="flex items-center gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setViewingBill({
+                            id: bill.id,
+                            referenceNumber: conn.reference_number,
+                            meterNumber: conn.meter_number || undefined,
+                            consumerName: conn.name,
+                            billingMonth: bill.billing_month,
+                            billAmount: bill.bill_amount,
+                            unitsConsumed: bill.units_consumed || 165,
+                            dueDate: bill.due_date,
+                            billStatus: bill.status,
+                          })
+                        }
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#FF704D] hover:underline cursor-pointer"
+                      >
+                        <FileText size={13} />
+                        <span>View Bill</span>
+                      </button>
+
+                      <a
+                        href={`/api/bills/${bill.id}/download?ref=${encodeURIComponent(conn.reference_number)}&month=${encodeURIComponent(bill.billing_month)}`}
+                        download
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-[#CBD4BC] bg-[#FAF6F0] hover:bg-[#E8EDD9] text-xs font-medium text-[#17211D] transition shadow-2xs cursor-pointer"
+                        title="Download Bill Document"
+                      >
+                        <Download size={12} />
+                        <span>Download</span>
+                      </a>
+                    </div>
                   ) : (
                     <span className="text-xs text-[#58655E]">No bill file</span>
                   )}

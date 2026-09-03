@@ -70,6 +70,22 @@ export interface LedgerStats {
 }
 
 /**
+ * Checks if a lease is active for a given billing month string (e.g. "2026-09-01")
+ */
+export function isLeaseActiveInMonth(lease: any, billingMonthStr: string): boolean {
+  if (!lease || lease.status !== "ACTIVE") return false;
+  const monthKey = billingMonthStr.slice(0, 7); // "YYYY-MM"
+
+  const startKey = (lease.lease_start_date || lease.move_in_date || "").slice(0, 7);
+  if (startKey && monthKey < startKey) return false;
+
+  const endKey = (lease.lease_end_date || lease.ended_at || "").slice(0, 7);
+  if (endKey && monthKey > endKey) return false;
+
+  return true;
+}
+
+/**
  * Normalizes any month string (e.g. "2026-08" or "2026-08-15") into "2026-08-01"
  */
 export function normalizeBillingMonth(monthInput?: string | null): string {
@@ -169,10 +185,11 @@ export async function getMonthlyLedgers(
   for (const tv of activeTenants) {
     const { tenant, lease, unit } = tv;
     if (!unit || !lease) continue;
+    if (!isLeaseActiveInMonth(lease, billingMonth)) continue;
 
     // A. Rent calculation
     const rentAmount = Number(lease.monthly_rent || unit.default_monthly_rent || 0);
-    const rentDueDay = Number(lease.rent_due_day || 5);
+    const rentDueDay = Number(lease.rent_due_day || 10);
     const rentDueDateStr = `${year}-${String(month).padStart(2, "0")}-${String(rentDueDay).padStart(2, "0")}`;
 
     // B. Electricity allocation via Phase 3 mapping
@@ -198,9 +215,9 @@ export async function getMonthlyLedgers(
     const otherCharges = Number(customRow?.other_charges || 0);
     const previousBalance = 0; // Dynamic carryover
 
-    // E. Total Payable
-    const effectiveElec = elecAmount !== null ? elecAmount : 0;
-    const totalPayable = rentAmount + effectiveElec + maintenanceAmount + otherCharges + previousBalance;
+    // E. Total Payable (Plaza Collection Scope: Monthly Rent + Maintenance + Other Charges)
+    // Note: Electricity bills are paid directly by tenants to IESCO. Plaza management only collects Rent & Security.
+    const totalPayable = rentAmount + maintenanceAmount + otherCharges + previousBalance;
 
     // F. Payments recorded
     const targetMonthPrefix = billingMonth.slice(0, 7);
@@ -223,12 +240,11 @@ export async function getMonthlyLedgers(
 
     // G. Independent Statuses
     const rentPaidAmount = Math.min(rentAmount, totalPaid);
-    const elecPaidAmount = Math.max(0, Math.min(effectiveElec, totalPaid - rentAmount));
-
     const rentStatus = evaluateIndependentStatus(rentAmount, rentPaidAmount, rentDueDateStr);
-    const electricityStatus = hasElecBill
-      ? evaluateIndependentStatus(elecAmount, elecPaidAmount, elecDueDateStr)
-      : "UNPAID";
+
+    // Electricity bill status (Informational - tenants pay IESCO directly)
+    const isElecPaid = elecData.bill_status === "paid";
+    const electricityStatus = hasElecBill ? (isElecPaid ? "PAID" : "UNPAID") : "UNPAID";
 
     const overallStatus = calculateLedgerStatus(totalPayable, totalPaid, rentDueDateStr);
 
@@ -251,8 +267,8 @@ export async function getMonthlyLedgers(
       rent_status: rentStatus,
 
       electricity_amount: elecAmount,
-      electricity_due_date: hasElecBill ? elecDueDateStr : null,
-      electricity_paid: elecPaidAmount,
+      electricity_due_date: hasElecBill ? (elecData.due_date || elecDueDateStr) : null,
+      electricity_paid: isElecPaid ? (elecAmount || 0) : 0,
       electricity_status: electricityStatus,
       has_electricity_bill: hasElecBill,
       electricity_is_shared: elecData.is_shared,
@@ -286,7 +302,7 @@ export async function getMonthlyLedgers(
   const total_collected = items.reduce((sum, i) => sum + i.paid_amount, 0);
   const total_outstanding = items.reduce((sum, i) => sum + i.remaining_balance, 0);
   const electricity_outstanding = items.reduce(
-    (sum, i) => sum + (i.electricity_amount !== null ? Math.max(0, i.electricity_amount - i.electricity_paid) : 0),
+    (sum, i) => sum + (i.electricity_amount !== null && i.electricity_status !== "PAID" ? Number(i.electricity_amount) : 0),
     0
   );
   const collection_rate = total_expected > 0 ? Math.round((total_collected / total_expected) * 100) : 0;

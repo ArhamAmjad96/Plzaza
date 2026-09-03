@@ -278,25 +278,19 @@ export async function connectUnitMeter(params: {
     );
 
     if (!existingBill && connectionId) {
-      const newBill = {
-        id: Date.now() + 2,
-        connection_id: connectionId,
-        billing_month: currentMonth,
-        issue_date: new Date().toISOString().split("T")[0],
-        due_date: new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0],
-        bill_amount: 5400,
-        units_consumed: 165,
+      const { saveElectricityBillRecord } = await import("@/lib/bills/service");
+      existingBill = await saveElectricityBillRecord({
+        connectionId: connectionId,
+        unitId: unitId,
+        referenceNumber: cleanRef,
+        billingMonth: currentMonth,
+        issueDate: new Date().toISOString().split("T")[0],
+        dueDate: new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0],
+        billAmount: 5400,
+        unitsConsumed: 165,
+        meterNumber: cleanMeter || null,
         status: "unpaid",
-      };
-
-      updateStore((s) => {
-        s.bills.unshift(newBill);
       });
-      existingBill = newBill;
-
-      try {
-        await supabase.from("bills").insert(newBill);
-      } catch {}
     }
 
     return { success: true, connectionId: connectionId ?? undefined, bill: existingBill };
@@ -465,15 +459,19 @@ export async function saveConnectionUnitMappings(
     }
   } catch {}
 
-  fallbackMappings = fallbackMappings.filter((m) => m.connection_id.toString() !== connectionId.toString());
-  mappings.forEach((m, idx) => {
-    fallbackMappings.push({
-      id: Date.now() + idx,
-      connection_id: connectionId,
-      unit_id: m.unit_id,
-      split_type: m.split_type,
-      split_value: m.split_value,
-      notes: m.notes,
+  updateStore((s) => {
+    s.connection_unit_mappings = (s.connection_unit_mappings || []).filter(
+      (m: any) => m.connection_id.toString() !== connectionId.toString()
+    );
+    mappings.forEach((m, idx) => {
+      s.connection_unit_mappings.push({
+        id: Date.now() + idx,
+        connection_id: connectionId,
+        unit_id: m.unit_id,
+        split_type: m.split_type,
+        split_value: m.split_value,
+        notes: m.notes,
+      });
     });
   });
 

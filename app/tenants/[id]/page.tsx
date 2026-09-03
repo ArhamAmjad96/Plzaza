@@ -26,15 +26,28 @@ export default async function TenantDetailPage({
   // 1. Fetch all tenant views with leases
   const { tenants } = await getTenantsWithLeases();
 
-  // Find tenant by ID, or fallback to matching connection_id
-  let tenantView: TenantLeaseView | undefined = tenants.find((t) => t.tenant.id.toString() === id);
-  if (!tenantView) {
-    tenantView = tenants.find((t) => t.connection_id?.toString() === id);
-  }
+  // Find tenant by ID, lease ID, unit ID, or matching connection_id
+  let tenantView: TenantLeaseView | undefined = tenants.find(
+    (t) =>
+      t.tenant?.id?.toString() === id ||
+      t.lease?.id?.toString() === id ||
+      t.unit?.id?.toString() === id ||
+      t.connection_id?.toString() === id
+  );
 
   if (!tenantView) {
     // If neither matches, check if it's a legacy connection without a tenant
-    const { data: conn } = await supabase.from("connections").select("*").eq("id", id).maybeSingle();
+    let conn = null;
+    try {
+      const { data } = await supabase.from("connections").select("*").eq("id", id).maybeSingle();
+      conn = data;
+    } catch {}
+
+    if (!conn) {
+      const { getStore } = await import("@/lib/storage/fileStore");
+      const store = getStore();
+      conn = (store.connections || []).find((c: any) => c.id?.toString() === id) || null;
+    }
     if (conn) {
       tenantView = {
         tenant: {
